@@ -1,0 +1,243 @@
+PL/SQL Dynamic Content
+-----------------------
+Declare
+   Vloop number := 1;
+   cursor c_sdlc is
+   select '<div class="dropdiv" id="'||sdlcno||'" ondrop="drop_handle(this,event)" 
+                  ondragover="drop_over_handle(event)">
+                      <h1>' ||sdlcname|| '</h1><br> 
+                     <div class="dropdiv-new-item-region" style="cursor: default;">
+                        <a href="'||apex_util.prepare_url('f?p=&APP_ID.:61:' || :app_session || '::::P61_SDLC:' ||sdlcno|| '-' ||sdlcname)||'">
+                           <div class="dropdiv-new-card" style="cursor: pointer;">
+                              <i class="fa fa-plus"></i>
+                           </div> 
+                        </a>
+              </div>' dropsdlc, sdlcno
+   from demo_sdlc
+   order by sdlcno;
+
+   cursor c_task (b_sdlcno in number) is
+   select '<div id="'||t.id||'" class="dnddiv" draggable="true"
+                  ondragstart="drag_handle(event)"> 
+                  <div class="card-header">
+                     <i class=" '|| t.project_icon||'" style="color:black;background:#F7DA1B;"></i>
+                  </div>
+                  <div class="card-title">
+                     <p>'||t.project_id||'</p>
+                  </div> 
+                  <div class="card-content">
+                     <div>
+                        <div class="img_lnk">
+                            <a href="' || apex_util.prepare_url('f?p=&APP_ID.:61:' || :app_session || '::::P61_SDLC,P61_ID:' || to_number(b_sdlcno) || ',' || to_number(t.id)) || '">
+                                 <div style="cursor: pointer;">
+                                       <img src="data:image/png;base64, ' || apex_web_service.blob2clobbase64(u.userimage) || '"/>' ||u.username ||' - '||t.task_name|| '
+                                 </div> 
+                            </a>                       
+                       </div>
+                    <div>
+                       <p>'||t.task_description||'</p>
+                    </div>
+                 </div>
+             </div>
+          </div>' dragline
+   from demo_task t, demo_users u
+   where t.sdlcno = b_sdlcno and t.userid=u.userid;
+begin
+   --Use a HTML table to format the output
+   sys.htp.print('<table>');
+   sys.htp.print('<tr>');
+   for r_sdlc in c_sdlc
+      loop
+      sys.htp.print('<td>');
+      sys.htp.print(r_sdlc.dropsdlc);
+      for r_task in c_task(r_sdlc.sdlcno)
+         loop
+         sys.htp.print(r_task.dragline);
+      end loop;
+      sys.htp.print('</td>');
+      if Vloop = 3 then   -- Print three columns per row
+         Vloop := 1;
+         sys.htp.print('</tr>');
+      else
+         Vloop := Vloop + 1;
+      end if;   
+   end loop;
+   sys.htp.print('</tr>');
+   sys.htp.print('</table>');
+end;
+
+
+CSS code for the div where the task can be dropped
+--------------------------------------------------
+
+.dropdiv {
+   border: 2px solid #838383;
+   box-shadow: 3px 3px 3px #BDBEBD;
+   border-radius: 5px 5px 5px 5px;
+   display: block;
+   min-height: 300px;
+   padding: 16px;
+   text-decoration: none;
+   margin-right: 10px;
+   width: 100%;
+}
+
+.dropdiv:hover {
+   -webkit-transform: translateY(-6px);
+   -ms-transform: translateY(-6px);
+   transform: translateY(-6px);
+}
+
+.dropdiv h1 {
+    font: bold 18px/18px Helvetica, Arial, Sans-serif;
+    text-shadow: 0px -1px 2px rgba(0, 0, 0, 0.5);
+    margin: 0px;
+    text-align: center;
+    line-height: 35px;
+    border-radius: 20px;
+    background-color: #f1f1f1;
+    overflow: visible;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dropdiv-new-item-region {
+    clear: both;
+}
+
+.dropdiv-new-card {
+    float: left;
+    text-align: center;
+    margin: 3px 10px 10px 10px;
+    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    background: #55c555;
+}
+
+.dropdiv-new-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.dropdiv-new-card i {
+    font-size: 18px;
+    line-height: 28px;
+    width: 28px;
+    height: 28px;
+    color: white;
+}
+
+/* CSS code for the div to be dragged */
+.dnddiv {
+    display: inline-block;
+    width: 100%;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.44);
+    border-radius: 1px;
+    color: rgba(0, 0, 0, 0.87);
+    transition: all 0.4s ease;
+    background: #fafafa;
+    position: relative;
+    overflow: hidden;
+/*    cursor: pointer;*/
+    cursor: grab;
+    margin-bottom: 8px;
+}
+
+.dnddiv:hover {
+    background: #fff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    /*cursor: grabbing;*/
+}
+
+.dnddiv .card-content .img_lnk {
+    height: 40px;
+    line-height: 40px;
+    border-radius: 20px;
+    background-color: #f1f1f1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+    padding-right: 4px;
+}
+
+.dnddiv .card-content .img_lnk:hover {
+    overflow: visible;
+}
+
+.dnddiv .card-content .img_lnk img{
+    float: left;
+    height: 40px;
+    width: 40px;
+    padding: 0px 4px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background: #f1f1f1;
+}
+
+.dnddiv .card-header {
+    float: left;
+    text-align: center;
+    margin: 6px 0px 6px 6px;
+    box-shadow: 0 12px 20px -10px rgba(230, 230, 230, 0.28), 0 4px 20px 0px rgba(0, 0, 0, 0.12), 0 7px 8px -5px rgba(230, 230, 230, 0.2);
+    transition: all 1.0s ease;
+}
+
+.dnddiv .card-header i {
+    font-size: 18px;
+    line-height: 28px;
+    width: 28px;
+    height: 28px;
+    /*color: white;*/
+    transition: all 1.0s ease;
+}
+
+.dnddiv .card-title {
+    text-align: left;
+    padding: 0 6px;
+    overflow: hidden;
+    min-height: 40px;
+    display: table;
+    margin-top: 10px;
+}
+
+.dnddiv .card-content {
+    margin: 0 20px 6px;
+    padding-top: 3px;
+    border-top: 1px solid #eeeeee;
+    color: #999999;
+}
+
+
+SAVE_RESHUFFLING AJAX Callback Process
+--------------------------------------
+begin
+   update demo_task set sdlcno = :P60_SDLCNO
+   where id = :P60_ID;
+-- Eliminate "Error: SyntaxError: Unexpected end of JSON input"
+   apex_json.open_object;  
+   apex_json.write('success', true);  
+   apex_json.close_object; 
+end;
+
+
+
+Function and Global Variable Declaration
+----------------------------------------
+function drop_over_handle(evt) {
+   evt.preventDefault();
+}
+
+function drag_handle(evt) {
+   evt.dataTransfer.setData("Text",evt.target.id);
+}
+
+function drop_handle(obj,evt) {
+   evt.preventDefault(evt);
+   var data=evt.dataTransfer.getData("Text");
+   evt.target.appendChild(document.getElementById(data));
+   $x("P60_ID").value = data;    
+   $x("P60_SDLCNO").value = obj.id;    
+    
+   apex.server.process ( "SAVE_RESHUFFLING", { pageItems: "#P60_ID, #P60_SDLCNO" } );
+}
+
+
