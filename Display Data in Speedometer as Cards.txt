@@ -1,0 +1,87 @@
+Create Table Code:
+=========================================
+  CREATE TABLE "EBA_DEMO_CARD_VEHICLE_SPEED" 
+   ( "ID" NUMBER DEFAULT to_number(sys_guid(), 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'), 
+ "POSTED_SPEED" NUMBER, 
+ "VEHICLE_SPEED" NUMBER, 
+ "DATE_OF_INCEDENT" DATE, 
+ "LICENSE_PLATE" VARCHAR2(50), 
+ "LOCATION" VARCHAR2(50), 
+ "STATE" VARCHAR2(50), 
+  CONSTRAINT "EBA_DEMO_CARD_VSPEED_PK" PRIMARY KEY ("ID")
+  USING INDEX  ENABLE
+   ) ;
+
+Sample Data:
+=========================================
+ID Posted Speed Vehicle Speed Date of Incedent License Plate Location State
+319 55  62  9/24/2020  EF544343 Highway 5 VA
+320 45  43  10/08/2020  0EF54437 River Road VA
+321 35  47  10/13/2020  20EF5448 Main Street VA
+322 45  46  10/07/2020  4345B5103 River Road PA
+323 55  53  9/22/2020  44345C53 Highway 5 PA
+324 55  50  10/04/2020  44345D515 Highway 5 VA
+325 55  54  10/09/2020  4.43E+10 Highway 5 VA
+326 35  31  10/01/2020  5F510EE2 Main Street MD
+327 55  52  10/06/2020  20EF548 Highway 5 VA
+
+JavaScript:
+=====================================
+[require jet]
+
+require(["ojs/ojgauge"], function() {});
+
+
+CSS:
+=====================================
+#JET_CSS_DIRECTORY#alta/oj-alta-notag-min.css
+
+.speedometer {
+    align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    height: 120px;
+    width: 100%;
+}
+
+
+SQL Query: [Replace * with Greater Than Sign]
+==============================================
+with v_speed as (
+    select id,
+       state,
+       license_plate,
+       location,
+       vehicle_speed,
+       posted_speed,
+       vehicle_speed - posted_speed over_speed,
+       posted_speed max_val
+    from eba_demo_card_vehicle_speed )
+select s.id, s.state, s.license_plate, s.location,
+       s.vehicle_speed,
+       s.posted_speed,
+       s.over_speed,
+       s.max_val
+from v_speed s
+where over_speed * 0
+
+
+HTML Expressions: [Replace * with Angled Brackets]
+================================================
+strong &LICENSE_PLATE. /strong
+
+&VEHICLE_SPEED. mph in &POSTED_SPEED. zone
+
+*oj-status-meter-gauge
+    id = "vehichle_speed"
+    angle-extent = 250
+    start-angle = 215
+    min = "0"
+    max = "&MAX_VAL!ATTR."
+    labelled-by="readOnly"
+    thresholds='[{"max": 5, "color": "yellow"},{"max": 19, "color": "orange"},{"max": 40, "color": "red"}]'
+    value = "&OVER_SPEED!ATTR."
+    label.text ="mph over"
+    orientation = "circular"
+    class="speedometer" readonly*
+/oj-status-meter-gauge
