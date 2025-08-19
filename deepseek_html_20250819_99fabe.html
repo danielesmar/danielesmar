@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla Compacta de Dispositivos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f1f1f1;
+        }
+        
+        .header h1 {
+            font-size: 1.6rem;
+            color: #4a6cf7;
+            font-weight: 600;
+        }
+        
+        .header p {
+            color: #666;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+        
+        .devices-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-header {
+            background-color: #f8f9fa;
+        }
+        
+        .table-header th {
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .device-row {
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+        
+        .device-row:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .device-row td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+        
+        .device-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .device-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f4ff;
+            border-radius: 8px;
+            margin-right: 12px;
+            color: #4a6cf7;
+            font-size: 16px;
+        }
+        
+        .device-name {
+            font-weight: 500;
+            color: #212529;
+            font-size: 0.95rem;
+        }
+        
+        .device-type {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        
+        .date-time {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .date {
+            font-weight: 500;
+            color: #212529;
+            font-size: 0.9rem;
+        }
+        
+        .time {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        
+        .battery-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .battery-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+        
+        .battery-high {
+            color: #4cd964;
+        }
+        
+        .battery-medium {
+            color: #ffcc00;
+        }
+        
+        .battery-low {
+            color: #ff3b30;
+        }
+        
+        .battery-percentage {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .location-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .location-icon {
+            margin-right: 8px;
+            color: #4a6cf7;
+            font-size: 16px;
+        }
+        
+        .location-status {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .location-precise {
+            color: #4cd964;
+        }
+        
+        .location-approximate {
+            color: #ff9500;
+        }
+        
+        .action-link a {
+            display: inline-flex;
+            align-items: center;
+            color: #4a6cf7;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+        
+        .action-link a:hover {
+            color: #2b50d3;
+        }
+        
+        .link-icon {
+            margin-left: 6px;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .devices-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .table-header th, 
+            .device-row td {
+                padding: 10px;
+            }
+            
+            .device-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Estado de Dispositivos</h1>
+            <p>Información actualizada en tiempo real</p>
+        </div>
+        
+        <table class="devices-table">
+            <thead class="table-header">
+                <tr>
+                    <th>Dispositivo</th>
+                    <th>Fecha y Hora</th>
+                    <th>Batería</th>
+                    <th>Ubicación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Fila 1 -->
+                <tr class="device-row">
+                    <td>
+                        <div class="device-info">
+                            <div class="device-icon">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <div>
+                                <div class="device-name">iPhone 13 Pro</div>
+                                <div class="device-type">Smartphone</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="date-time">
+                            <span class="date">19/08/2025</span>
+                            <span class="time">08:50 am</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="battery-info">
+                            <i class="fas fa-battery-three-quarters battery-high battery-icon"></i>
+                            <span class="battery-percentage">80%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="location-info">
+                            <i class="fas fa-map-marker-alt location-icon"></i>
+                            <span class="location-status location-precise">Precisa</span>
+                        </div>
+                    </td>
+                    <td class="action-link">
+                        <a href="#">
+                            Ver detalles <i class="fas fa-external-link-alt link-icon"></i>
+                        </a>
+                    </td>
+                </tr>
+                
+                <!-- Fila 2 -->
+                <tr class="device-row">
+                    <td>
+                        <div class="device-info">
+                            <div class="device-icon">
+                                <i class="fas fa-tablet-alt"></i>
+                            </div>
+                            <div>
+                                <div class="device-name">iPad Air</div>
+                                <div class="device-type">Tablet</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="date-time">
+                            <span class="date">19/08/2025</span>
+                            <span class="time">09:15 am</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="battery-info">
+                            <i class="fas fa-battery-half battery-medium battery-icon"></i>
+                            <span class="battery-percentage">45%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="location-info">
+                            <i class="fas fa-map-marker-alt location-icon"></i>
+                            <span class="location-status location-precise">Precisa</span>
+                        </div>
+                    </td>
+                    <td class="action-link">
+                        <a href="#">
+                            Ver detalles <i class="fas fa-external-link-alt link-icon"></i>
+                        </a>
+                    </td>
+                </tr>
+                
+                <!-- Fila 3 -->
+                <tr class="device-row">
+                    <td>
+                        <div class="device-info">
+                            <div class="device-icon">
+                                <i class="fas fa-laptop"></i>
+                            </div>
+                            <div>
+                                <div class="device-name">MacBook Pro</div>
+                                <div class="device-type">Laptop</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="date-time">
+                            <span class="date">19/08/2025</span>
+                            <span class="time">10:30 am</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="battery-info">
+                            <i class="fas fa-battery-full battery-high battery-icon"></i>
+                            <span class="battery-percentage">92%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="location-info">
+                            <i class="fas fa-map-marker-alt location-icon"></i>
+                            <span class="location-status location-precise">Precisa</span>
+                        </div>
+                    </td>
+                    <td class="action-link">
+                        <a href="#">
+                            Ver detalles <i class="fas fa-external-link-alt link-icon"></i>
+                        </a>
+                    </td>
+                </tr>
+                
+                <!-- Fila 4 -->
+                <tr class="device-row">
+                    <td>
+                        <div class="device-info">
+                            <div class="device-icon">
+                                <i class="fas fa-watch"></i>
+                            </div>
+                            <div>
+                                <div class="device-name">Apple Watch</div>
+                                <div class="device-type">Wearable</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="date-time">
+                            <span class="date">19/08/2025</span>
+                            <span class="time">08:20 am</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="battery-info">
+                            <i class="fas fa-battery-quarter battery-low battery-icon"></i>
+                            <span class="battery-percentage">28%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="location-info">
+                            <i class="fas fa-map-marker-alt location-icon"></i>
+                            <span class="location-status location-approximate">Aproximada</span>
+                        </div>
+                    </td>
+                    <td class="action-link">
+                        <a href="#">
+                            Ver detalles <i class="fas fa-external-link-alt link-icon"></i>
+                        </a>
+                    </td>
+                </tr>
+                
+                <!-- Fila 5 -->
+                <tr class="device-row">
+                    <td>
+                        <div class="device-info">
+                            <div class="device-icon">
+                                <i class="fas fa-headphones"></i>
+                            </div>
+                            <div>
+                                <div class="device-name">AirPods Pro</div>
+                                <div class="device-type">Audio</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="date-time">
+                            <span class="date">19/08/2025</span>
+                            <span class="time">07:45 am</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="battery-info">
+                            <i class="fas fa-battery-three-quarters battery-high battery-icon"></i>
+                            <span class="battery-percentage">75%</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="location-info">
+                            <i class="fas fa-map-marker-alt location-icon"></i>
+                            <span class="location-status location-precise">Precisa</span>
+                        </div>
+                    </td>
+                    <td class="action-link">
+                        <a href="#">
+                            Ver detalles <i class="fas fa-external-link-alt link-icon"></i>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
