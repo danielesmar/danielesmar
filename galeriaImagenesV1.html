@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carousel Slider para Oracle APEX</title>
+   <!-- CSS: coloca en tu CSS global o Inline CSS -->
+<style>
+  :root {
+    --nav-size: 44px;
+    --gap: 12px;
+    --transition: 350ms cubic-bezier(.2,.8,.2,1);
+    --bg: rgba(0,0,0,0.35);
+    --dot-size: 10px;
+  }
+
+  /* El contenedor padre debe dar la altura. Este carrusel ocupa 100% del padre. */
+  .carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;              /* <-- se ajusta al alto del contenedor padre (modal) */
+    overflow: hidden;
+    display: block;
+    background: #000;
+    border-radius: 8px;
+  }
+
+  .carousel__track {
+    height: 100%;
+    display: flex;
+    transition: transform var(--transition);
+    will-change: transform;
+  }
+
+  .carousel__slide {
+    min-width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .carousel__slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;    /* mantiene la imagen llenando el contenedor sin deformar */
+    display: block;
+  }
+
+  /* Navegación */
+  .carousel__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: var(--nav-size);
+    height: var(--nav-size);
+    border-radius: 50%;
+    border: none;
+    background: var(--bg);
+    color: #fff;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    z-index: 30;
+    transition: background 180ms;
+    backdrop-filter: blur(4px);
+  }
+  .carousel__nav:focus { outline: 3px solid rgba(255,255,255,0.25); }
+  .carousel__nav:hover { background: rgba(0,0,0,0.55); }
+
+  .carousel__nav--prev { left: var(--gap); }
+  .carousel__nav--next { right: var(--gap); }
+
+  /* Dots */
+  .carousel__dots {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(var(--gap));
+    display: flex;
+    gap: 8px;
+    z-index: 40;
+  }
+  .carousel__dot {
+    width: var(--dot-size);
+    height: var(--dot-size);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.45);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .carousel__dot[aria-selected="true"] {
+    transform: scale(1.2);
+    background: white;
+  }
+
+  /* Responsive: reduce tamaño de botones en pantallas pequeñas */
+  @media (max-width: 520px) {
+    :root { --nav-size: 36px; }
+    .carousel__nav { opacity: 0.9; }
+  }
+</style>
+</head>
+<body>
+    <!-- HTML: pon esto dentro del contenido del modal -->
+<div class="carousel" id="myCarousel" aria-roledescription="carousel">
+  <div class="carousel__track">
+    <div class="carousel__slide" role="group" aria-roledescription="slide" aria-label="1 / 4">
+      <img src="https://picsum.photos/id/1015/1200/800" alt="Paisaje 1" />
+    </div>
+    <div class="carousel__slide" role="group" aria-roledescription="slide" aria-label="2 / 4">
+      <img src="https://picsum.photos/id/1016/1200/800" alt="Paisaje 2" />
+    </div>
+    <div class="carousel__slide" role="group" aria-roledescription="slide" aria-label="3 / 4">
+      <img src="https://picsum.photos/id/1018/1200/800" alt="Paisaje 3" />
+    </div>
+    <div class="carousel__slide" role="group" aria-roledescription="slide" aria-label="4 / 4">
+      <img src="https://picsum.photos/id/1020/1200/800" alt="Paisaje 4" />
+    </div>
+  </div>
+
+  <button class="carousel__nav carousel__nav--prev" aria-label="Anterior">&larr;</button>
+  <button class="carousel__nav carousel__nav--next" aria-label="Siguiente">&rarr;</button>
+
+  <div class="carousel__dots" role="tablist" aria-label="Navegación de slides">
+    <!-- Se generan por JS -->
+  </div>
+</div>
+
+ <!-- JavaScript: Ejecuta al cargar la página/modal -->
+    <script>
+       
+
+  (function () {
+    const carousel = document.getElementById('myCarousel');
+    if (!carousel) return;
+
+    const track = carousel.querySelector('.carousel__track');
+    const slides = Array.from(carousel.querySelectorAll('.carousel__slide'));
+    const prevBtn = carousel.querySelector('.carousel__nav--prev');
+    const nextBtn = carousel.querySelector('.carousel__nav--next');
+    const dotsContainer = carousel.querySelector('.carousel__dots');
+
+    let current = 0;
+    const total = slides.length;
+
+    // Crear dots
+    slides.forEach((s, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'carousel__dot';
+      btn.type = 'button';
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-label', `Slide ${i+1}`);
+      btn.dataset.index = i;
+      btn.addEventListener('click', () => goTo(i));
+      dotsContainer.appendChild(btn);
+    });
+
+    const dots = Array.from(dotsContainer.children);
+
+    function update() {
+      const x = -current * carousel.clientWidth;
+      track.style.transform = `translateX(${x}px)`;
+      dots.forEach((d, i) => d.setAttribute('aria-selected', i === current ? 'true' : 'false'));
+      // update ARIA on slides
+      slides.forEach((s,i) => s.setAttribute('aria-hidden', i === current ? 'false' : 'true'));
+    }
+
+    function goTo(index) {
+      current = (index + total) % total;
+      update();
+    }
+
+    prevBtn.addEventListener('click', () => goTo(current - 1));
+    nextBtn.addEventListener('click', () => goTo(current + 1));
+
+    // Keyboard navigation
+    carousel.addEventListener('keydown', (ev) => {
+      if (ev.key === 'ArrowLeft') { ev.preventDefault(); goTo(current - 1); }
+      if (ev.key === 'ArrowRight') { ev.preventDefault(); goTo(current + 1); }
+    });
+
+    // Touch / swipe support
+    (function addSwipeSupport() {
+      let startX = 0, deltaX = 0, dragging = false;
+      track.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX; dragging = true;
+      }, {passive: true});
+      track.addEventListener('touchmove', (e) => {
+        if (!dragging) return;
+        deltaX = e.touches[0].clientX - startX;
+        track.style.transition = 'none';
+        track.style.transform = `translateX(${ -current * carousel.clientWidth + deltaX }px)`;
+      }, {passive: true});
+      track.addEventListener('touchend', () => {
+        dragging = false;
+        track.style.transition = '';
+        if (Math.abs(deltaX) > (carousel.clientWidth * 0.15)) {
+          if (deltaX < 0) goTo(current + 1); else goTo(current - 1);
+        } else {
+          update();
+        }
+        deltaX = 0;
+      });
+    })();
+
+    // Resize handler: recalcula transform si cambia el tamaño del modal
+    window.addEventListener('resize', update);
+
+    // Inicialización
+    goTo(0);
+
+    // Si quieres que el carousel reciba foco para teclado:
+    carousel.tabIndex = 0;
+  })();
+    </script>
+</body>
+</html>
