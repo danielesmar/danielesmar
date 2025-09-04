@@ -1,0 +1,50 @@
+WITH total_registros AS (
+    -- Llama a la función de conteo con tus parámetros de filtro
+    SELECT ContarIncidencias(:P_FILTRAR_USUARIO, :P_FEC_INICIO, :P_FEC_FINAL, :P_ID) AS total_rows FROM dual
+),
+paginas AS (
+    SELECT CEIL(total_rows / :P_PAGE_SIZE) AS total_pages
+    FROM total_registros
+),
+paginacion_data AS (
+    SELECT
+        CASE
+            WHEN :P_PAGE_NUMBER > 10 AND TRUNC((:P_PAGE_NUMBER - 1) / 10) > 0 THEN '&#9664; Anterior'
+            ELSE NULL
+        END AS prev_block_link,
+        CEIL(LEAST(total_pages, TRUNC((:P_PAGE_NUMBER - 1) / 10) * 10 + 10)) AS end_page_in_block,
+        CEIL(GREATEST(1, TRUNC((:P_PAGE_NUMBER - 1) / 10) * 10 + 1)) AS start_page_in_block,
+        CASE
+            WHEN total_pages > (TRUNC((:P_PAGE_NUMBER - 1) / 10) * 10 + 10) THEN 'Siguiente &#9654;'
+            ELSE NULL
+        END AS next_block_link,
+        total_pages
+    FROM paginas
+),
+numeros_de_pagina AS (
+    SELECT LEVEL AS page_number
+    FROM dual
+    CONNECT BY LEVEL <= (SELECT end_page_in_block FROM paginacion_data)
+    AND LEVEL >= (SELECT start_page_in_block FROM paginacion_data)
+)
+SELECT
+    CASE WHEN (SELECT prev_block_link FROM paginacion_data) IS NOT NULL THEN
+        '<a href="' || APEX_UTIL.PREPARE_URL(
+            p_url => 'f?p=' || :APP_ID || ':' || :APP_PAGE_ID || ':' || :APP_SESSION || '::NO::P' || :APP_PAGE_ID || '_PAGE_NUMBER:' || (TRUNC((:P_PAGE_NUMBER - 1) / 10) * 10)
+        ) || '" class="pagination-link">' || (SELECT prev_block_link FROM paginacion_data) || '</a>'
+    ELSE NULL
+    END AS prev_block_html,
+    CASE
+        WHEN page_number = :P_PAGE_NUMBER THEN '<span class="current-page">' || page_number || '</span>'
+        ELSE '<a href="' || APEX_UTIL.PREPARE_URL(
+            p_url => 'f?p=' || :APP_ID || ':' || :APP_PAGE_ID || ':' || :APP_SESSION || '::NO::P' || :APP_PAGE_ID || '_PAGE_NUMBER:' || page_number
+        ) || '" class="pagination-link">' || page_number || '</a>'
+    END AS paginacion_link,
+    CASE WHEN (SELECT next_block_link FROM paginacion_data) IS NOT NULL AND page_number = (SELECT end_page_in_block FROM paginacion_data) THEN
+        '<a href="' || APEX_UTIL.PREPARE_URL(
+            p_url => 'f?p=' || :APP_ID || ':' || :APP_PAGE_ID || ':' || :APP_SESSION || '::NO::P' || :APP_PAGE_ID || '_PAGE_NUMBER:' || (TRUNC((:P_PAGE_NUMBER - 1) / 10) * 10 + 11)
+        ) || '" class="pagination-link">' || (SELECT next_block_link FROM paginacion_data) || '</a>'
+    ELSE NULL
+    END AS next_block_html
+FROM numeros_de_pagina
+ORDER BY page_number;
