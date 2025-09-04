@@ -1,60 +1,50 @@
 WITH paginacion_data AS (
-    -- Calcula el total de páginas y el número del bloque actual en una sola CTE
     SELECT
         CEIL(ContarIncidencias(:P_FILTRAR_USUARIO, :P_FEC_INICIO, :P_FEC_FINAL, :P_ID) / :P_PAGE_SIZE) AS total_pages,
         FLOOR((:P_PAGE_NUMBER - 1) / 10) AS block_number
     FROM dual
 ),
-rango_botones AS (
-    -- Genera los números de página para el bloque actual
-    SELECT
-        ROWNUM AS rn,
-        (SELECT total_pages FROM paginacion_data) AS total_pages,
-        (SELECT block_number FROM paginacion_data) AS block_number
-    FROM dual
-    CONNECT BY LEVEL <= (SELECT total_pages FROM paginacion_data)
-),
 botones AS (
-    -- Combina todos los elementos de paginación
+    -- Botón de bloque anterior
     SELECT
         1 AS button_order,
         'Anterior' AS button_label,
         (block_number * 10) AS target_page,
         'previous' AS button_type
-    FROM rango_botones
+    FROM paginacion_data
     WHERE block_number > 0
-    AND rn = 1
+    
     UNION ALL
+    
+    -- Botones numerados
     SELECT
         2 AS button_order,
-        TO_CHAR(rn) AS button_label,
-        rn AS target_page,
+        TO_CHAR(LEVEL) AS button_label,
+        LEVEL AS target_page,
         'page_number' AS button_type
-    FROM rango_botones
-    WHERE rn BETWEEN (block_number * 10) + 1 AND LEAST((block_number * 10) + 10, total_pages)
+    FROM dual
+    CONNECT BY LEVEL BETWEEN ((SELECT block_number FROM paginacion_data) * 10) + 1 AND LEAST(((SELECT block_number FROM paginacion_data) * 10) + 10, (SELECT total_pages FROM paginacion_data))
+
     UNION ALL
+    
+    -- Botón de bloque siguiente
     SELECT
         3 AS button_order,
         'Siguiente' AS button_label,
-        (block_number * 10) + 11 AS target_page,
+        ((SELECT block_number FROM paginacion_data) * 10) + 11 AS target_page,
         'next' AS button_type
-    FROM rango_botones
-    WHERE (block_number * 10) + 10 < total_pages
-    AND rn = 1
+    FROM paginacion_data
+    WHERE ((SELECT block_number FROM paginacion_data) * 10) + 10 < (SELECT total_pages FROM paginacion_data)
 )
 SELECT
     CASE
         WHEN button_type = 'page_number' THEN
             CASE
                 WHEN button_label = TO_CHAR(:P_PAGE_NUMBER) THEN '<span class="current-page">' || button_label || '</span>'
-                ELSE '<a href="' || APEX_UTIL.PREPARE_URL(
-                    p_url => 'f?p=' || :APP_ID || ':' || :APP_PAGE_ID || ':' || :APP_SESSION || '::NO::P' || :APP_PAGE_ID || '_PAGE_NUMBER:' || target_page
-                ) || '" class="pagination-link">' || button_label || '</a>'
+                ELSE '<a href="#" onclick="setPageAndRefresh(' || target_page || '); return false;" class="pagination-link">' || button_label || '</a>'
             END
         ELSE
-            '<a href="' || APEX_UTIL.PREPARE_URL(
-                p_url => 'f?p=' || :APP_ID || ':' || :APP_PAGE_ID || ':' || :APP_SESSION || '::NO::P' || :APP_PAGE_ID || '_PAGE_NUMBER:' || target_page
-            ) || '" class="pagination-link">' || button_label || '</a>'
+            '<a href="#" onclick="setPageAndRefresh(' || target_page || '); return false;" class="pagination-link">' || button_label || '</a>'
     END AS paginacion_link
 FROM botones
 ORDER BY button_order, button_label;
