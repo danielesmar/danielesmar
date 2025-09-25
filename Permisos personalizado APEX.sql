@@ -1672,3 +1672,471 @@ Con esta implementación, PEPITO podrá:
 ❌ No poder ejecutar acciones de modificación
 
 Y para la página 10 (Registro Visitas), simplemente no tendrá el permiso VIEW, por lo que no podrá acceder en absoluto.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+***********************************************************************************************************
+
+
+Perfecto! Entonces necesitas actualizar todas las referencias de las tablas en el paquete. Aquí está la versión completa corregida con todos los nombres CO_:
+
+Paquete Completo Corregido con Nombres CO_
+sql
+CREATE OR REPLACE PACKAGE pkg_apex_auth_v2 AS
+    
+    -- Constantes
+    C_PERM_VIEW     CONSTANT VARCHAR2(10) := 'VIEW';
+    C_PERM_EDIT     CONSTANT VARCHAR2(10) := 'EDIT';
+    C_PERM_CREATE   CONSTANT VARCHAR2(10) := 'CREATE';
+    C_PERM_DELETE   CONSTANT VARCHAR2(10) := 'DELETE';
+    C_PERM_PRINT    CONSTANT VARCHAR2(10) := 'PRINT';
+    C_PERM_DOWNLOAD CONSTANT VARCHAR2(10) := 'DOWNLOAD';
+    C_PERM_FULL     CONSTANT VARCHAR2(10) := 'FULL';
+    C_PERM_DENY     CONSTANT VARCHAR2(10) := 'DENY';
+    
+    -- Función principal mejorada que considera usuario + rol
+    FUNCTION has_permission(
+        p_username      IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_feature_code  IN VARCHAR2,
+        p_permission    IN VARCHAR2 DEFAULT C_PERM_VIEW
+    ) RETURN VARCHAR2;
+    
+    -- Función para obtener permisos específicos del usuario
+    FUNCTION get_user_specific_permission(
+        p_username      IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_feature_id    IN NUMBER,
+        p_permission    IN VARCHAR2
+    ) RETURN VARCHAR2;
+    
+    -- Función para obtener permisos del rol
+    FUNCTION get_role_permission(
+        p_username      IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_feature_id    IN NUMBER,
+        p_permission    IN VARCHAR2
+    ) RETURN VARCHAR2;
+    
+    -- Procedimiento para asignar permiso específico a usuario
+    PROCEDURE grant_user_permission(
+        p_username      IN VARCHAR2,
+        p_feature_code  IN VARCHAR2,
+        p_permission    IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_is_granted    IN VARCHAR2 DEFAULT 'Y',
+        p_granted_by    IN VARCHAR2
+    );
+    
+    -- Procedimiento para revocar permiso específico
+    PROCEDURE revoke_user_permission(
+        p_username      IN VARCHAR2,
+        p_feature_code  IN VARCHAR2,
+        p_permission    IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_revoked_by    IN VARCHAR2
+    );
+    
+    -- Función para listar permisos de usuario (rol + específicos)
+    FUNCTION get_user_permissions(
+        p_username      IN VARCHAR2,
+        p_application_id IN NUMBER
+    ) RETURN SYS_REFCURSOR;
+    
+    -- Función para verificar herencia activa
+    FUNCTION is_inheritance_active(
+        p_application_id IN NUMBER,
+        p_inherit_type   IN VARCHAR2
+    ) RETURN BOOLEAN;
+
+END pkg_apex_auth_v2;
+/
+
+CREATE OR REPLACE PACKAGE BODY pkg_apex_auth_v2 AS
+
+    FUNCTION get_user_specific_permission(
+        p_username      IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_feature_id    IN NUMBER,
+        p_permission    IN VARCHAR2
+    ) RETURN VARCHAR2
+    IS
+        l_result VARCHAR2(1) := NULL;
+    BEGIN
+        SELECT up.is_granted
+        INTO l_result
+        FROM co_user_permissions up  -- ← CORREGIDO
+        WHERE up.username = p_username
+          AND up.feature_id = p_feature_id
+          AND up.application_id = p_application_id
+          AND up.is_granted IN ('Y','N')
+          AND (up.permission_level = p_permission 
+               OR up.permission_level = C_PERM_FULL
+               OR up.permission_level = C_PERM_DENY);
+        
+        RETURN l_result;
+        
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RETURN NULL;
+        WHEN TOO_MANY_ROWS THEN
+            BEGIN
+                SELECT MAX(is_granted) KEEP (
+                    DENSE_RANK FIRST ORDER BY 
+                    CASE permission_level 
+                        WHEN C_PERM_DENY THEN 1
+                        WHEN C_PERM_FULL THEN 2
+                        ELSE 3 
+                    END
+                )
+                INTO l_result
+                FROM co_user_permissions  -- ← CORREGIDO
+                WHERE username = p_username
+                  AND feature_id = p_feature_id
+                  AND application_id = p_application_id;
+                
+                RETURN l_result;
+            EXCEPTION
+                WHEN OTHERS THEN
+                    RETURN NULL;
+            END;
+    END get_user_specific_permission;
+
+    FUNCTION get_role_permission(
+        p_username      IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_feature_id    IN NUMBER,
+        p_permission    IN VARCHAR2
+    ) RETURN VARCHAR2
+    IS
+        l_result VARCHAR2(1) := 'N';
+    BEGIN
+        SELECT MAX('Y')
+        INTO l_result
+        FROM co_role_permissions rp  -- ← CORREGIDO
+        JOIN co_user_roles ur ON rp.role_id = ur.role_id  -- ← CORREGIDO
+        WHERE ur.username = p_username
+          AND ur.application_id = p_application_id
+          AND ur.is_active = 'Y'
+          AND rp.feature_id = p_feature_id
+          AND rp.is_granted = 'Y'
+          AND (rp.permission_level = p_permission 
+               OR rp.permission_level = C_PERM_FULL
+               OR (p_permission = C_PERM_VIEW AND rp.permission_level IN (C_PERM_EDIT, C_PERM_CREATE, C_PERM_DELETE)));
+        
+        RETURN NVL(l_result, 'N');
+        
+    EXCEPTION
+        WHEN OTHERS THEN
+            RETURN 'N';
+    END get_role_permission;
+
+    FUNCTION has_permission(
+        p_username      IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_feature_code  IN VARCHAR2,
+        p_permission    IN VARCHAR2 DEFAULT C_PERM_VIEW
+    ) RETURN VARCHAR2
+    IS
+        l_feature_id    NUMBER;
+        l_user_perm     VARCHAR2(1);
+        l_role_perm     VARCHAR2(1);
+        l_inheritance   BOOLEAN;
+    BEGIN
+        SELECT feature_id INTO l_feature_id
+        FROM co_features  -- ← CORREGIDO
+        WHERE feature_code = p_feature_code
+          AND application_id = p_application_id;
+
+        l_user_perm := get_user_specific_permission(
+            p_username, p_application_id, l_feature_id, p_permission
+        );
+        
+        IF l_user_perm IS NOT NULL THEN
+            RETURN l_user_perm;
+        END IF;
+        
+        l_inheritance := is_inheritance_active(p_application_id, 'ROLE_TO_USER');
+        
+        IF l_inheritance THEN
+            l_role_perm := get_role_permission(
+                p_username, p_application_id, l_feature_id, p_permission
+            );
+            
+            RETURN l_role_perm;
+        ELSE
+            RETURN 'N';
+        END IF;
+        
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            RETURN 'N'; -- Feature no existe
+        WHEN OTHERS THEN
+            RETURN 'N';
+    END has_permission;
+
+    PROCEDURE grant_user_permission(
+        p_username      IN VARCHAR2,
+        p_feature_code  IN VARCHAR2,
+        p_permission    IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_is_granted    IN VARCHAR2 DEFAULT 'Y',
+        p_granted_by    IN VARCHAR2
+    )
+    IS
+        l_feature_id NUMBER;
+    BEGIN
+        SELECT feature_id INTO l_feature_id
+        FROM co_features  -- ← CORREGIDO
+        WHERE feature_code = p_feature_code
+          AND application_id = p_application_id;
+        
+        MERGE INTO co_user_permissions up  -- ← CORREGIDO
+        USING (SELECT p_username as username, l_feature_id as feature_id FROM dual) src
+        ON (up.username = src.username AND up.feature_id = src.feature_id AND up.permission_level = p_permission)
+        WHEN MATCHED THEN
+            UPDATE SET 
+                up.is_granted = p_is_granted,
+                up.updated_by = p_granted_by,
+                up.updated_date = SYSDATE
+        WHEN NOT MATCHED THEN
+            INSERT (username, feature_id, permission_level, is_granted, application_id, created_by)
+            VALUES (p_username, l_feature_id, p_permission, p_is_granted, p_application_id, p_granted_by);
+        
+        COMMIT;
+        
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR(-20002, 'Error al asignar permiso: ' || SQLERRM);
+    END grant_user_permission;
+
+    PROCEDURE revoke_user_permission(
+        p_username      IN VARCHAR2,
+        p_feature_code  IN VARCHAR2,
+        p_permission    IN VARCHAR2,
+        p_application_id IN NUMBER,
+        p_revoked_by    IN VARCHAR2
+    )
+    IS
+        l_feature_id NUMBER;
+    BEGIN
+        SELECT feature_id INTO l_feature_id
+        FROM co_features  -- ← CORREGIDO
+        WHERE feature_code = p_feature_code
+          AND application_id = p_application_id;
+        
+        DELETE FROM co_user_permissions  -- ← CORREGIDO
+        WHERE username = p_username
+          AND feature_id = l_feature_id
+          AND permission_level = p_permission
+          AND application_id = p_application_id;
+        
+        COMMIT;
+        
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            NULL; -- El permiso no existía, no hay problema
+        WHEN OTHERS THEN
+            RAISE_APPLICATION_ERROR(-20003, 'Error al revocar permiso: ' || SQLERRM);
+    END revoke_user_permission;
+
+    FUNCTION get_user_permissions(
+        p_username      IN VARCHAR2,
+        p_application_id IN NUMBER
+    ) RETURN SYS_REFCURSOR
+    IS
+        l_cursor SYS_REFCURSOR;
+    BEGIN
+        OPEN l_cursor FOR
+        WITH user_roles AS (
+            SELECT r.role_id, r.role_name
+            FROM co_user_roles ur  -- ← CORREGIDO
+            JOIN co_roles r ON ur.role_id = r.role_id  -- ← CORREGIDO
+            WHERE ur.username = p_username
+              AND ur.application_id = p_application_id
+              AND ur.is_active = 'Y'
+              AND r.is_active = 'Y'
+        ),
+        role_permissions AS (
+            SELECT 
+                f.feature_code,
+                f.feature_name,
+                rp.permission_level,
+                'ROLE' as permission_type,
+                ur.role_name,
+                rp.is_granted
+            FROM co_role_permissions rp  -- ← CORREGIDO
+            JOIN co_features f ON rp.feature_id = f.feature_id  -- ← CORREGIDO
+            JOIN user_roles ur ON rp.role_id = ur.role_id
+            WHERE rp.application_id = p_application_id
+        ),
+        user_permissions AS (
+            SELECT 
+                f.feature_code,
+                f.feature_name,
+                up.permission_level,
+                'USER' as permission_type,
+                NULL as role_name,
+                up.is_granted
+            FROM co_user_permissions up  -- ← CORREGIDO
+            JOIN co_features f ON up.feature_id = f.feature_id  -- ← CORREGIDO
+            WHERE up.username = p_username
+              AND up.application_id = p_application_id
+        )
+        SELECT * FROM role_permissions
+        UNION ALL
+        SELECT * FROM user_permissions
+        ORDER BY feature_code, permission_type DESC, permission_level;
+        
+        RETURN l_cursor;
+    END get_user_permissions;
+
+    FUNCTION is_inheritance_active(
+        p_application_id IN NUMBER,
+        p_inherit_type   IN VARCHAR2
+    ) RETURN BOOLEAN
+    IS
+        l_count NUMBER;
+    BEGIN
+        SELECT COUNT(*)
+        INTO l_count
+        FROM co_permission_inheritance  -- ← CORREGIDO (asumiendo que también la renombraste)
+        WHERE application_id = p_application_id
+          AND inherit_type = p_inherit_type
+          AND is_active = 'Y';
+        
+        RETURN l_count > 0;
+    END is_inheritance_active;
+
+END pkg_apex_auth_v2;
+/
+Verificación de Todas las Tablas CO_
+Antes de ejecutar, verifica que tengas todas las tablas con el prefijo CO_:
+
+sql
+-- Verificar todas tus tablas CO_
+SELECT table_name FROM user_tables 
+WHERE table_name LIKE 'CO\_%' ESCAPE '\'
+ORDER BY table_name;
+Si Faltara Alguna Tabla, Aquí Están los CREATE TABLE Corregidos:
+sql
+-- Tabla de Roles
+CREATE TABLE co_roles (
+    role_id          NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    role_name        VARCHAR2(100) NOT NULL UNIQUE,
+    role_description VARCHAR2(500),
+    application_id   NUMBER NOT NULL,
+    is_active        VARCHAR2(1) DEFAULT 'Y' CHECK (is_active IN ('Y','N')),
+    created_by       VARCHAR2(100),
+    created_date     DATE DEFAULT SYSDATE,
+    updated_by       VARCHAR2(100),
+    updated_date     DATE
+);
+
+-- Tabla de User Roles
+CREATE TABLE co_user_roles (
+    user_role_id     NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    username         VARCHAR2(100) NOT NULL,
+    role_id          NUMBER NOT NULL REFERENCES co_roles(role_id),
+    application_id   NUMBER NOT NULL,
+    is_active        VARCHAR2(1) DEFAULT 'Y' CHECK (is_active IN ('Y','N')),
+    start_date       DATE DEFAULT SYSDATE,
+    end_date         DATE,
+    created_by       VARCHAR2(100),
+    created_date     DATE DEFAULT SYSDATE
+);
+
+-- Tabla de Role Permissions
+CREATE TABLE co_role_permissions (
+    permission_id    NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    role_id          NUMBER NOT NULL REFERENCES co_roles(role_id),
+    feature_id       NUMBER NOT NULL REFERENCES co_features(feature_id),
+    permission_level VARCHAR2(50) CHECK (permission_level IN ('VIEW','EDIT','CREATE','DELETE','PRINT','DOWNLOAD','FULL')),
+    is_granted       VARCHAR2(1) DEFAULT 'Y' CHECK (is_granted IN ('Y','N')),
+    application_id   NUMBER NOT NULL,
+    created_by       VARCHAR2(100),
+    created_date     DATE DEFAULT SYSDATE,
+    updated_by       VARCHAR2(100),
+    updated_date     DATE,
+    UNIQUE (role_id, feature_id, permission_level)
+);
+
+-- Tabla de User Permissions
+CREATE TABLE co_user_permissions (
+    user_permission_id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    username         VARCHAR2(100) NOT NULL,
+    feature_id       NUMBER NOT NULL REFERENCES co_features(feature_id),
+    permission_level VARCHAR2(50) CHECK (permission_level IN ('VIEW','EDIT','CREATE','DELETE','PRINT','DOWNLOAD','FULL','DENY')),
+    is_granted       VARCHAR2(1) DEFAULT 'Y' CHECK (is_granted IN ('Y','N')),
+    application_id   NUMBER NOT NULL,
+    created_by       VARCHAR2(100),
+    created_date     DATE DEFAULT SYSDATE,
+    updated_by       VARCHAR2(100),
+    updated_date     DATE,
+    UNIQUE (username, feature_id, permission_level)
+);
+
+-- Tabla de Permission Inheritance
+CREATE TABLE co_permission_inheritance (
+    inheritance_id   NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    application_id   NUMBER NOT NULL,
+    inherit_type     VARCHAR2(20) CHECK (inherit_type IN ('ROLE_TO_USER', 'PARENT_TO_CHILD')),
+    is_active        VARCHAR2(1) DEFAULT 'Y',
+    created_by       VARCHAR2(100),
+    created_date     DATE DEFAULT SYSDATE
+);
+Función Simplificada para APEX
+sql
+CREATE OR REPLACE FUNCTION f_has_perm(
+    p_feature_code IN VARCHAR2,
+    p_permission IN VARCHAR2 DEFAULT 'VIEW'
+) RETURN VARCHAR2
+AS
+BEGIN
+    RETURN pkg_apex_auth_v2.has_permission(
+        :APP_USER,
+        :APP_ID,
+        p_feature_code,
+        p_permission
+    );
+END;
+/
+Ahora el paquete debería compilar sin errores, ya que todas las referencias a tablas están actualizadas al esquema CO_.
