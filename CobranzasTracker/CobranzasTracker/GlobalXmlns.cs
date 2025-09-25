@@ -1,0 +1,2 @@
+[assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "CobranzasTracker")]
+[assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "CobranzasTracker.Views")]
