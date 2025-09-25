@@ -2140,3 +2140,83 @@ BEGIN
 END;
 /
 Ahora el paquete debería compilar sin errores, ya que todas las referencias a tablas están actualizadas al esquema CO_.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE OR REPLACE PACKAGE BODY pkg_apex_auth_v2 AS
+
+    FUNCTION get_user_permissions(
+        p_username      IN VARCHAR2,
+        p_application_id IN NUMBER
+    ) RETURN SYS_REFCURSOR
+    IS
+        l_cursor SYS_REFCURSOR;
+    BEGIN
+        -- Versión alternativa usando consultas separadas
+        OPEN l_cursor FOR
+        SELECT 
+            feature_code,
+            feature_name, 
+            permission_level,
+            permission_type,
+            role_name,
+            is_granted
+        FROM (
+            -- Permisos de rol
+            SELECT 
+                f.feature_code,
+                f.feature_name,
+                rp.permission_level,
+                'ROLE' as permission_type,
+                r.role_name,
+                rp.is_granted
+            FROM co_role_permissions rp
+            JOIN co_features f ON rp.feature_id = f.feature_id
+            JOIN co_roles r ON rp.role_id = r.role_id
+            JOIN co_user_roles ur ON r.role_id = ur.role_id
+            WHERE ur.username = p_username
+              AND ur.application_id = p_application_id
+              AND ur.is_active = 'Y'
+              AND r.is_active = 'Y'
+              AND rp.application_id = p_application_id
+            
+            UNION ALL
+            
+            -- Permisos de usuario específicos
+            SELECT 
+                f.feature_code,
+                f.feature_name,
+                up.permission_level,
+                'USER' as permission_type,
+                NULL as role_name,
+                up.is_granted
+            FROM co_user_permissions up
+            JOIN co_features f ON up.feature_id = f.feature_id
+            WHERE up.username = p_username
+              AND up.application_id = p_application_id
+        )
+        ORDER BY feature_code, permission_type DESC, permission_level;
+        
+        RETURN l_cursor;
+    END get_user_permissions;
+
+    -- ... (las otras funciones se mantienen igual) ...
+
+END pkg_apex_auth_v2;
+/
