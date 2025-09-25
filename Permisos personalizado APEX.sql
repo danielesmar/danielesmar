@@ -1311,3 +1311,364 @@ Dime cuál prefieres y lo genero ya (sin esperas).
 
 
 
+Integración del Sistema de Permisos en Páginas APEX
+Te muestro cómo implementar los controles de permisos en tus páginas específicas:
+
+1. Configuración de Autorización por Página
+1.1 En la Página 10 (Registro Visitas)
+Propiedades de Página → Autorización Esquema:
+
+Tipo: Función que devuelve Booleano
+
+Nombre de la función: f_has_page_access(10, 'VIEW')
+
+sql
+CREATE OR REPLACE FUNCTION f_has_page_access(
+    p_page_id IN NUMBER,
+    p_permission IN VARCHAR2 DEFAULT 'VIEW'
+) RETURN BOOLEAN
+AS
+BEGIN
+    RETURN pkg_apex_auth_v2.has_permission(
+        :APP_USER,
+        :APP_ID,
+        'PAGE_' || p_page_id,
+        p_permission
+    ) = 'Y';
+END;
+/
+2. Configuración de Componentes en Página 15 (Registro Incidencias)
+2.1 Classic Report - Control de Columnas
+En la definición del Classic Report, usar condiciones en columnas:
+
+sql
+-- Columna "Acciones" - Solo mostrar si tiene permiso EDIT
+SELECT 
+    incidencia_id,
+    descripcion,
+    fecha,
+    -- Columna de acciones condicional
+    CASE 
+        WHEN f_has_perm('PAGE_15', 'EDIT') = 'Y' THEN
+            '<button class="t-Button t-Button--small" onclick="editarIncidencia('||incidencia_id||')">Editar</button>'
+        ELSE
+            NULL
+    END as acciones
+FROM incidencias
+2.2 Condiciones en Botones
+Botón "Nueva Incidencia":
+
+Tipo de Condición: Función PL/SQL que devuelve Booleano
+
+Expresión: RETURN f_has_perm('PAGE_15', 'CREATE') = 'Y';
+
+Botón "Imprimir Reporte":
+
+Tipo de Condición: Función PL/SQL que devuelve BooleAN
+
+Expresión: RETURN f_has_perm('PAGE_15', 'PRINT') = 'Y';
+
+Botón "Exportar Excel":
+
+Tipo de Condición: Función PL/SQL que devuelve BooleAN
+
+Expresión: RETURN f_has_perm('PAGE_15', 'DOWNLOAD') = 'Y';
+
+2.3 Proceso de Eliminación - Validación de Permisos
+Crear proceso de eliminación con validación:
+
+sql
+DECLARE
+    l_has_delete_permission BOOLEAN;
+BEGIN
+    -- Verificar permiso antes de eliminar
+    l_has_delete_permission := f_has_perm('PAGE_15', 'DELETE');
+    
+    IF NOT l_has_delete_permission THEN
+        apex_error.add_error(
+            p_message => 'No tiene permisos para eliminar incidencias',
+            p_display_location => apex_error.c_inline_in_notification
+        );
+        RETURN;
+    END IF;
+    
+    -- Procedimiento de eliminación
+    DELETE FROM incidencias 
+    WHERE incidencia_id = :P15_INCIDENCIA_ID;
+    
+    :P15_SUCCESS_MESSAGE := 'Incidencia eliminada correctamente';
+END;
+3. Configuración de Regions Dinámicas
+3.1 Region con Información Sensible
+En propiedades de la Region:
+
+Condición: Función PL/SQL que devuelve Booleano
+
+Expresión: RETURN f_has_perm('PAGE_15', 'VIEW') = 'Y';
+
+3.2 Region de Estadísticas (solo para editores)
+sql
+-- Condición de la region
+RETURN f_has_perm('PAGE_15', 'EDIT') = 'Y';
+4. JavaScript Dinámico para Ocultar Elementos
+4.1 Crear Dynamic Action en la Página 15
+Evento: Page Load
+Condición: Ninguna
+
+Acción True:
+
+Tipo: Ejecutar Código JavaScript
+
+Código:
+
+javascript
+// Ocultar/mostrar elementos basado en permisos
+function aplicarPermisosPagina() {
+    // Verificar permisos via AJAX
+    apex.server.process(
+        'CHECK_PERMISSIONS',
+        {
+            pageId: 15,
+            x01: 'VIEW,EDIT,CREATE,DELETE,PRINT,DOWNLOAD'
+        },
+        {
+            success: function(data) {
+                // Ocultar botón Imprimir si no tiene permiso
+                if (!data.permissions.PRINT) {
+                    $('.js-print-btn').hide();
+                }
+                
+                // Ocultar botón Exportar si no tiene permiso
+                if (!data.permissions.DOWNLOAD) {
+                    $('.js-export-btn').hide();
+                }
+                
+                // Ocultar columna acciones si no tiene EDIT
+                if (!data.permissions.EDIT) {
+                    $('.js-actions-col').hide();
+                }
+                
+                // Deshabilitar botón Eliminar
+                if (!data.permissions.DELETE) {
+                    $('.js-delete-btn').prop('disabled', true).addClass('is-disabled');
+                }
+            }
+        }
+    );
+}
+
+// Ejecutar al cargar la página
+apicarPermisosPagina();
+4.2 Proceso AJAX para Verificar Múltiples Permisos
+sql
+-- Proceso APEX: CHECK_PERMISSIONS
+DECLARE
+    l_permissions VARCHAR2(200) := apex_application.g_x01;
+    l_page_id NUMBER := :APP_PAGE_ID;
+    l_permission_list apex_t_varchar2;
+BEGIN
+    l_permission_list := apex_string.split(l_permissions, ',');
+    
+    apex_json.open_object;
+    
+    FOR i IN 1..l_permission_list.count LOOP
+        apex_json.write(
+            l_permission_list(i),
+            CASE 
+                WHEN pkg_apex_auth_v2.has_permission(
+                    :APP_USER, :APP_ID, 'PAGE_' || l_page_id, l_permission_list(i)
+                ) = 'Y' THEN 'true'
+                ELSE 'false'
+            END
+        );
+    END LOOP;
+    
+    apex_json.close_object;
+END;
+5. Configuración de Tabs y Navegación
+5.1 Condición en Tabs de Navegación
+Para el Tab "Registro Visitas":
+
+Condición: Función PL/SQL
+
+Expresión: RETURN f_has_page_access(10) = TRUE;
+
+Para el Tab "Registro Incidencias":
+
+Condición: Función PL/SQL
+
+Expresión: RETURN f_has_page_access(15) = TRUE;
+
+6. Validación en Procesos de DML
+6.1 Proceso de Actualización con Validación
+sql
+DECLARE
+    l_has_edit_permission BOOLEAN;
+BEGIN
+    -- Validar permiso de edición
+    l_has_edit_permission := f_has_perm('PAGE_15', 'EDIT');
+    
+    IF NOT l_has_edit_permission THEN
+        RAISE_APPLICATION_ERROR(-20001, 'No tiene permisos para editar incidencias');
+    END IF;
+    
+    -- Actualizar registro
+    UPDATE incidencias 
+    SET descripcion = :P15_DESCRIPCION,
+        estado = :P15_ESTADO
+    WHERE incidencia_id = :P15_INCIDENCIA_ID;
+END;
+7. Configuración para PEPITO Específico
+7.1 Script de Configuración para PEPITO
+sql
+-- PEPITO puede ver página 15 pero con restricciones
+BEGIN
+    -- Permiso para VER página 15
+    pkg_apex_auth_v2.grant_user_permission(
+        p_username => 'PEPITO',
+        p_feature_code => 'PAGE_15',
+        p_permission => 'VIEW',
+        p_application_id => 100,
+        p_granted_by => 'ADMIN'
+    );
+    
+    -- DENEGAR permiso para EDITAR en página 15
+    pkg_apex_auth_v2.grant_user_permission(
+        p_username => 'PEPITO',
+        p_feature_code => 'PAGE_15',
+        p_permission => 'EDIT',
+        p_application_id => 100,
+        p_is_granted => 'N', -- DENEGAR
+        p_granted_by => 'ADMIN'
+    );
+    
+    -- DENEGAR permiso para ELIMINAR
+    pkg_apex_auth_v2.grant_user_permission(
+        p_username => 'PEPITO',
+        p_feature_code => 'PAGE_15',
+        p_permission => 'DELETE',
+        p_application_id => 100,
+        p_is_granted => 'N',
+        p_granted_by => 'ADMIN'
+    );
+    
+    -- DENEGAR permiso para IMPRIMIR
+    pkg_apex_auth_v2.grant_user_permission(
+        p_username => 'PEPITO',
+        p_feature_code => 'PAGE_15',
+        p_permission => 'PRINT',
+        p_application_id => 100,
+        p_is_granted => 'N',
+        p_granted_by => 'ADMIN'
+    );
+    
+    -- DENEGAR permiso para DESCARGAR
+    pkg_apex_auth_v2.grant_user_permission(
+        p_username => 'PEPITO',
+        p_feature_code => 'PAGE_15',
+        p_permission => 'DOWNLOAD',
+        p_application_id => 100,
+        p_is_granted => 'N',
+        p_granted_by => 'ADMIN'
+    );
+    
+    COMMIT;
+END;
+/
+8. Función de Utilidad Mejorada
+sql
+CREATE OR REPLACE FUNCTION f_has_perm(
+    p_feature_code IN VARCHAR2,
+    p_permission IN VARCHAR2 DEFAULT 'VIEW'
+) RETURN VARCHAR2
+AS
+    l_result VARCHAR2(1);
+BEGIN
+    -- Si es una página, agregar prefijo
+    IF REGEXP_LIKE(p_feature_code, '^[0-9]+$') THEN
+        l_result := pkg_apex_auth_v2.has_permission(
+            :APP_USER,
+            :APP_ID,
+            'PAGE_' || p_feature_code,
+            p_permission
+        );
+    ELSE
+        l_result := pkg_apex_auth_v2.has_permission(
+            :APP_USER,
+            :APP_ID,
+            p_feature_code,
+            p_permission
+        );
+    END IF;
+    
+    RETURN l_result;
+END;
+/
+
+-- Uso simplificado en condiciones:
+-- f_has_perm('15', 'VIEW') = 'Y'  -- Para página 15
+-- f_has_perm('REPORT_EXPORT', 'DOWNLOAD') = 'Y'  -- Para feature específico
+9. Template de Página con Seguridad Integrada
+9.1 Crear Plantilla de Página Segura
+En el HTML Header de la plantilla:
+
+html
+<script>
+// Verificar permisos al cargar la página
+$(document).ready(function() {
+    // Verificar si el usuario tiene acceso a la página
+    apex.server.process('CHECK_PAGE_ACCESS', {
+        pageId: &APP_PAGE_ID.
+    }, {
+        success: function(data) {
+            if (!data.hasAccess) {
+                // Redirigir a página de acceso denegado
+                window.location.href = 'f?p=&APP_ID.:999:&APP_SESSION.';
+            }
+        }
+    });
+});
+</script>
+10. Monitorización y Debug
+10.1 Página de Debug de Permisos (solo Admin)
+sql
+-- Reporte para ver permisos actuales de PEPITO
+SELECT 
+    f.feature_code,
+    f.feature_name,
+    'ROL' as tipo,
+    rp.permission_level,
+    rp.is_granted
+FROM apex_role_permissions rp
+JOIN apex_features f ON rp.feature_id = f.feature_id
+JOIN apex_user_roles ur ON rp.role_id = ur.role_id
+WHERE ur.username = 'PEPITO'
+  AND ur.application_id = :APP_ID
+
+UNION ALL
+
+SELECT 
+    f.feature_code,
+    f.feature_name,
+    'USUARIO' as tipo,
+    up.permission_level,
+    up.is_granted
+FROM apex_user_permissions up
+JOIN apex_features f ON up.feature_id = f.feature_id
+WHERE up.username = 'PEPITO'
+  AND up.application_id = :APP_ID
+
+ORDER BY feature_code, tipo;
+Con esta implementación, PEPITO podrá:
+
+✅ Ver la página 15 (Registro Incidencias)
+
+❌ No ver botones de Editar/Eliminar
+
+❌ No ver botón de Imprimir
+
+❌ No ver botón de Exportar
+
+❌ No poder ejecutar acciones de modificación
+
+Y para la página 10 (Registro Visitas), simplemente no tendrá el permiso VIEW, por lo que no podrá acceder en absoluto.
