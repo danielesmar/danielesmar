@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Timeline Template - APEX</title>
+
+<!-- Fuente recomendada (Poppins) -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#eaf0ff;
+    --header-start:#8fb5ff;
+    --header-end:#9fc7ff;
+    --card-bg:#ffffff;
+    --accent:#ff6fa8; /* little pink accent */
+    --dot-blue:#7ea0ff;
+    --muted:#bfc9de;
+    --text:#2b2b3a;
+    --shadow: 0 8px 20px rgba(35,50,90,0.08);
+    --card-radius:18px;
+  }
+
+  /* Reset ligero */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: linear-gradient(180deg,var(--bg), #f7f9ff 60%);
+    -webkit-font-smoothing:antialiased;
+    color:var(--text);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px;
+  }
+
+  /* Contenedor principal simula móvil */
+  .mock-phone{
+    width:360px;
+    max-width:95vw;
+    border-radius:28px;
+    overflow:visible;
+    background:linear-gradient(180deg,var(--header-start),var(--header-end));
+    box-shadow: var(--shadow);
+    position:relative;
+    padding-bottom:48px;
+  }
+
+  /* Header */
+  .topbar{
+    padding:18px 18px 8px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    color:white;
+  }
+  .icon-btn{
+    width:34px;height:34px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;
+    background: rgba(255,255,255,0.06);
+  }
+  .title{
+    font-weight:600;
+    font-size:20px;
+    letter-spacing:0.6px;
+    text-align:center;
+    flex:1;
+  }
+
+  /* Date bar */
+  .date-bar{
+    display:flex;
+    gap:10px;
+    justify-content:space-around;
+    align-items:center;
+    padding:8px 12px 18px;
+    color: rgba(255,255,255,0.9);
+    font-size:12px;
+  }
+  .day{
+    text-align:center;
+    min-width:48px;
+  }
+  .day .weekday{display:block;font-weight:600;opacity:0.95;font-size:12px}
+  .day .daynum{display:block;font-weight:600;font-size:13px;margin-top:4px}
+  .day.active{
+    background:rgba(255,255,255,0.18);
+    padding:8px;border-radius:16px;color:white;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.06);
+  }
+
+  /* Card */
+  .card-wrap{
+    background:transparent;
+    padding:0 16px;
+    margin-top: -8px; /* overlay effect */
+  }
+  .card{
+    background:var(--card-bg);
+    border-radius:20px;
+    margin-bottom:28px;
+    padding:18px;
+    box-shadow: 0 10px 25px rgba(20,40,80,0.06);
+    min-height:420px;
+  }
+
+  .card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+  }
+  .card-header h3{
+    margin:0;
+    font-size:16px;
+    font-weight:600;
+    color:var(--muted);
+  }
+  .card-header .date{
+    font-size:13px;
+    color:var(--muted);
+    font-weight:600;
+  }
+  .progress{
+    height:3px;
+    background: linear-gradient(90deg, var(--accent), rgba(255,111,150,0.25));
+    border-radius:6px;
+    margin-top:10px;
+  }
+
+  /* Timeline list */
+  .timeline{
+    margin-top:12px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+
+  .timeline-item{
+    display:grid;
+    grid-template-columns:78px 1fr;
+    align-items:start;
+    padding:14px 6px;
+    border-bottom:1px solid #f0f2fb;
+  }
+  .time{
+    text-align:left;
+    color:var(--muted);
+    font-size:13px;
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+    padding-left:6px;
+  }
+  .time .ampm{font-size:11px;opacity:0.9}
+
+  .item-body{
+    padding-left:10px;
+  }
+  .item-title{
+    font-weight:600;
+    font-size:16px;
+    margin-bottom:6px;
+    color: #222436;
+  }
+  .item-desc{
+    font-size:13px;
+    color:#a6adc0;
+    line-height:1.3;
+  }
+
+  .dot{
+    width:10px;height:10px;border-radius:50%;
+    display:inline-block;margin-top:6px;margin-left:8px;
+  }
+  .dot.blue{background:var(--dot-blue);box-shadow:0 2px 6px rgba(126,160,255,0.18)}
+  .dot.pink{background:transparent;border:2px solid #ffd1e6;box-shadow:none}
+
+  /* Floating add button */
+  .fab{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:-22px;
+    width:64px;height:64px;border-radius:50%;
+    background: linear-gradient(180deg,#6f9bff,#4b6fff);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow: 0 10px 28px rgba(75,111,255,0.28);
+    border:6px solid rgba(255,255,255,0.85);
+    color:white;
+    font-size:34px;
+    cursor:pointer;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width:420px){
+    .mock-phone{width:92vw}
+    .timeline-item{grid-template-columns:68px 1fr}
+    .fab{width:56px;height:56px;bottom:-20px}
+  }
+</style>
+</head>
+<body>
+
+  <div class="mock-phone" role="region" aria-label="Timeline preview">
+    <!-- Header -->
+    <div class="topbar">
+      <div class="icon-btn" aria-hidden="true">
+        <!-- menu icon -->
+        <svg width="18" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="5" width="18" height="2" rx="1" fill="white" />
+          <rect x="3" y="11" width="18" height="2" rx="1" fill="white" opacity="0.9"/>
+          <rect x="3" y="17" width="18" height="2" rx="1" fill="white" opacity="0.8"/>
+        </svg>
+      </div>
+
+      <div class="title">timeline</div>
+
+      <div class="icon-btn" aria-hidden="true">
+        <!-- search icon -->
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <path d="M21 21l-4.35-4.35" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11" cy="11" r="5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Date Row -->
+    <div class="date-bar" role="navigation" aria-label="Días de la semana">
+      <div class="day"><span class="weekday">SUN</span><span class="daynum">17</span></div>
+      <div class="day"><span class="weekday">MON</span><span class="daynum">18</span></div>
+      <div class="day active"><span class="weekday">TUE</span><span class="daynum">19</span></div>
+      <div class="day"><span class="weekday">WED</span><span class="daynum">20</span></div>
+      <div class="day"><span class="weekday">THU</span><span class="daynum">21</span></div>
+    </div>
+
+    <!-- Card -->
+    <div class="card-wrap">
+      <div class="card" role="article" aria-label="Plan de hoy">
+        <div class="card-header">
+          <h3>Today plan</h3>
+          <div class="date">04 / 05</div>
+        </div>
+
+        <div class="progress" style="width:72%"></div>
+
+        <div class="timeline" aria-live="polite">
+          <!-- Item 1 -->
+          <div class="timeline-item">
+            <div class="time">
+              <strong>07:00</strong>
+              <span class="ampm">AM</span>
+              <span class="dot blue" aria-hidden="true"></span>
+            </div>
+            <div class="item-body">
+              <div class="item-title">Sport</div>
+              <div class="item-desc">Run for 1 hour</div>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="timeline-item">
+            <div class="time">
+              <strong>09:10</strong>
+              <span class="ampm">AM</span>
+              <span class="dot blue" aria-hidden="true"></span>
+            </div>
+            <div class="item-body">
+              <div class="item-title">Read</div>
+              <div class="item-desc">( Designing Design kenya hara )</div>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="timeline-item">
+            <div class="time">
+              <strong>11:30</strong>
+              <span class="ampm">AM</span>
+              <span class="dot blue" aria-hidden="true"></span>
+            </div>
+            <div class="item-body">
+              <div class="item-title">Exercises</div>
+              <div class="item-desc">An icon and an interface</div>
+            </div>
+          </div>
+
+          <!-- Item 4 -->
+          <div class="timeline-item">
+            <div class="time">
+              <strong>01:40</strong>
+              <span class="ampm">PM</span>
+              <span class="dot blue" aria-hidden="true"></span>
+            </div>
+            <div class="item-body">
+              <div class="item-title">Learn</div>
+              <div class="item-desc">Watch a tutorial video</div>
+            </div>
+          </div>
+
+          <!-- Item 5 -->
+          <div class="timeline-item">
+            <div class="time">
+              <strong>05:30</strong>
+              <span class="ampm">PM</span>
+              <span class="dot pink" aria-hidden="true"></span>
+            </div>
+            <div class="item-body">
+              <div class="item-title">Sport</div>
+              <div class="item-desc">Play basketball for an hour</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Floating add button -->
+    <button class="fab" aria-label="Agregar evento">+</button>
+
+  </div>
+
+</body>
+</html>
