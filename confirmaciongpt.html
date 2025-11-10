@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmación de Visita</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ <style>
+  :root {
+  --verde-principal: #00683b;
+  --verde-suave: #e6f2ec;
+  --gris-fondo: #f8f9f8;
+  --gris-texto: #555;
+  --gris-claro: #9ca3af;
+  --blanco: #fff;
+  --borde-suave: #dce3dd;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--gris-fondo);
+  color: var(--gris-texto);
+  min-height: 100vh;
+}
+
+.app-header {
+  background: var(--verde-principal);
+  color: var(--blanco);
+  padding: 1rem;
+  text-align: center;
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.container {
+  max-width: 650px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.card {
+  background: var(--blanco);
+  border-radius: 14px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  overflow: hidden;
+  padding: 1.5rem;
+}
+
+.card-header {
+  text-align: center;
+  border-bottom: 1px solid var(--borde-suave);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-header h2 {
+  color: var(--verde-principal);
+  font-size: 1.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.fecha {
+  font-size: 0.9rem;
+  color: var(--gris-claro);
+}
+
+.cliente {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.section {
+  margin-top: 1rem;
+}
+
+.section h4 {
+  color: var(--verde-principal);
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.data-grid {
+  display: grid;
+  gap: 0.8rem;
+  padding-left: 0.5rem;
+}
+
+.data-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: var(--verde-suave);
+  padding: 0.8rem;
+  border-radius: 10px;
+}
+
+.data-item i {
+  color: var(--verde-principal);
+  font-size: 1.2rem;
+}
+
+.label {
+  font-size: 0.85rem;
+  color: var(--gris-claro);
+  display: block;
+}
+
+.value {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.detalle {
+  background: #f4f9f5;
+  border-left: 4px solid var(--verde-principal);
+  padding: 0.8rem;
+  border-radius: 8px;
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1.5px solid var(--verde-principal);
+  color: var(--verde-principal);
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  background: var(--verde-principal);
+  color: var(--blanco);
+}
+
+.acciones {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.btn-guardar {
+  background: var(--verde-principal);
+  color: var(--blanco);
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.btn-guardar:hover {
+  background: #008c52;
+  transform: scale(1.03);
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .card {
+    padding: 1rem;
+  }
+
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-guardar {
+    width: 100%;
+  }
+}
+
+    </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <h1><i class="fa-solid fa-handshake"></i> Cobranzas Móvil</h1>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="card-header">
+        <h2><i class="fa-solid fa-check-circle"></i> Confirmación de Visita</h2>
+        <p class="fecha">Lunes, 10 de noviembre de 2025 - 09:16:42 AM</p>
+        <h3 class="cliente">ROSA MARIA TREMINIO</h3>
+      </div>
+
+      <div class="section">
+        <h4><i class="fa-solid fa-info-circle"></i> Datos de Visita</h4>
+        <div class="data-grid">
+          <div class="data-item">
+            <i class="fa-solid fa-user-tag"></i>
+            <div>
+              <span class="label">Tipo de visita:</span>
+              <span class="value">Cliente</span>
+            </div>
+          </div>
+
+          <div class="data-item">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <div>
+              <span class="label">Lugar de visita:</span>
+              <span class="value">Domicilio</span>
+            </div>
+          </div>
+
+          <div class="data-item">
+            <i class="fa-solid fa-star"></i>
+            <div>
+              <span class="label">Calificación:</span>
+              <span class="value">Arreglo de Pago</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detalle">
+          <p><strong>Detalle de visita:</strong> Arreglo de Pago por parte del cliente</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h4><i class="fa-solid fa-dollar-sign"></i> Datos Económicos</h4>
+        <div class="data-grid">
+          <div class="data-item">
+            <i class="fa-solid fa-calendar-days"></i>
+            <div>
+              <span class="label">Fecha:</span>
+              <span class="value">11/18/2025</span>
+            </div>
+          </div>
+
+          <div class="data-item">
+            <i class="fa-solid fa-money-bill-wave"></i>
+            <div>
+              <span class="label">Monto:</span>
+              <span class="value">C$ 1,500.00 NIO</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h4><i class="fa-solid fa-image"></i> Imágenes</h4>
+        <button class="btn-secondary">
+          <i class="fa-solid fa-pen-to-square"></i> Modificar
+        </button>
+      </div>
+
+      <div class="acciones">
+        <button class="btn-guardar">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar
+        </button>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
