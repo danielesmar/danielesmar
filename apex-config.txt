@@ -1,97 +1,88 @@
 eres un analista desarrollador senior con muchos años de experiencia desarrollando sistemas en oracle apex, cuentas con multiples certificaciones en oracle apex 24.2.8, necesito que diseñes el siguiente requerimiento en mi aplicación en apex: implementar un proceso que sea ejecutado 2 segundos antes que la sesión del usuario finalice, en dos escenarios: fin de sesión por inactividad o fin de sesión por expiración de tiempo maximo, para ello es necesario crear un watchdog o temporizador que se ejecute al momento de iniciar sesión, y este escuchando a los eventos del usuario, para saber si está inactivo y especificamente la acción de extender la sesión integrada en oracle apex, en el caso de hacer clic en boton Extend del confirm, debe tomarse en cuenta y recalcular los tiempos para ejecutar el proceso de finalizar sesión, los parametros solamente para validar la funcionalidad serán: Maximum Session Length Seconds (240), Maximum Session Idle Time in Seconds (60) y Session Timeout Warning in Senconds (30) y  deden leerse al iniciar una nueva sesión de la configuración de la aplicación y almacenarse en un item de session, el proceso solamente debe ejecutarse una unica vez 2 segundos antes de vencer la sesión, no se tienen que duplicar ejecuciones creando falsos positivos, la unica manera es que se pueda duplicar es que en esos dos segundos antes de que apex finalice la sesión el usuario extienda la misma, el proceso simplemente ejecutará un procedimiento almacenado que notifique el fin de sesión, esa implementación (el procedimiento) me encargo yo, pero crea todo el flujo e indica paso a paso que debo hacer, donde y como, dado a que soy totalmente nuevo en oracle apex.
 
+// --- Variables de Configuración ---
+var MAX_SESSION_LENGTH = 240; 
+var MAX_SESSION_IDLE = 60;   
+var WARNING_TIME = 30;       
 
-
-// Variables para almacenar los parámetros de sesión
-var MAX_SESSION_LENGTH = 240; // Segundos (240)
-var MAX_SESSION_IDLE = 60;   // Segundos (60)
-var WARNING_TIME = 30;       // Segundos (30)
-
-// Intervalo de tiempo para verificar la inactividad (en milisegundos)
+// --- Variables del Watchdog ---
 const WATCHDOG_INTERVAL = 1000; 
 let watchdogTimer;
-let sessionExpiryTimestamp;
+let sessionStartTime;           
+let lastActivityTime;           
 let isProcessExecuted = false;
 
-/**
- * Calcula y establece el tiempo de expiración de la sesión.
- * @param {number} sessionStartTime El timestamp Unix (milisegundos) del inicio de sesión/extensión.
- */
-function calculateSessionExpiry(sessionStartTime) {
-    // Tiempo máximo de expiración (desde el inicio)
-    const maxTimeExpiry = sessionStartTime + (MAX_SESSION_LENGTH * 1000);
+// Obtener el ID de Sesión actual de APEX
+const CURRENT_SESSION_ID = apex.view.sessionStorage.getItem('APEX_SESSION_ID');
 
-    // Tiempo de expiración por inactividad (el tiempo de inactividad es gestionado por APEX, 
-    // pero podemos estimar la expiración futura máxima si el usuario se detiene AHORA)
-    // Usaremos el tiempo máximo para el watchdog, ya que la inactividad la gestiona APEX 
-    // y su función de "extender" reinicia el tiempo MÁXIMO.
 
-    sessionExpiryTimestamp = maxTimeExpiry;
+// --- Funciones del Watchdog ---
 
-    console.log('Session Start Time:', new Date(sessionStartTime));
-    console.log('Maximum Session Expiry:', new Date(sessionExpiryTimestamp));
+function getNearestExpiryTimestamp() {
+    const lengthExpiryTimestamp = sessionStartTime + (MAX_SESSION_LENGTH * 1000);
+    const idleExpiryTimestamp = lastActivityTime + (MAX_SESSION_IDLE * 1000);
+    return Math.min(lengthExpiryTimestamp, idleExpiryTimestamp);
 }
 
-/**
- * Función principal del Watchdog. Se ejecuta cada segundo.
- */
 function sessionWatchdog() {
-    if (isProcessExecuted) {
+    // **VALIDACIÓN CRÍTICA (1):** Detener si el proceso ya se ejecutó o si la sesión de APEX ya no existe.
+    if (isProcessExecuted || !CURRENT_SESSION_ID || !apex.session.getCurrent()) {
         clearInterval(watchdogTimer);
+        console.log('⛔ Watchdog detenido: Sesión expirada/finalizada o proceso ya ejecutado.');
         return;
     }
 
+    const nearestExpiryTimestamp = getNearestExpiryTimestamp();
     const currentTime = Date.now();
-    const timeUntilExpiry = sessionExpiryTimestamp - currentTime;
+    const timeUntilExpiry = nearestExpiryTimestamp - currentTime;
     const TWO_SECONDS_MS = 2000;
 
-    // **Lógica de Ejecución Única:** Si estamos dentro de los últimos 2 segundos
+    // Lógica de Ejecución Única: Si estamos dentro de los últimos 2 segundos
     if (timeUntilExpiry > 0 && timeUntilExpiry <= TWO_SECONDS_MS) {
-
-        // Si no se ha ejecutado y la ventana de warning NO está visible (o se ignora)
-        // (La ventana de warning gestiona la inactividad, nosotros gestionamos la duración MÁXIMA)
-
+        
         if (!isProcessExecuted) {
             console.warn(`⏳ Ejecutando proceso finalización. Tiempo restante: ${timeUntilExpiry / 1000}s`);
 
             // Ejecuta la llamada AJAX al proceso On-Demand
-            apex.server.process("FINALIZE_SESSION_PROCESS", {
-                // No se necesitan parámetros adicionales.
-            }, {
+            apex.server.process("FINALIZE_SESSION_PROCESS", {}, {
                 dataType: 'json',
                 success: function(pData) {
                     if (pData.success) {
                         isProcessExecuted = true;
-                        clearInterval(watchdogTimer); // Detiene el temporizador después de la ejecución
-                        console.log('✅ Proceso de finalización ejecutado con éxito.');
+                        clearInterval(watchdogTimer); 
+                        console.log('✅ Proceso de finalización ejecutado con éxito. Temporizador detenido.');
                     }
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.error('❌ Error al ejecutar el proceso de finalización:', errorThrown);
-                    // No detener el temporizador si falla, para un reintento si es necesario.
+                    // Si falla, no detenemos el timer, se reintentará en el siguiente ciclo.
                 }
             });
         }
     }
-
-    // Opcional: Para depuración
-    // console.log(`Tiempo hasta el fin: ${timeUntilExpiry / 1000}s`);
 }
 
-/**
- * Función para recalcular el tiempo si el usuario hace clic en "Extender".
- * APEX lo hace internamente, pero necesitamos capturar el evento.
- */
+function recordUserActivity() {
+    lastActivityTime = Date.now();
+    // Reinicia la bandera y el timer solo si la sesión es válida
+    if (apex.session.getCurrent() && isProcessExecuted) {
+         isProcessExecuted = false;
+         if (!watchdogTimer) {
+             watchdogTimer = setInterval(sessionWatchdog, WATCHDOG_INTERVAL);
+         }
+    }
+}
+
 function handleSessionExtend(pEvent, pData) {
-    // pData.extended será true si la sesión se extendió
     if (pData && pData.extended) {
         console.info('🚀 Sesión Extendida. Recalculando Watchdog.');
+        sessionStartTime = Date.now();
+        lastActivityTime = Date.now(); 
+        isProcessExecuted = false; 
 
-        // El servidor de APEX extiende la sesión en el lado del servidor y 
-        // generalmente retorna el nuevo timestamp de creación de sesión o resetea el contador.
-        // Para simplicidad, asumimos que el nuevo tiempo de inicio es AHORA.
-        isProcessExecuted = false; // Permite una nueva ejecución en el futuro.
-        calculateSessionExpiry(Date.now());
+        if (!watchdogTimer) {
+             watchdogTimer = setInterval(sessionWatchdog, WATCHDOG_INTERVAL);
+        }
     }
 }
 
@@ -99,29 +90,29 @@ function handleSessionExtend(pEvent, pData) {
 // INICIALIZACIÓN AL CARGAR LA PÁGINA
 // **********************************************
 
-// 1. Obtiene el timestamp de inicio de sesión (almacenado en G_SESSION_START_TIME)
-// Se convierte el timestamp de la DB (segundos) a milisegundos para JavaScript
-const sessionStartTimeDB = apex.item('G_SESSION_START_TIME').getValue();
+// **VALIDACIÓN CRÍTICA (2):** No iniciar el watchdog si no hay sesión válida.
+if (CURRENT_SESSION_ID && apex.session.getCurrent()) {
+    const sessionStartTimeDB = apex.item('G_SESSION_START_TIME').getValue();
+    
+    if (sessionStartTimeDB) {
+        // Conversión de Segundos (DB) a Milisegundos (JS)
+        sessionStartTime = sessionStartTimeDB * 1000; 
+        lastActivityTime = Date.now(); 
 
-if (sessionStartTimeDB) {
-    // El item G_SESSION_START_TIME está en segundos desde 1-JAN-1970
-    const sessionStartTimeMs = sessionStartTimeDB * 1000; 
+        // Inicia el Watchdog
+        watchdogTimer = setInterval(sessionWatchdog, WATCHDOG_INTERVAL);
 
-    // 2. Calcula la expiración inicial
-    calculateSessionExpiry(sessionStartTimeMs);
-
-    // 3. Inicia el Watchdog
-    watchdogTimer = setInterval(sessionWatchdog, WATCHDOG_INTERVAL);
-
-    // 4. Se suscribe al evento de extensión de sesión de APEX.
-    // Este evento se dispara cuando el usuario hace clic en "Extend Session" 
-    // en el diálogo de advertencia de timeout.
-    $(document).on('apexextendedsession', handleSessionExtend);
+        // Suscripciones a eventos
+        $(document).on('apexextendedsession', handleSessionExtend);
+        $(document).on('mousemove keydown click', recordUserActivity);
+        
+        console.log('✅ Watchdog de Sesión Inicializado y en escucha.');
+    } else {
+        console.error('❌ G_SESSION_START_TIME no disponible. Revise el proceso After Authentication.');
+    }
 } else {
-    console.error('❌ G_SESSION_START_TIME no está disponible. Watchdog no iniciado.');
+    console.log('⚠️ Watchdog no iniciado: Usuario no autenticado o sesión no inicializada.');
 }
-
-
 
 
 
