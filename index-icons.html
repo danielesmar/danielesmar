@@ -72,7 +72,6 @@
         /* [Estilos de popup y botones generales mantenidos] */
         .popup { display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; }
         .popup-content { background-color: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); text-align: center; position: relative; }
-        /* Se eliminan los botones generales, solo queda el contenedor de variants */
         .close-button { position: absolute; top: 10px; right: 15px; font-size: 1.8em; cursor: pointer; color: #aaa; line-height: 1; }
         .close-button:hover { color: #333; }
         #popupName { font-size: 1.5em; margin-bottom: 10px; color: #2e7d32; font-weight: bold; }
@@ -112,11 +111,9 @@
         const popupPreviewContainer = document.getElementById('popupPreviewContainer'); 
         const popupName = document.getElementById('popupName');
         
-        // La URL actual es necesaria para la descarga, aunque ahora se pasa a la función.
-        // Mantenemos currentSvgUrl solo para referencia si fuera necesario.
         let currentSvgUrl = ''; 
         
-        // --- FUNCIONES DE ORDENAMIENTO Y UTILIDAD ---
+        // --- FUNCIONES DE UTILIDAD ---
 
         function getVariantOrder(type) {
             switch (type) {
@@ -160,6 +157,8 @@
             };
         }
 
+        // --- FUNCIÓN DE GENERACIÓN PRINCIPAL (Añadida la asignación del filtro) ---
+        
         function initGallery() {
             if (typeof ICON_URLS_LIST !== 'undefined' && Array.isArray(ICON_URLS_LIST)) {
                 let iconDataArray = ICON_URLS_LIST.map(parseIconUrl);
@@ -167,6 +166,8 @@
                 iconDataArray.sort((a, b) => a.Name.toUpperCase().localeCompare(b.Name.toUpperCase()));
                 
                 generateIconGallery(iconDataArray);
+                
+                // 🚀 SOLUCIÓN: Volver a adjuntar el evento keyup al filtro
                 iconFilter.addEventListener('keyup', filterIcons);
             } else {
                 iconGrid.innerHTML = '<p style="grid-column: 1 / -1; color: red;">Error: La lista de URLs de iconos (ICON_URLS_LIST) no se cargó correctamente.</p>';
@@ -179,6 +180,7 @@
             iconDataArray.forEach(icon => {
                 const item = document.createElement('div');
                 item.className = 'icon-item';
+                // Usamos el atributo data-filter-name para la búsqueda
                 item.setAttribute('data-filter-name', icon.Keywords); 
                 
                 const type = icon.Indicator ? icon.Indicator.toUpperCase() : 'BASE'; 
@@ -197,22 +199,36 @@
             setupIconClickEvents(iconWrappers);
         }
         
-        // --- MANEJO DEL MODAL Y VARIANTES ---
+        // --- FUNCIÓN DE FILTRADO (Ahora funcional) ---
         
-        /**
-         * Fuerza la descarga de un archivo SVG sin salir de la página.
-         * @param {string} url - La URL del archivo a descargar.
-         * @param {string} baseName - El nombre base del archivo para nombrar la descarga.
-         * @param {string} variantLabel - La etiqueta de la variante (Base, Negativo, etc.).
-         */
+        function filterIcons() {
+            const filterValue = iconFilter.value.toLowerCase().trim();
+            const iconItems = document.querySelectorAll('.icon-item');
+
+            iconItems.forEach(item => {
+                const keywordsAttribute = item.getAttribute('data-filter-name'); 
+                
+                if (!keywordsAttribute) return; 
+
+                const isMatch = keywordsAttribute.includes(filterValue);
+                
+                if (filterValue.length === 0 || isMatch) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        }
+
+
+        // --- MANEJO DEL MODAL Y VARIANTES (Mantenidas) ---
+
         function downloadVariant(url, baseName, variantLabel) {
             const a = document.createElement('a');
             a.href = url;
-            // Construir un nombre de archivo amigable: 'Home_Negativo.svg'
             const fileName = `${baseName.replace(/\s/g, '_')}_${variantLabel.replace(/\s/g, '_')}.svg`;
             a.download = fileName; 
             
-            // Usar click() en el elemento 'a' para iniciar la descarga
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -227,15 +243,10 @@
             });
         }
 
-        /**
-         * Genera el HTML para una vista previa de variante, incluyendo el botón de descarga.
-         */
         function createVariantBox(url, baseName, label, isNegative) {
             const box = document.createElement('div');
             box.className = 'variant-box';
             
-            const sanitizedLabel = label.replace(/\s/g, ''); // Para uso en funciones
-
             box.innerHTML = `
                 <div class="preview-image ${isNegative ? 'negative-bg' : ''}">
                     <img src="${url}" alt="${label} Preview" />
@@ -249,23 +260,18 @@
         async function checkAndDisplayVariants(urlBase, baseName, indicator) {
             popupPreviewContainer.innerHTML = '';
             
-            // 1. Mostrar el icono original (Base)
             const baseBox = createVariantBox(urlBase, baseName, 'Base', false);
             popupPreviewContainer.appendChild(baseBox);
             
-            // Extraer solo la parte del nombre de archivo sin la extensión ni el indicador
             const fileNameFull = urlBase.substring(urlBase.lastIndexOf('/') + 1);
             const fileNameWithoutExtAndIndicator = fileNameFull.split(' - ').slice(0, -1).join(' - ');
             
-            // Obtener el directorio base (img/)
             const baseDir = urlBase.substring(0, urlBase.lastIndexOf('/') + 1);
             
-            // Definición de las variantes a verificar
             const variantsToCheck = [];
 
             if (indicator.includes('m')) {
                 variantsToCheck.push({
-                    // Ruta esperada: img/monocromathic/Home - casa hogar home.svg
                     url: baseDir.replace('img/', 'img/monocromathic/') + fileNameWithoutExtAndIndicator + '.svg',
                     label: 'Monocromático',
                     isNegative: false,
@@ -274,7 +280,6 @@
             }
             if (indicator.includes('n')) {
                 variantsToCheck.push({
-                    // Ruta esperada: img/negative/Home - casa hogar home_negative.svg
                     url: baseDir.replace('img/', 'img/negative/') + fileNameWithoutExtAndIndicator + '_negative.svg',
                     label: 'Negativo',
                     isNegative: true,
@@ -282,10 +287,8 @@
                 });
             }
 
-            // Ordenar las variantes antes de mostrarlas (Monocromático antes que Negativo)
             variantsToCheck.sort((a, b) => a.order - b.order);
 
-            // 2. Verificar y agregar variantes
             for (const variant of variantsToCheck) {
                 if (await checkImageExists(variant.url)) {
                     const variantBox = createVariantBox(variant.url, baseName, variant.label, variant.isNegative);
@@ -300,7 +303,6 @@
                 wrapper.addEventListener('click', async () => {
                     const svgUrl = wrapper.getAttribute('data-svg-url');
                     
-                    // Obtener los datos completos del icono
                     const iconData = ICON_URLS_LIST.map(parseIconUrl).find(d => d.Url === svgUrl);
                     
                     if (!iconData) return;
@@ -308,7 +310,6 @@
                     currentSvgUrl = svgUrl;
                     popupName.textContent = iconData.Name;
                     
-                    // Llamar a la función asíncrona para verificar y mostrar las variantes
                     await checkAndDisplayVariants(svgUrl, iconData.Name, iconData.Indicator);
                     
                     iconPopup.style.display = 'flex';
