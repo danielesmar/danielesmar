@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colección de Iconos Dinámica (Modal Mejorado)</title>
+    <title>Colección de Iconos Dinámica (Descarga Individual)</title>
     <style>
-        /* [Estilos base mantenidos iguales] */
+        /* [Estilos CSS del ejemplo anterior] */
         body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         h1 { font-size: 2.5em; font-weight: bold; color: #333; margin-bottom: 20px; }
         .icon-gallery { background-color: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); width: 95%; max-width: 1200px; }
@@ -54,11 +54,25 @@
             background-color: #2e7d32; 
             border-color: #2e7d32;
         }
-        /* [Estilos de popup y botones de descarga mantenidos] */
+        .variant-box button { /* Estilo para los nuevos botones pequeños */
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            transition: background-color 0.2s;
+        }
+        .variant-box button:hover {
+             background-color: #1b5e20;
+        }
+
+        /* [Estilos de popup y botones generales mantenidos] */
         .popup { display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; }
         .popup-content { background-color: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); text-align: center; position: relative; }
-        .popup-actions button { background-color: #2e7d32; color: white; border: none; padding: 10px 20px; margin: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9em; transition: background-color 0.2s; }
-        .popup-actions button:hover { background-color: #1b5e20; }
+        /* Se eliminan los botones generales, solo queda el contenedor de variants */
         .close-button { position: absolute; top: 10px; right: 15px; font-size: 1.8em; cursor: pointer; color: #aaa; line-height: 1; }
         .close-button:hover { color: #333; }
         #popupName { font-size: 1.5em; margin-bottom: 10px; color: #2e7d32; font-weight: bold; }
@@ -66,7 +80,7 @@
 </head>
 <body>
 
-    <h1>Colección de Iconos Dinámica (Modal Mejorado)</h1>
+    <h1>Colección de Iconos Dinámica (Descarga por Variante)</h1>
 
     <div class="icon-gallery">
         <div class="flow-header">Flow de iconos</div>
@@ -85,10 +99,7 @@
             <div id="popupPreviewContainer" class="preview-container">
                 </div>
             
-            <div class="popup-actions">
-                <button id="downloadOriginalButton" onclick="downloadSvgUrl()">Descargar Icono Base</button>
             </div>
-        </div>
     </div>
 
     <script src="scripts/icon_urls.js"></script> 
@@ -98,16 +109,18 @@
         const iconGrid = document.getElementById('iconGrid');
         const iconFilter = document.getElementById('iconFilter');
         const iconPopup = document.getElementById('iconPopup');
-        const popupPreviewContainer = document.getElementById('popupPreviewContainer'); // Nuevo
+        const popupPreviewContainer = document.getElementById('popupPreviewContainer'); 
         const popupName = document.getElementById('popupName');
-        const downloadOriginalButton = document.getElementById('downloadOriginalButton');
-        let currentSvgUrl = '';
+        
+        // La URL actual es necesaria para la descarga, aunque ahora se pasa a la función.
+        // Mantenemos currentSvgUrl solo para referencia si fuera necesario.
+        let currentSvgUrl = ''; 
         
         // --- FUNCIONES DE ORDENAMIENTO Y UTILIDAD ---
 
         function getVariantOrder(type) {
             switch (type) {
-                case 'Base': // Se usa para el icono original (sin sufijo de variante)
+                case 'Base':
                     return 1;
                 case 'Monocromático': 
                     return 2;
@@ -118,10 +131,6 @@
             }
         }
         
-        /**
-         * Parsea la URL base para obtener nombre, keywords e indicador de variante.
-         * @param {string} fullUrl - La URL base (ej: "img/Home - keywords - mn.svg")
-         */
         function parseIconUrl(fullUrl) {
             const fileName = fullUrl.substring(fullUrl.lastIndexOf('/') + 1);
             const nameWithoutExt = fileName.replace(/\.svg$/i, '');
@@ -131,7 +140,6 @@
             let keywords = '';
             let indicator = '';
 
-            // 1. Obtener Nombre, Keywords y el Indicador (-mn, -n, -m)
             if (parts.length >= 3) {
                 baseName = parts[0].trim();
                 keywords = parts[1].trim().toLowerCase().replace(/\s+/g, ',');
@@ -147,18 +155,15 @@
             return {
                 Name: baseName,
                 Keywords: `${baseName.toLowerCase().replace(/\s/g, ',')},${keywords}`,
-                Indicator: indicator, // Guarda el indicador de variante
+                Indicator: indicator, 
                 Url: fullUrl
             };
         }
 
-        // --- FUNCIÓN DE GENERACIÓN PRINCIPAL ---
-        
         function initGallery() {
             if (typeof ICON_URLS_LIST !== 'undefined' && Array.isArray(ICON_URLS_LIST)) {
                 let iconDataArray = ICON_URLS_LIST.map(parseIconUrl);
                 
-                // Ordenar por Nombre Base
                 iconDataArray.sort((a, b) => a.Name.toUpperCase().localeCompare(b.Name.toUpperCase()));
                 
                 generateIconGallery(iconDataArray);
@@ -176,7 +181,6 @@
                 item.className = 'icon-item';
                 item.setAttribute('data-filter-name', icon.Keywords); 
                 
-                // Usamos el indicador para el tipo de icono base, si existe
                 const type = icon.Indicator ? icon.Indicator.toUpperCase() : 'BASE'; 
 
                 item.innerHTML = `
@@ -193,13 +197,27 @@
             setupIconClickEvents(iconWrappers);
         }
         
-        // --- MANEJO DEL MODAL Y VARIANTES (MODIFICADO) ---
-
+        // --- MANEJO DEL MODAL Y VARIANTES ---
+        
         /**
-         * Verifica si la URL de la imagen existe.
-         * @param {string} url - Ruta del archivo.
-         * @returns {Promise<boolean>} True si existe.
+         * Fuerza la descarga de un archivo SVG sin salir de la página.
+         * @param {string} url - La URL del archivo a descargar.
+         * @param {string} baseName - El nombre base del archivo para nombrar la descarga.
+         * @param {string} variantLabel - La etiqueta de la variante (Base, Negativo, etc.).
          */
+        function downloadVariant(url, baseName, variantLabel) {
+            const a = document.createElement('a');
+            a.href = url;
+            // Construir un nombre de archivo amigable: 'Home_Negativo.svg'
+            const fileName = `${baseName.replace(/\s/g, '_')}_${variantLabel.replace(/\s/g, '_')}.svg`;
+            a.download = fileName; 
+            
+            // Usar click() en el elemento 'a' para iniciar la descarga
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
         function checkImageExists(url) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -210,57 +228,67 @@
         }
 
         /**
-         * Genera el HTML para una vista previa de variante.
+         * Genera el HTML para una vista previa de variante, incluyendo el botón de descarga.
          */
-        function createVariantBox(url, label, isNegative) {
+        function createVariantBox(url, baseName, label, isNegative) {
             const box = document.createElement('div');
             box.className = 'variant-box';
             
+            const sanitizedLabel = label.replace(/\s/g, ''); // Para uso en funciones
+
             box.innerHTML = `
                 <div class="preview-image ${isNegative ? 'negative-bg' : ''}">
                     <img src="${url}" alt="${label} Preview" />
                 </div>
                 <span class="label">${label}</span>
+                <button onclick="downloadVariant('${url}', '${baseName}', '${label}')">Descargar</button>
             `;
             return box;
         }
 
-        /**
-         * Genera y verifica las variantes a mostrar en el modal.
-         */
-        async function checkAndDisplayVariants(urlBase, indicator) {
+        async function checkAndDisplayVariants(urlBase, baseName, indicator) {
             popupPreviewContainer.innerHTML = '';
             
             // 1. Mostrar el icono original (Base)
-            const baseBox = createVariantBox(urlBase, 'Base', false);
+            const baseBox = createVariantBox(urlBase, baseName, 'Base', false);
             popupPreviewContainer.appendChild(baseBox);
             
-            const baseDir = urlBase.substring(0, urlBase.lastIndexOf('/') + 1);
+            // Extraer solo la parte del nombre de archivo sin la extensión ni el indicador
             const fileNameFull = urlBase.substring(urlBase.lastIndexOf('/') + 1);
-            const fileNameWithoutExtAndIndicator = fileNameFull.split(' - ').slice(0, -1).join(' - ') + '.svg';
+            const fileNameWithoutExtAndIndicator = fileNameFull.split(' - ').slice(0, -1).join(' - ');
+            
+            // Obtener el directorio base (img/)
+            const baseDir = urlBase.substring(0, urlBase.lastIndexOf('/') + 1);
             
             // Definición de las variantes a verificar
             const variantsToCheck = [];
 
             if (indicator.includes('m')) {
                 variantsToCheck.push({
-                    url: baseDir.replace('img/', 'img/monocromathic/') + fileNameWithoutExtAndIndicator,
+                    // Ruta esperada: img/monocromathic/Home - casa hogar home.svg
+                    url: baseDir.replace('img/', 'img/monocromathic/') + fileNameWithoutExtAndIndicator + '.svg',
                     label: 'Monocromático',
-                    isNegative: false
+                    isNegative: false,
+                    order: getVariantOrder('Monocromático')
                 });
             }
             if (indicator.includes('n')) {
                 variantsToCheck.push({
-                    url: baseDir.replace('img/', 'img/negative/') + fileNameWithoutExtAndIndicator.replace('.svg', '_negative.svg'),
+                    // Ruta esperada: img/negative/Home - casa hogar home_negative.svg
+                    url: baseDir.replace('img/', 'img/negative/') + fileNameWithoutExtAndIndicator + '_negative.svg',
                     label: 'Negativo',
-                    isNegative: true
+                    isNegative: true,
+                    order: getVariantOrder('Negativo')
                 });
             }
+
+            // Ordenar las variantes antes de mostrarlas (Monocromático antes que Negativo)
+            variantsToCheck.sort((a, b) => a.order - b.order);
 
             // 2. Verificar y agregar variantes
             for (const variant of variantsToCheck) {
                 if (await checkImageExists(variant.url)) {
-                    const variantBox = createVariantBox(variant.url, variant.label, variant.isNegative);
+                    const variantBox = createVariantBox(variant.url, baseName, variant.label, variant.isNegative);
                     popupPreviewContainer.appendChild(variantBox);
                 }
             }
@@ -271,41 +299,27 @@
             wrappers.forEach(wrapper => {
                 wrapper.addEventListener('click', async () => {
                     const svgUrl = wrapper.getAttribute('data-svg-url');
-                    const fullName = wrapper.getAttribute('title');
                     
-                    // Obtener el objeto de datos del icono que contiene el indicador
+                    // Obtener los datos completos del icono
                     const iconData = ICON_URLS_LIST.map(parseIconUrl).find(d => d.Url === svgUrl);
-                    const indicator = iconData ? iconData.Indicator : '';
+                    
+                    if (!iconData) return;
 
                     currentSvgUrl = svgUrl;
                     popupName.textContent = iconData.Name;
                     
-                    // Mostrar solo el botón de descarga del icono original
-                    downloadOriginalButton.textContent = `Descargar ${iconData.Name} Base`;
-                    
                     // Llamar a la función asíncrona para verificar y mostrar las variantes
-                    await checkAndDisplayVariants(svgUrl, indicator);
+                    await checkAndDisplayVariants(svgUrl, iconData.Name, iconData.Indicator);
                     
                     iconPopup.style.display = 'flex';
                 });
             });
         }
         
-        // --- FUNCIONES DE POPUP Y DESCARGA (Mantenidas) ---
+        // --- FUNCIONES DE POPUP Y DESCARGA (Finales) ---
         
         function closePopup() { iconPopup.style.display = 'none'; }
         
-        // Se mantiene solo la descarga del icono base (currentSvgUrl)
-        function downloadSvgUrl() {
-            if (!currentSvgUrl) return;
-            const a = document.createElement('a');
-            a.href = currentSvgUrl;
-            a.download = popupName.textContent.replace(/\s/g, '_') + '.svg'; 
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
         iconPopup.addEventListener('click', (event) => {
             if (event.target === iconPopup) {
                 closePopup();
