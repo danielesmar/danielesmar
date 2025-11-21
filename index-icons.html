@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colección de Iconos (Palabras Clave Múltiples)</title>
+    <title>Colección de Iconos (Usando URL de SVG)</title>
     <style>
         /* --- ESTILOS GENERALES Y LAYOUT --- */
         body {
@@ -86,28 +86,29 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
             transform: translateY(-2px);
         }
+        /* Ajuste para usar IMG en el wrapper */
+        .icon-wrapper img {
+            width: 40px;
+            height: 40px;
+            /* Si usas IMG, ya no puedes controlar stroke o fill con CSS fácilmente */
+        }
         .icon-wrapper svg {
             width: 40px;
             height: 40px;
             stroke-width: 2;
         }
 
-        /* Estilos para el Icono Negativo */
+        /* Estilos para el Icono Negativo (Solo aplica a la caja, el color del SVG es fijo) */
         .icon-wrapper.negative {
             background-color: #2e7d32;
             border-color: #2e7d32;
         }
-        .icon-wrapper.negative svg {
-            stroke: white !important;
-            fill: none !important;
-        }
 
-        /* Ocultamos la etiqueta según el requisito */
         .icon-label {
             display: none;
         }
 
-        /* --- MEDIA QUERIES PARA RESPONSIVIDAD (Ajuste de quiebres) --- */
+        /* --- MEDIA QUERIES y POPUP (Se mantienen iguales) --- */
         @media (max-width: 1024px) {
             .icon-grid {
                 grid-template-columns: repeat(6, 1fr); 
@@ -130,7 +131,7 @@
         .popup-content { background-color: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); text-align: center; position: relative; }
         .popup-preview { width: 160px; height: 160px; display: flex; justify-content: center; align-items: center; margin: 20px auto; border: 1px solid #ddd; border-radius: 8px; }
         .popup-preview.negative { background-color: #2e7d32; }
-        .popup-preview svg { width: 100px; height: 100px; }
+        .popup-preview img { width: 100%; height: 100%; object-fit: contain; } /* Aseguramos que la imagen se vea bien en el preview */
         .popup-actions button { background-color: #2e7d32; color: white; border: none; padding: 10px 20px; margin: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9em; transition: background-color 0.2s; }
         .popup-actions button:hover { background-color: #1b5e20; }
         .close-button { position: absolute; top: 10px; right: 15px; font-size: 1.8em; cursor: pointer; color: #aaa; line-height: 1; }
@@ -145,141 +146,66 @@
     <div class="icon-gallery">
         <div class="flow-header">Flow de iconos</div>
         
-        <input type="text" id="iconFilter" onkeyup="filterIcons()" placeholder="Filtra iconos por nombre o palabra clave (ej: 'casa' o 'compra')...">
+        <input type="text" id="iconFilter" onkeyup="filterIcons()" placeholder="Filtra iconos por nombre o palabra clave...">
 
         <div class="icon-grid" id="iconGrid">
             
             <div class="icon-item" data-filter-name="casco,seguridad,proteccion,obrero,construccion">
-                <div class="icon-wrapper" title="Casco Bicromático" data-icon-name="Casco" data-icon-type="bichromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14 14.5 16.5"></polyline></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14 14.5 16.5"></polyline></svg>
+                <div class="icon-wrapper" title="Casco Bicromático" data-icon-type="bichromatic" data-svg-url="img/casco-bicromatico.svg">
+                    <img src="img/casco-bicromatico.svg" alt="Casco Bicromático" />
                 </div>
                 <span class="icon-label bichromatic">Casco Bicromático</span>
             </div>
             <div class="icon-item" data-filter-name="casco,seguridad,proteccion,obrero,construccion">
-                <div class="icon-wrapper" title="Casco Monocromático" data-icon-name="Casco" data-icon-type="monochromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14 14.5 16.5"></polyline></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14 14.5 16.5"></polyline></svg>
+                <div class="icon-wrapper" title="Casco Monocromático" data-icon-type="monochromatic" data-svg-url="img/casco-monocromatico.svg">
+                    <img src="img/casco-monocromatico.svg" alt="Casco Monocromático" />
                 </div>
                 <span class="icon-label">Casco Monocromático</span>
             </div>
             <div class="icon-item" data-filter-name="casco,seguridad,proteccion,obrero,construccion">
-                <div class="icon-wrapper negative" title="Casco Negativo" data-icon-name="Casco" data-icon-type="negative" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14 14.5 16.5"></polyline></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14 14.5 16.5"></polyline></svg>
+                <div class="icon-wrapper negative" title="Casco Negativo" data-icon-type="negative" data-svg-url="img/casco-negativo.svg">
+                    <img src="img/casco-negativo.svg" alt="Casco Negativo" />
                 </div>
                 <span class="icon-label negative">Casco Negative</span>
             </div>
             
             <div class="icon-item" data-filter-name="carrito,compra,tienda,supermercado,ecommerce">
-                <div class="icon-wrapper" title="Carrito Bicromático" data-icon-name="Carrito" data-icon-type="bichromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <div class="icon-wrapper" title="Carrito Bicromático" data-icon-type="bichromatic" data-svg-url="img/carrito-bicromatico.svg">
+                    <img src="img/carrito-bicromatico.svg" alt="Carrito Bicromático" />
                 </div>
                 <span class="icon-label bichromatic">Carrito Bicromático</span>
             </div>
             <div class="icon-item" data-filter-name="carrito,compra,tienda,supermercado,ecommerce">
-                <div class="icon-wrapper" title="Carrito Monocromático" data-icon-name="Carrito" data-icon-type="monochromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <div class="icon-wrapper" title="Carrito Monocromático" data-icon-type="monochromatic" data-svg-url="img/carrito-monocromatico.svg">
+                    <img src="img/carrito-monocromatico.svg" alt="Carrito Monocromático" />
                 </div>
                 <span class="icon-label">Carrito Monocromático</span>
             </div>
             <div class="icon-item" data-filter-name="carrito,compra,tienda,supermercado,ecommerce">
-                <div class="icon-wrapper negative" title="Carrito Negativo" data-icon-name="Carrito" data-icon-type="negative" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <div class="icon-wrapper negative" title="Carrito Negativo" data-icon-type="negative" data-svg-url="img/carrito-negativo.svg">
+                    <img src="img/carrito-negativo.svg" alt="Carrito Negativo" />
                 </div>
                 <span class="icon-label negative">Carrito Negative</span>
             </div>
 
-            <div class="icon-item" data-filter-name="intercambio,transferencia,movimiento,cambio,flechas">
-                <div class="icon-wrapper" title="Intercambio Bicromático" data-icon-name="Intercambio" data-icon-type="bichromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 14v-3a4 4 0 0 1 4-4h12"></path><polyline points="9 14 4 9 9 4"></polyline><path d="M20 15v-2a4 4 0 0 0-4-4H4"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 14v-3a4 4 0 0 1 4-4h12"></path><polyline points="9 14 4 9 9 4"></polyline><path d="M20 15v-2a4 4 0 0 0-4-4H4"></path></svg>
-                </div>
-                <span class="icon-label bichromatic">Intercambio Bicromático</span>
-            </div>
-            <div class="icon-item" data-filter-name="intercambio,transferencia,movimiento,cambio,flechas">
-                <div class="icon-wrapper" title="Intercambio Monocromático" data-icon-name="Intercambio" data-icon-type="monochromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 14v-3a4 4 0 0 1 4-4h12"></path><polyline points="9 14 4 9 9 4"></polyline><path d="M20 15v-2a4 4 0 0 0-4-4H4"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 14v-3a4 4 0 0 1 4-4h12"></path><polyline points="9 14 4 9 9 4"></polyline><path d="M20 15v-2a4 4 0 0 0-4-4H4"></path></svg>
-                </div>
-                <span class="icon-label">Intercambio Monocromático</span>
-            </div>
-            <div class="icon-item" data-filter-name="intercambio,transferencia,movimiento,cambio,flechas">
-                <div class="icon-wrapper negative" title="Intercambio Negativo" data-icon-name="Intercambio" data-icon-type="negative" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 14v-3a4 4 0 0 1 4-4h12"></path><polyline points="9 14 4 9 9 4"></polyline><path d="M20 15v-2a4 4 0 0 0-4-4H4"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 10 20 15 15 20"></polyline><path d="M4 14v-3a4 4 0 0 1 4-4h12"></path><polyline points="9 14 4 9 9 4"></polyline><path d="M20 15v-2a4 4 0 0 0-4-4H4"></path></svg>
-                </div>
-                <span class="icon-label negative">Intercambio Negative</span>
-            </div>
-
-            <div class="icon-item" data-filter-name="calendario,fecha,agenda,evento,tiempo">
-                <div class="icon-wrapper" title="Calendario Bicromático" data-icon-name="Calendario" data-icon-type="bichromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M12 14v-3a3 3 0 0 0 0 6h4"></path><line x1="10" y1="17" x2="14" y2="17"></line></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M12 14v-3a3 3 0 0 0 0 6h4"></path><line x1="10" y1="17" x2="14" y2="17"></line></svg>
-                </div>
-                <span class="icon-label bichromatic">Calendario Bicromático</span>
-            </div>
-            <div class="icon-item" data-filter-name="calendario,fecha,agenda,evento,tiempo">
-                <div class="icon-wrapper" title="Calendario Monocromático" data-icon-name="Calendario" data-icon-type="monochromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M12 14v-3a3 3 0 0 0 0 6h4"></path><line x1="10" y1="17" x2="14" y2="17"></line></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M12 14v-3a3 3 0 0 0 0 6h4"></path><line x1="10" y1="17" x2="14" y2="17"></line></svg>
-                </div>
-                <span class="icon-label">Calendario Monocromático</span>
-            </div>
-            <div class="icon-item" data-filter-name="calendario,fecha,agenda,evento,tiempo">
-                <div class="icon-wrapper negative" title="Calendario Negativo" data-icon-name="Calendario" data-icon-type="negative" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M12 14v-3a3 3 0 0 0 0 6h4"></path><line x1="10" y1="17" x2="14" y2="17"></line></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><path d="M12 14v-3a3 3 0 0 0 0 6h4"></path><line x1="10" y1="17" x2="14" y2="17"></line></svg>
-                </div>
-                <span class="icon-label negative">Calendario Negative</span>
-            </div>
-            
-            <div class="icon-item" data-filter-name="estrella,calificacion,favorito,guardar">
-                <div class="icon-wrapper" title="Estrella Monocromática" data-icon-name="Estrella" data-icon-type="monochromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                </div>
-                <span class="icon-label">Estrella Monocromática</span>
-            </div>
-
-            <div class="icon-item" data-filter-name="rayo,electricidad,energia,velocidad,alerta">
-                <div class="icon-wrapper" title="Rayo Bicromático" data-icon-name="Rayo" data-icon-type="bichromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-                </div>
-                <span class="icon-label bichromatic">Rayo Bicromático</span>
-            </div>
-
-            <div class="icon-item" data-filter-name="candado,seguro,bloqueo,password,privacidad">
-                <div class="icon-wrapper negative" title="Candado Negativo" data-icon-name="Candado" data-icon-type="negative" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                </div>
-                <span class="icon-label negative">Candado Negative</span>
-            </div>
-
-            <div class="icon-item" data-filter-name="camara,foto,video,grabar,imagen">
-                <div class="icon-wrapper" title="Cámara Monocromática" data-icon-name="Cámara" data-icon-type="monochromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-                </div>
-                <span class="icon-label">Cámara Monocromática</span>
-            </div>
-
-            <div class="icon-item" data-filter-name="nube,cloud,subir,descargar,almacenamiento">
-                <div class="icon-wrapper" title="Nube Bicromática" data-icon-name="Nube" data-icon-type="bichromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h-.71a4 4 0 0 0-4-4 4 4 0 0 0-4 4c0 1.25.75 2.14 1.76 2.76"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h-.71a4 4 0 0 0-4-4 4 4 0 0 0-4 4c0 1.25.75 2.14 1.76 2.76"></path></svg>
-                </div>
-                <span class="icon-label bichromatic">Nube Bicromática</span>
-            </div>
-
             <div class="icon-item" data-filter-name="hogar,casa,vivienda,inicio,principal">
-                <div class="icon-wrapper" title="Hogar Monocromático" data-icon-name="Hogar" data-icon-type="monochromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <div class="icon-wrapper" title="Hogar Monocromático" data-icon-type="monochromatic" data-svg-url="img/hogar.svg">
+                    <img src="img/hogar.svg" alt="Hogar Monocromático" />
                 </div>
                 <span class="icon-label">Hogar Monocromático</span>
             </div>
 
             <div class="icon-item" data-filter-name="configuracion,ajustes,opciones,herramientas,engranaje">
-                <div class="icon-wrapper negative" title="Configuración Negativo" data-icon-name="Configuración" data-icon-type="negative" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33 1.82 1.65 1.65 0 0 0 1.51 1H9a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.82-.33l-.06-.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0 1.51-1V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0 1.51-1V3z"></path></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0-.33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0 .33 1.82 1.65 1.65 0 0 0 1.51 1H9a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82 1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.82-.33l-.06-.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0 1.51-1V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0 1.51-1V3z"></path></svg>
+                <div class="icon-wrapper negative" title="Configuración Negativo" data-icon-type="negative" data-svg-url="img/configuracion-negativo.svg">
+                    <img src="img/configuracion-negativo.svg" alt="Configuración Negativo" />
                 </div>
                 <span class="icon-label negative">Configuración Negative</span>
             </div>
-
-            <div class="icon-item" data-filter-name="correo,email,mensaje,inbox,notificacion">
-                <div class="icon-wrapper" title="Correo Monocromático" data-icon-name="Correo" data-icon-type="monochromatic" data-svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>'>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                </div>
-                <span class="icon-label">Correo Monocromático</span>
-            </div>
+             <div class="icon-item"></div>
+            <div class="icon-item"></div>
+            <div class="icon-item"></div>
+            <div class="icon-item"></div>
+            
         </div>
     </div>
     
@@ -290,8 +216,8 @@
             <div id="popupPreview" class="popup-preview">
                 </div>
             <div class="popup-actions">
-                <button onclick="copySvg()">Copiar SVG</button>
-                <button onclick="downloadSvg()">Descargar SVG</button>
+                <button onclick="copySvgUrl()">Copiar URL del SVG</button>
+                <button onclick="downloadSvgUrl()">Descargar SVG</button>
             </div>
         </div>
     </div>
@@ -301,11 +227,9 @@
         const iconPopup = document.getElementById('iconPopup');
         const popupPreview = document.getElementById('popupPreview');
         const popupName = document.getElementById('popupName');
-        let currentSvgData = '';
+        let currentSvgUrl = '';
         
-        /**
-         * Función de filtro mejorada: busca coincidencias en una lista de palabras clave.
-         */
+        // --- FUNCIÓN DE FILTRO (Se mantiene igual) ---
         function filterIcons() {
             const filterValue = document.getElementById('iconFilter').value.toLowerCase().trim();
             const iconItems = document.querySelectorAll('.icon-item');
@@ -313,17 +237,16 @@
             iconItems.forEach(item => {
                 const keywordsAttribute = item.getAttribute('data-filter-name'); 
                 
-                // Si no hay valor en el filtro, mostramos todos.
+                if (!keywordsAttribute) return; // Ignorar elementos sin palabras clave
+
                 if (filterValue.length === 0) {
                     item.classList.remove('hidden');
                     return;
                 }
 
-                // Dividimos la cadena de palabras clave por comas y limpiamos espacios.
                 const keywords = keywordsAttribute.split(',')
                     .map(keyword => keyword.trim().toLowerCase());
 
-                // Verificamos si alguna palabra clave incluye el valor del filtro
                 const isMatch = keywords.some(keyword => keyword.includes(filterValue));
                 
                 if (isMatch) {
@@ -334,33 +257,36 @@
             });
         }
 
-        // --- MANEJO DE POPUP (se mantiene igual) ---
+        // --- MANEJO DE POPUP (MODIFICADO) ---
         iconWrappers.forEach(wrapper => {
             wrapper.addEventListener('click', () => {
-                const svgContent = wrapper.getAttribute('data-svg');
+                const svgUrl = wrapper.getAttribute('data-svg-url');
                 const iconType = wrapper.getAttribute('data-icon-type');
                 const fullName = wrapper.getAttribute('title');
 
-                currentSvgData = svgContent;
+                // 1. Almacena la URL
+                currentSvgUrl = svgUrl;
+
+                // 2. Muestra el nombre
                 popupName.textContent = fullName;
-                popupPreview.innerHTML = svgContent;
                 
+                // 3. Limpia y crea la etiqueta <img> en el preview
+                popupPreview.innerHTML = '';
+                if (svgUrl) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = svgUrl;
+                    imgElement.alt = fullName;
+                    popupPreview.appendChild(imgElement);
+                }
+                
+                // 4. Aplica estilos de fondo (para el modo negativo)
                 const isNegativeIcon = iconType === 'negative';
                 if (isNegativeIcon) {
                     popupPreview.classList.add('negative');
-                    const svgElement = popupPreview.querySelector('svg');
-                    if (svgElement) svgElement.setAttribute('stroke', 'white');
                 } else {
                     popupPreview.classList.remove('negative');
-                    const svgElement = popupPreview.querySelector('svg');
-                    if (svgElement) {
-                        if (iconType === 'bichromatic') {
-                            svgElement.setAttribute('stroke', '#2e7d32');
-                        } else {
-                            svgElement.setAttribute('stroke', '#333');
-                        }
-                    }
                 }
+                
                 iconPopup.style.display = 'flex';
             });
         });
@@ -368,24 +294,37 @@
         function closePopup() {
             iconPopup.style.display = 'none';
         }
+        
+        // --- NUEVAS FUNCIONES DE COPIADO/DESCARGA PARA URL ---
+        
+        /**
+         * Copia la URL del archivo SVG al portapapeles.
+         */
+        function copySvgUrl() {
+            if (!currentSvgUrl) return;
 
-        function copySvg() {
-            navigator.clipboard.writeText(currentSvgData)
-                .then(() => alert('SVG copiado al portapapeles!'))
-                .catch(err => console.error('Error al copiar SVG: ', err));
+            navigator.clipboard.writeText(currentSvgUrl)
+                .then(() => alert('URL del SVG copiada al portapapeles!'))
+                .catch(err => console.error('Error al copiar URL: ', err));
         }
 
-        function downloadSvg() {
-            const blob = new Blob([currentSvgData], { type: 'image/svg+xml' });
-            const url = URL.createObjectURL(blob);
+        /**
+         * Descarga el archivo SVG usando la URL.
+         */
+        function downloadSvgUrl() {
+            if (!currentSvgUrl) return;
+
             const a = document.createElement('a');
-            a.href = url;
-            a.download = popupName.textContent.replace(/\s/g, '_') + '.svg';
+            a.href = currentSvgUrl;
+            // Usa el nombre del popup como nombre de archivo para la descarga
+            a.download = popupName.textContent.replace(/\s/g, '_') + '.svg'; 
+            
+            // Simula un clic en el enlace para iniciar la descarga
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
         }
+
 
         iconPopup.addEventListener('click', (event) => {
             if (event.target === iconPopup) {
