@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colección de Iconos (JS Global Variable)</title>
+    <title>Colección de Iconos (Ordenada por Nombre)</title>
     <style>
         /* [Estilos CSS del ejemplo anterior] */
         body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -34,7 +34,7 @@
 </head>
 <body>
 
-    <h1>Colección de Iconos Dinámica (Sin CORS)</h1>
+    <h1>Colección de Iconos Dinámica (Ordenada)</h1>
 
     <div class="icon-gallery">
         <div class="flow-header">Flow de iconos</div>
@@ -68,7 +68,7 @@
         const popupName = document.getElementById('popupName');
         let currentSvgUrl = '';
         
-        // --- FUNCIONES DE UTILIDAD PARA PROCESAR EL NOMBRE DE ARCHIVO (Se mantienen iguales) ---
+        // --- FUNCIONES DE UTILIDAD PARA PROCESAR EL NOMBRE DE ARCHIVO ---
         
         function parseIconUrl(fullUrl) {
             const fileName = fullUrl.substring(fullUrl.lastIndexOf('/') + 1);
@@ -107,7 +107,7 @@
             }
             
             return {
-                Name: baseName,
+                Name: baseName, // Campo clave para el ordenamiento
                 Keywords: `${baseName.toLowerCase().replace(/\s/g, ',')},${keywords}`,
                 Type: type,
                 Url: fullUrl,
@@ -115,16 +115,33 @@
             };
         }
 
-        // --- FUNCIÓN DE GENERACIÓN PRINCIPAL (Modificada para usar ICON_URLS_LIST) ---
+        // --- FUNCIÓN DE GENERACIÓN PRINCIPAL (Añadido el ordenamiento) ---
         
         function initGallery() {
-            // Utilizamos directamente la variable global ICON_URLS_LIST
             if (typeof ICON_URLS_LIST !== 'undefined' && Array.isArray(ICON_URLS_LIST)) {
-                const iconDataArray = ICON_URLS_LIST.map(parseIconUrl);
+                let iconDataArray = ICON_URLS_LIST.map(parseIconUrl);
+                
+                // 🚀 CAMBIO CLAVE: Ordenar el array por el campo 'Name' (nombre base del icono)
+                iconDataArray.sort((a, b) => {
+                    const nameA = a.Name.toUpperCase();
+                    const nameB = b.Name.toUpperCase();
+                    
+                    if (nameA < nameB) {
+                        return -1;
+                    }
+                    if (nameA > nameB) {
+                        return 1;
+                    }
+                    // Si los nombres son iguales (ej: House Monocromático y House Negativo), 
+                    // se ordena por el Tipo de variante para mantenerlos juntos.
+                    return a.Type.localeCompare(b.Type);
+                });
+                // -----------------------------------------------------------
+                
                 generateIconGallery(iconDataArray);
                 iconFilter.addEventListener('keyup', filterIcons);
             } else {
-                iconGrid.innerHTML = '<p style="grid-column: 1 / -1; color: red;">Error: La lista de URLs de iconos (ICON_URLS_LIST) no se cargó correctamente. Revisa el archivo icon_urls.js.</p>';
+                iconGrid.innerHTML = '<p style="grid-column: 1 / -1; color: red;">Error: La lista de URLs de iconos (ICON_URLS_LIST) no se cargó correctamente.</p>';
             }
         }
 
@@ -140,7 +157,6 @@
                 
                 const item = document.createElement('div');
                 item.className = 'icon-item';
-                // El filtro ahora se aplica a todas las keywords concatenadas
                 item.setAttribute('data-filter-name', icon.Keywords); 
                 
                 const wrapperClass = `icon-wrapper${icon.IsNegative ? ' negative' : ''}`;
@@ -161,7 +177,7 @@
             setupIconClickEvents(iconWrappers);
         }
         
-        // --- FUNCIONES DE FILTRO, POPUP Y DESCARGA (Mantenidas iguales) ---
+        // --- FUNCIONES DE FILTRO, POPUP Y DESCARGA (Se mantienen iguales) ---
         
         function filterIcons() {
             const filterValue = iconFilter.value.toLowerCase().trim();
