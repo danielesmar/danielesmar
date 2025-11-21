@@ -3,135 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colección de Iconos (Usando URL de SVG)</title>
+    <title>Colección de Iconos (Lógica en JS)</title>
     <style>
-        /* --- ESTILOS GENERALES Y LAYOUT --- */
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        h1 {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
-        }
+        /* [Estilos CSS del ejemplo anterior] */
+        body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { font-size: 2.5em; font-weight: bold; color: #333; margin-bottom: 20px; }
+        .icon-gallery { background-color: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); width: 95%; max-width: 1200px; }
+        .flow-header { font-size: 1.1em; font-weight: 600; color: #555; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        #iconFilter { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
+        .icon-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 15px 10px; }
+        .icon-item { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .icon-item.hidden { display: none; }
+        .icon-wrapper { width: 100%; height: 80px; display: flex; justify-content: center; align-items: center; border: 1px solid #eee; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 5px; position: relative; }
+        .icon-wrapper:hover { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
+        .icon-wrapper img { width: 40px; height: 40px; object-fit: contain; }
+        .icon-wrapper.negative { background-color: #2e7d32; border-color: #2e7d32; }
+        .icon-label { display: none; }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
-        .icon-gallery {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            width: 95%;
-            max-width: 1200px;
-        }
-        .flow-header {
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        /* --- FILTRO --- */
-        #iconFilter {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1em;
-        }
-
-        /* --- CUADRÍCULA DE ICONOS (12 columnas en desktop) --- */
-        .icon-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr); 
-            gap: 15px 10px;
-        }
-
-        /* --- ITEM DE ICONO SIN ETIQUETA --- */
-        .icon-item {
-            display: flex; 
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        .icon-item.hidden {
-            display: none;
-        }
-
-        .icon-wrapper {
-            width: 100%;
-            height: 80px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-bottom: 5px;
-            position: relative;
-        }
-        .icon-wrapper:hover {
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
-        }
-        /* Ajuste para usar IMG en el wrapper */
-        .icon-wrapper img {
-            width: 40px;
-            height: 40px;
-            /* Si usas IMG, ya no puedes controlar stroke o fill con CSS fácilmente */
-        }
-        .icon-wrapper svg {
-            width: 40px;
-            height: 40px;
-            stroke-width: 2;
-        }
-
-        /* Estilos para el Icono Negativo (Solo aplica a la caja, el color del SVG es fijo) */
-        .icon-wrapper.negative {
-            background-color: #2e7d32;
-            border-color: #2e7d32;
-        }
-
-        .icon-label {
-            display: none;
-        }
-
-        /* --- MEDIA QUERIES y POPUP (Se mantienen iguales) --- */
-        @media (max-width: 1024px) {
-            .icon-grid {
-                grid-template-columns: repeat(6, 1fr); 
-            }
-        }
-        @media (max-width: 768px) {
-            .icon-grid {
-                grid-template-columns: repeat(4, 1fr); 
-            }
-        }
-        @media (max-width: 500px) {
-            .icon-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 15px 5px;
-            }
-        }
-        
-        /* --- POPUP STYLES --- */
+        /* Estilos del popup... (se mantienen) */
         .popup { display: none; position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; }
         .popup-content { background-color: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); text-align: center; position: relative; }
         .popup-preview { width: 160px; height: 160px; display: flex; justify-content: center; align-items: center; margin: 20px auto; border: 1px solid #ddd; border-radius: 8px; }
         .popup-preview.negative { background-color: #2e7d32; }
-        .popup-preview img { width: 100%; height: 100%; object-fit: contain; } /* Aseguramos que la imagen se vea bien en el preview */
+        .popup-preview img { width: 100%; height: 100%; object-fit: contain; }
         .popup-actions button { background-color: #2e7d32; color: white; border: none; padding: 10px 20px; margin: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.9em; transition: background-color 0.2s; }
         .popup-actions button:hover { background-color: #1b5e20; }
         .close-button { position: absolute; top: 10px; right: 15px; font-size: 1.8em; cursor: pointer; color: #aaa; line-height: 1; }
@@ -141,80 +35,22 @@
 </head>
 <body>
 
-    <h1>Colección de Iconos</h1>
+    <h1>Colección de Iconos Dinámica (URL Parsing)</h1>
 
     <div class="icon-gallery">
         <div class="flow-header">Flow de iconos</div>
         
-        <input type="text" id="iconFilter" onkeyup="filterIcons()" placeholder="Filtra iconos por nombre o palabra clave...">
+        <input type="text" id="iconFilter" placeholder="Filtra iconos por nombre o palabra clave...">
 
         <div class="icon-grid" id="iconGrid">
-            
-            <div class="icon-item" data-filter-name="casco,seguridad,proteccion,obrero,construccion">
-                <div class="icon-wrapper" title="Casco Bicromático" data-icon-type="bichromatic" data-svg-url="img/casco-bicromatico.svg">
-                    <img src="img/casco-bicromatico.svg" alt="Casco Bicromático" />
-                </div>
-                <span class="icon-label bichromatic">Casco Bicromático</span>
             </div>
-            <div class="icon-item" data-filter-name="casco,seguridad,proteccion,obrero,construccion">
-                <div class="icon-wrapper" title="Casco Monocromático" data-icon-type="monochromatic" data-svg-url="img/casco-monocromatico.svg">
-                    <img src="img/casco-monocromatico.svg" alt="Casco Monocromático" />
-                </div>
-                <span class="icon-label">Casco Monocromático</span>
-            </div>
-            <div class="icon-item" data-filter-name="casco,seguridad,proteccion,obrero,construccion">
-                <div class="icon-wrapper negative" title="Casco Negativo" data-icon-type="negative" data-svg-url="img/casco-negativo.svg">
-                    <img src="img/casco-negativo.svg" alt="Casco Negativo" />
-                </div>
-                <span class="icon-label negative">Casco Negative</span>
-            </div>
-            
-            <div class="icon-item" data-filter-name="carrito,compra,tienda,supermercado,ecommerce">
-                <div class="icon-wrapper" title="Carrito Bicromático" data-icon-type="bichromatic" data-svg-url="img/carrito-bicromatico.svg">
-                    <img src="img/carrito-bicromatico.svg" alt="Carrito Bicromático" />
-                </div>
-                <span class="icon-label bichromatic">Carrito Bicromático</span>
-            </div>
-            <div class="icon-item" data-filter-name="carrito,compra,tienda,supermercado,ecommerce">
-                <div class="icon-wrapper" title="Carrito Monocromático" data-icon-type="monochromatic" data-svg-url="img/carrito-monocromatico.svg">
-                    <img src="img/carrito-monocromatico.svg" alt="Carrito Monocromático" />
-                </div>
-                <span class="icon-label">Carrito Monocromático</span>
-            </div>
-            <div class="icon-item" data-filter-name="carrito,compra,tienda,supermercado,ecommerce">
-                <div class="icon-wrapper negative" title="Carrito Negativo" data-icon-type="negative" data-svg-url="img/carrito-negativo.svg">
-                    <img src="img/carrito-negativo.svg" alt="Carrito Negativo" />
-                </div>
-                <span class="icon-label negative">Carrito Negative</span>
-            </div>
-
-            <div class="icon-item" data-filter-name="hogar,casa,vivienda,inicio,principal">
-                <div class="icon-wrapper" title="Hogar Monocromático" data-icon-type="monochromatic" data-svg-url="img/hogar.svg">
-                    <img src="img/hogar.svg" alt="Hogar Monocromático" />
-                </div>
-                <span class="icon-label">Hogar Monocromático</span>
-            </div>
-
-            <div class="icon-item" data-filter-name="configuracion,ajustes,opciones,herramientas,engranaje">
-                <div class="icon-wrapper negative" title="Configuración Negativo" data-icon-type="negative" data-svg-url="img/configuracion-negativo.svg">
-                    <img src="img/configuracion-negativo.svg" alt="Configuración Negativo" />
-                </div>
-                <span class="icon-label negative">Configuración Negative</span>
-            </div>
-             <div class="icon-item"></div>
-            <div class="icon-item"></div>
-            <div class="icon-item"></div>
-            <div class="icon-item"></div>
-            
-        </div>
     </div>
     
     <div id="iconPopup" class="popup">
         <div class="popup-content">
             <span class="close-button" onclick="closePopup()">&times;</span>
             <h2 id="popupName"></h2>
-            <div id="popupPreview" class="popup-preview">
-                </div>
+            <div id="popupPreview" class="popup-preview"></div>
             <div class="popup-actions">
                 <button onclick="copySvgUrl()">Copiar URL del SVG</button>
                 <button onclick="downloadSvgUrl()">Descargar SVG</button>
@@ -223,33 +59,148 @@
     </div>
 
     <script>
-        const iconWrappers = document.querySelectorAll('.icon-wrapper');
+        // Variables globales
+        const iconGrid = document.getElementById('iconGrid');
+        const iconFilter = document.getElementById('iconFilter');
         const iconPopup = document.getElementById('iconPopup');
         const popupPreview = document.getElementById('popupPreview');
         const popupName = document.getElementById('popupName');
         let currentSvgUrl = '';
         
-        // --- FUNCIÓN DE FILTRO (Se mantiene igual) ---
+        // --- FUNCIONES DE UTILIDAD PARA PROCESAR EL NOMBRE DE ARCHIVO ---
+        
+        /**
+         * Aplica las reglas de split y limpieza a una URL.
+         * @param {string} fullUrl - La URL completa del archivo (ej: "img/negative/House - casa hogar vivienda.svg")
+         * @returns {Object} Un objeto con Name, Keywords y Type.
+         */
+        function parseIconUrl(fullUrl) {
+            // 1. Extraer solo el nombre del archivo (con extensión)
+            const fileName = fullUrl.substring(fullUrl.lastIndexOf('/') + 1);
+            
+            // 2. Determinar si es Negativo por la carpeta o el nombre
+            const isNegative = fullUrl.includes('/negative/') || fileName.includes('_negative');
+            
+            // 3. Obtener el nombre sin extensión
+            const nameWithoutExt = fileName.replace(/\.svg$/i, '');
+            
+            // 4. Aplicar el split por " - "
+            const parts = nameWithoutExt.split(' - ');
+
+            let baseName = '';
+            let keywords = '';
+
+            if (parts.length === 2) {
+                baseName = parts[0].trim();
+                
+                // Procesar palabras clave (parte derecha)
+                let keywordsRaw = parts[1];
+                
+                // Limpiar sufijos como '_negative' o '_fill' de la parte de keywords
+                keywordsRaw = keywordsRaw.replace(/_negative|_fill|_sm|_alert/gi, '').trim();
+
+                // Limpiar espacios extra y unir con comas
+                keywords = keywordsRaw
+                    .split(/\s+/) // Dividir por uno o más espacios
+                    .filter(k => k.length > 0) // Quitar strings vacíos
+                    .map(k => k.toLowerCase())
+                    .join(',');
+            } else {
+                // Si no hay " - ", usar el nombre limpio como nombre y keywords
+                baseName = nameWithoutExt.replace(/[-_]/g, ' ').trim();
+                keywords = baseName.toLowerCase().replace(/\s/g, ',');
+            }
+            
+            // Determinar el tipo de variante para la interfaz
+            let type = 'Monocromático';
+            if (isNegative) {
+                type = 'Negativo';
+            } else if (fileName.includes('_fill')) {
+                type = 'Relleno';
+            } else if (fileName.includes('_alert')) {
+                type = 'Alerta';
+            } else if (fileName.includes('_sm')) {
+                type = 'Pequeño';
+            }
+            
+            return {
+                Name: baseName,
+                Keywords: `${baseName.toLowerCase().replace(/\s/g, ',')},${keywords}`, // Asegura que el nombre siempre es keyword
+                Type: type,
+                Url: fullUrl,
+                IsNegative: isNegative
+            };
+        }
+
+        // --- FUNCIÓN DE GENERACIÓN PRINCIPAL ---
+        
+        function initGallery() {
+            // Carga el array simple de URLs desde el JSON
+            fetch('scripts/icon_urls.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al cargar icon_urls.json: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(urlArray => {
+                    const iconDataArray = urlArray.map(parseIconUrl);
+                    generateIconGallery(iconDataArray);
+                    iconFilter.addEventListener('keyup', filterIcons);
+                })
+                .catch(error => {
+                    console.error(error);
+                    iconGrid.innerHTML = '<p style="grid-column: 1 / -1; color: red;">Error: No se pudo cargar la lista de URLs de iconos.</p>';
+                });
+        }
+
+        /**
+         * Itera sobre el array de objetos de iconos procesados y genera el HTML.
+         */
+        function generateIconGallery(iconDataArray) {
+            iconGrid.innerHTML = ''; 
+
+            iconDataArray.forEach(icon => {
+                const typeAttr = icon.Type.toLowerCase().replace('ó', 'o');
+                const fullName = `${icon.Name} ${icon.Type}`;
+                
+                const item = document.createElement('div');
+                item.className = 'icon-item';
+                item.setAttribute('data-filter-name', icon.Keywords);
+                
+                const wrapperClass = `icon-wrapper${icon.IsNegative ? ' negative' : ''}`;
+
+                item.innerHTML = `
+                    <div class="${wrapperClass}" 
+                         title="${fullName}" 
+                         data-icon-type="${typeAttr}" 
+                         data-svg-url="${icon.Url}">
+                        <img src="${icon.Url}" alt="${fullName}" onerror="this.src='placeholder.svg';" />
+                    </div>
+                    <span class="icon-label ${typeAttr}">${fullName}</span>
+                `;
+                iconGrid.appendChild(item);
+            });
+            
+            // Re-vincular los eventos de clic
+            const iconWrappers = document.querySelectorAll('.icon-wrapper');
+            setupIconClickEvents(iconWrappers);
+        }
+        
+        // --- FUNCIONES DE FILTRO, POPUP Y DESCARGA (Mantenidas iguales) ---
+        
         function filterIcons() {
-            const filterValue = document.getElementById('iconFilter').value.toLowerCase().trim();
+            const filterValue = iconFilter.value.toLowerCase().trim();
             const iconItems = document.querySelectorAll('.icon-item');
 
             iconItems.forEach(item => {
                 const keywordsAttribute = item.getAttribute('data-filter-name'); 
                 
-                if (!keywordsAttribute) return; // Ignorar elementos sin palabras clave
+                if (!keywordsAttribute) return; 
 
-                if (filterValue.length === 0) {
-                    item.classList.remove('hidden');
-                    return;
-                }
-
-                const keywords = keywordsAttribute.split(',')
-                    .map(keyword => keyword.trim().toLowerCase());
-
-                const isMatch = keywords.some(keyword => keyword.includes(filterValue));
+                const isMatch = keywordsAttribute.includes(filterValue);
                 
-                if (isMatch) {
+                if (filterValue.length === 0 || isMatch) {
                     item.classList.remove('hidden');
                 } else {
                     item.classList.add('hidden');
@@ -257,80 +208,66 @@
             });
         }
 
-        // --- MANEJO DE POPUP (MODIFICADO) ---
-        iconWrappers.forEach(wrapper => {
-            wrapper.addEventListener('click', () => {
-                const svgUrl = wrapper.getAttribute('data-svg-url');
-                const iconType = wrapper.getAttribute('data-icon-type');
-                const fullName = wrapper.getAttribute('title');
+        function setupIconClickEvents(wrappers) {
+            wrappers.forEach(wrapper => {
+                wrapper.addEventListener('click', () => {
+                    const svgUrl = wrapper.getAttribute('data-svg-url');
+                    const iconType = wrapper.getAttribute('data-icon-type');
+                    const fullName = wrapper.getAttribute('title');
 
-                // 1. Almacena la URL
-                currentSvgUrl = svgUrl;
-
-                // 2. Muestra el nombre
-                popupName.textContent = fullName;
-                
-                // 3. Limpia y crea la etiqueta <img> en el preview
-                popupPreview.innerHTML = '';
-                if (svgUrl) {
-                    const imgElement = document.createElement('img');
-                    imgElement.src = svgUrl;
-                    imgElement.alt = fullName;
-                    popupPreview.appendChild(imgElement);
-                }
-                
-                // 4. Aplica estilos de fondo (para el modo negativo)
-                const isNegativeIcon = iconType === 'negative';
-                if (isNegativeIcon) {
-                    popupPreview.classList.add('negative');
-                } else {
-                    popupPreview.classList.remove('negative');
-                }
-                
-                iconPopup.style.display = 'flex';
+                    currentSvgUrl = svgUrl;
+                    popupName.textContent = fullName;
+                    
+                    popupPreview.innerHTML = '';
+                    if (svgUrl) {
+                        const imgElement = document.createElement('img');
+                        imgElement.src = svgUrl;
+                        imgElement.alt = fullName;
+                        imgElement.onerror = function() { 
+                            this.src='placeholder.svg';
+                            this.alt='Icono no encontrado';
+                        }; 
+                        popupPreview.appendChild(imgElement);
+                    }
+                    
+                    const isNegativeIcon = iconType === 'negativo';
+                    if (isNegativeIcon) {
+                        popupPreview.classList.add('negative');
+                    } else {
+                        popupPreview.classList.remove('negative');
+                    }
+                    
+                    iconPopup.style.display = 'flex';
+                });
             });
-        });
-
-        function closePopup() {
-            iconPopup.style.display = 'none';
         }
         
-        // --- NUEVAS FUNCIONES DE COPIADO/DESCARGA PARA URL ---
+        function closePopup() { iconPopup.style.display = 'none'; }
         
-        /**
-         * Copia la URL del archivo SVG al portapapeles.
-         */
         function copySvgUrl() {
             if (!currentSvgUrl) return;
-
             navigator.clipboard.writeText(currentSvgUrl)
-                .then(() => alert('URL del SVG copiada al portapapeles!'))
-                .catch(err => console.error('Error al copiar URL: ', err));
+                .then(() => alert('URL del SVG copiada al portapapeles!'));
         }
 
-        /**
-         * Descarga el archivo SVG usando la URL.
-         */
         function downloadSvgUrl() {
             if (!currentSvgUrl) return;
-
             const a = document.createElement('a');
             a.href = currentSvgUrl;
-            // Usa el nombre del popup como nombre de archivo para la descarga
             a.download = popupName.textContent.replace(/\s/g, '_') + '.svg'; 
-            
-            // Simula un clic en el enlace para iniciar la descarga
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
         }
-
 
         iconPopup.addEventListener('click', (event) => {
             if (event.target === iconPopup) {
                 closePopup();
             }
         });
+
+        // --- INICIALIZACIÓN ---
+        document.addEventListener('DOMContentLoaded', initGallery);
     </script>
 </body>
 </html>
