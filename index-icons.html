@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colección de Iconos (Ordenada por Nombre)</title>
+    <title>Colección de Iconos (Ordenamiento Mejorado)</title>
     <style>
         /* [Estilos CSS del ejemplo anterior] */
         body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -34,7 +34,7 @@
 </head>
 <body>
 
-    <h1>Colección de Iconos Dinámica (Ordenada)</h1>
+    <h1>Colección de Iconos Dinámica (Ordenamiento Mejorado)</h1>
 
     <div class="icon-gallery">
         <div class="flow-header">Flow de iconos</div>
@@ -68,7 +68,30 @@
         const popupName = document.getElementById('popupName');
         let currentSvgUrl = '';
         
-        // --- FUNCIONES DE UTILIDAD PARA PROCESAR EL NOMBRE DE ARCHIVO ---
+        // --- FUNCIÓN DE ORDENAMIENTO DE VARIANTES ---
+        
+        /**
+         * Asigna un valor numérico a cada tipo de variante para asegurar un orden fijo.
+         * @param {string} type - El tipo de variante (Monocromático, Negativo, etc.)
+         * @returns {number} El valor de orden.
+         */
+        function getVariantOrder(type) {
+            switch (type) {
+                case 'Monocromático':
+                case 'Relleno': // Se asume que Monocromático/Relleno son los principales
+                    return 1;
+                case 'Negativo':
+                    return 2;
+                case 'Alerta':
+                    return 3;
+                case 'Pequeño':
+                    return 4;
+                default:
+                    return 99; // Para cualquier tipo desconocido, va al final
+            }
+        }
+        
+        // --- FUNCIONES DE UTILIDAD Y PARSING (Mantenidas iguales) ---
         
         function parseIconUrl(fullUrl) {
             const fileName = fullUrl.substring(fullUrl.lastIndexOf('/') + 1);
@@ -107,7 +130,7 @@
             }
             
             return {
-                Name: baseName, // Campo clave para el ordenamiento
+                Name: baseName, 
                 Keywords: `${baseName.toLowerCase().replace(/\s/g, ',')},${keywords}`,
                 Type: type,
                 Url: fullUrl,
@@ -115,26 +138,27 @@
             };
         }
 
-        // --- FUNCIÓN DE GENERACIÓN PRINCIPAL (Añadido el ordenamiento) ---
+        // --- FUNCIÓN DE GENERACIÓN PRINCIPAL (Ajuste en el sort) ---
         
         function initGallery() {
             if (typeof ICON_URLS_LIST !== 'undefined' && Array.isArray(ICON_URLS_LIST)) {
                 let iconDataArray = ICON_URLS_LIST.map(parseIconUrl);
                 
-                // 🚀 CAMBIO CLAVE: Ordenar el array por el campo 'Name' (nombre base del icono)
+                // 🚀 ORDENAMIENTO MEJORADO
                 iconDataArray.sort((a, b) => {
                     const nameA = a.Name.toUpperCase();
                     const nameB = b.Name.toUpperCase();
                     
+                    // 1. Ordenar por Nombre Base (House vs Alert)
                     if (nameA < nameB) {
                         return -1;
                     }
                     if (nameA > nameB) {
                         return 1;
                     }
-                    // Si los nombres son iguales (ej: House Monocromático y House Negativo), 
-                    // se ordena por el Tipo de variante para mantenerlos juntos.
-                    return a.Type.localeCompare(b.Type);
+                    
+                    // 2. Si los Nombres son iguales, ordenar por la posición numérica de la variante (Monocromático antes que Negativo)
+                    return getVariantOrder(a.Type) - getVariantOrder(b.Type);
                 });
                 // -----------------------------------------------------------
                 
@@ -145,9 +169,6 @@
             }
         }
 
-        /**
-         * Itera sobre el array de objetos de iconos procesados y genera el HTML.
-         */
         function generateIconGallery(iconDataArray) {
             iconGrid.innerHTML = ''; 
 
@@ -177,7 +198,7 @@
             setupIconClickEvents(iconWrappers);
         }
         
-        // --- FUNCIONES DE FILTRO, POPUP Y DESCARGA (Se mantienen iguales) ---
+        // --- FUNCIONES DE FILTRO, POPUP Y DESCARGA (Mantenidas iguales) ---
         
         function filterIcons() {
             const filterValue = iconFilter.value.toLowerCase().trim();
