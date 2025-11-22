@@ -3,50 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colección de Iconos Dinámica (Lazy Loading y Categorías)</title>
+    <title>Colección de Iconos Dinámica (Agrupación por Categoría)</title>
     <style>
-        /* [ESTILOS CSS MANTENIDOS] */
+        /* [ESTILOS BASE MANTENIDOS] */
         body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         h1 { font-size: 2.5em; font-weight: bold; color: #333; margin-bottom: 20px; }
         .icon-gallery { background-color: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); width: 95%; max-width: 1200px; }
         .flow-header { font-size: 1.1em; font-weight: 600; color: #555; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
         #iconFilter { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
-        .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px 10px; }
+        
+        /* --- ESTILOS DE AGRUPACIÓN POR BLOQUES --- */
+        
+        /* Contenedor principal para la lista de iconos, ya no es una cuadrícula pura */
+        #iconGrid { display: block; }
+        
+        /* H2 para Categoría Principal */
+        .category-header { 
+            color: #00683B; 
+            font-size: 16px; 
+            margin-top: 30px; /* Espacio antes de la Categoría */
+            margin-bottom: 10px;
+            font-weight: bold;
+            border-bottom: 2px solid #00683B; /* Opcional: separador visual */
+            padding-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        /* H4 para Subcategoría */
+        .subcategory-header { 
+            color: #69BE28; 
+            font-size: 12px; 
+            margin-top: 15px; /* Espacio antes de la Subcategoría */
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Contenedor de la cuadrícula de iconos dentro de cada subcategoría/categoría */
+        .icon-section {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+            gap: 15px 10px; 
+            padding: 10px 0;
+        }
+        
+        /* Estilos para ocultar secciones completas */
+        .hidden-group { display: none !important; }
+
+        /* Iconos individuales */
         .icon-item { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             text-align: center; 
-            min-width: 100px; 
-            padding: 10px 0; 
+            padding: 5px 0; 
+            /* Se eliminan los estilos de Category/Subcategory individuales */
         }
-        .icon-item.hidden { display: none; }
+        .icon-item.hidden { display: none !important; } 
+        
+        /* [ESTILOS MANTENIDOS PARA WRAPPER, LAZY LOADING Y MODAL] */
         .icon-wrapper { width: 100%; height: 80px; display: flex; justify-content: center; align-items: center; border: 1px solid #eee; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 5px; position: relative; }
         .icon-wrapper:hover { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
         .icon-wrapper img { width: 40px; height: 40px; object-fit: contain; }
         .icon-wrapper img.lazy { filter: blur(2px); transition: filter 0.5s; } 
         .icon-wrapper img.lazy.loaded { filter: none; }
         
-        /* --- ESTILOS CATEGORÍAS --- */
-        .icon-category { 
-            font-size: 16px; 
-            color: #00683B; /* Color Categoría Principal */
-            font-weight: bold; 
-            margin-top: 5px; 
-            width: 100%; 
-            text-align: center; 
-            line-height: 1.2;
-        }
-        .icon-subcategory { 
-            font-size: 12px; 
-            color: #69BE28; /* Color Subcategoría */
-            width: 100%; 
-            text-align: center; 
-            margin-bottom: 5px; 
-            line-height: 1.2;
-        }
-        
-        /* --- ESTILOS MODAL Y VARIANTES MANTENIDOS --- */
         .preview-container { display: flex; justify-content: center; gap: 20px; margin: 20px auto; }
         .variant-box { display: flex; flex-direction: column; align-items: center; }
         .variant-box .preview-image { width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 5px; }
@@ -64,7 +85,7 @@
 </head>
 <body>
 
-    <h1>Colección de Iconos Dinámica (Lazy Loading)</h1>
+    <h1>Colección de Iconos Dinámica (Agrupación por Bloque)</h1>
 
     <div class="icon-gallery">
         <div class="flow-header">Flow de iconos</div>
@@ -93,7 +114,7 @@
         const iconGrid = document.getElementById('iconGrid');
         const iconFilter = document.getElementById('iconFilter');
         
-        // --- FUNCIÓN DE PARSING (Mantiene la extracción de Name) ---
+        // --- FUNCIÓN DE PARSING (Mantenida) ---
         
         function parseIconUrl(fullUrl) {
             const fileName = fullUrl.substring(fullUrl.lastIndexOf('/') + 1);
@@ -108,13 +129,11 @@
             let subcategory = '';
 
             if (parts.length >= 4) {
-                // Nombre archivo - Categoria [Sub categoria] - tags - md
                 baseName = parts[0].trim();
                 categoryBlock = parts[1].trim(); 
                 tags = parts[2].trim().toLowerCase().replace(/\s+/g, ',');
                 indicator = parts[3].trim().toLowerCase();
             } else if (parts.length === 3) {
-                // Asumir que es Nombre - Cat[Sub] - md (sin tags explícitos)
                 baseName = parts[0].trim();
                 categoryBlock = parts[1].trim();
                 indicator = parts[2].trim().toLowerCase();
@@ -139,7 +158,7 @@
             }
 
             return {
-                Name: baseName, // <-- ESTE ES EL NOMBRE LIMPIO QUE USAMOS AHORA
+                Name: baseName, 
                 Category: category,
                 Subcategory: subcategory,
                 Keywords: tags, 
@@ -148,21 +167,13 @@
             };
         }
 
-        // --- FUNCIONES DE ORDENAMIENTO, GALERÍA Y LAZY LOADING (Mantenidas) ---
+        // --- FUNCIÓN DE INICIALIZACIÓN (Mantenida) ---
         
-        function getVariantOrder(type) {
-            switch (type) {
-                case 'Base': return 1;
-                case 'Monocromático': return 2;
-                case 'Negativo': return 3;
-                default: return 99;
-            }
-        }
-
         function initGallery() {
             if (typeof ICON_URLS_LIST !== 'undefined' && Array.isArray(ICON_URLS_LIST)) {
                 let iconDataArray = ICON_URLS_LIST.map(parseIconUrl);
                 
+                // Ordenamiento Triple (Categoría -> Subcategoría -> Nombre)
                 iconDataArray.sort((a, b) => {
                     const catA = a.Category.toUpperCase();
                     const catB = b.Category.toUpperCase();
@@ -184,28 +195,78 @@
             }
         }
 
+        /**
+         * 🚀 MODIFICADA: Genera el HTML agrupando por Categoría y Subcategoría.
+         */
         function generateIconGallery(iconDataArray) {
             iconGrid.innerHTML = ''; 
+            
+            let currentCategory = '';
+            let currentSubcategory = '';
+            let currentSection = null; // Referencia al contenedor .icon-section actual
 
             iconDataArray.forEach(icon => {
-                const item = document.createElement('div');
-                item.className = 'icon-item';
-                item.setAttribute('data-filter-name', icon.Keywords); 
-                
-                let categoryHtml = `<div class="icon-category">${icon.Category}</div>`;
-                if (icon.Subcategory) {
-                    categoryHtml += `<div class="icon-subcategory">${icon.Subcategory}</div>`;
+                // 1. Detección de cambio de Categoría
+                if (icon.Category !== currentCategory) {
+                    currentCategory = icon.Category;
+                    
+                    // Contenedor principal para toda la Categoría (útil para el filtrado)
+                    const categoryGroup = document.createElement('div');
+                    categoryGroup.className = 'category-group';
+                    categoryGroup.setAttribute('data-category', icon.Category);
+                    
+                    // H2: Encabezado de Categoría
+                    const h2 = document.createElement('h2');
+                    h2.className = 'category-header';
+                    h2.textContent = icon.Category;
+                    categoryGroup.appendChild(h2);
+                    iconGrid.appendChild(categoryGroup);
+                    
+                    // Reiniciar la subcategoría
+                    currentSubcategory = ''; 
                 }
+                
+                // 2. Detección de cambio de Subcategoría
+                if (icon.Subcategory !== currentSubcategory) {
+                    currentSubcategory = icon.Subcategory;
+                    
+                    // Si hay Subcategoría (no vacía)
+                    if (currentSubcategory) {
+                        // H4: Encabezado de Subcategoría
+                        const h4 = document.createElement('h4');
+                        h4.className = 'subcategory-header';
+                        h4.textContent = icon.Subcategory;
+                        iconGrid.lastElementChild.appendChild(h4); 
+                    }
+                    
+                    // 3. Crear el nuevo contenedor de iconos (la cuadrícula)
+                    currentSection = document.createElement('div');
+                    // Usamos un identificador único para el filtrado
+                    const sectionId = `section-${icon.Category.replace(/\s/g, '_')}-${icon.Subcategory.replace(/\s/g, '_') || 'base'}`;
+                    currentSection.id = sectionId;
+                    currentSection.className = 'icon-section';
+                    
+                    iconGrid.lastElementChild.appendChild(currentSection);
+                }
+                
+                // 4. Agregar el icono al contenedor de sección actual
+                if (currentSection) {
+                    const item = document.createElement('div');
+                    item.className = 'icon-item';
+                    item.setAttribute('data-filter-name', icon.Keywords); 
+                    item.setAttribute('data-category-name', icon.Category);
+                    item.setAttribute('data-subcategory-name', icon.Subcategory);
 
-                item.innerHTML = `
-                    ${categoryHtml}
-                    <div class="icon-wrapper" 
-                         title="${icon.Name} (${icon.Category} / ${icon.Subcategory || 'Base'})" 
-                         data-svg-url="${icon.Url}">
-                        <img class="lazy" data-src="${icon.Url}" alt="${icon.Name}" onerror="this.src='placeholder.svg';" />
-                    </div>
-                `;
-                iconGrid.appendChild(item);
+                    item.innerHTML = `
+                        <div class="icon-wrapper" 
+                             title="${icon.Name} (${icon.Category} / ${icon.Subcategory || 'Base'})" 
+                             data-svg-url="${icon.Url}">
+                            <img class="lazy" data-src="${icon.Url}" alt="${icon.Name}" onerror="this.src='placeholder.svg';" />
+                        </div>
+                        <span class="icon-name" style="font-size: 0.8em;">${icon.Name}</span>
+                    `;
+                    currentSection.appendChild(item);
+                }
             });
             
             const iconWrappers = document.querySelectorAll('.icon-wrapper');
@@ -214,6 +275,70 @@
             observeIcons();
         }
         
+        // --- FUNCIÓN DE FILTRADO (MODIFICADA PARA MANTENER ESTRUCTURA) ---
+        
+        function filterIcons() {
+            const filterValue = iconFilter.value.toLowerCase().trim();
+            const allCategoryGroups = document.querySelectorAll('.category-group');
+
+            allCategoryGroups.forEach(group => {
+                let categoryHasVisibleIcons = false;
+                
+                // Iterar sobre todas las secciones de iconos dentro de este grupo de categoría
+                const sections = group.querySelectorAll('.icon-section');
+
+                sections.forEach(section => {
+                    let sectionHasVisibleIcons = false;
+                    const iconItems = section.querySelectorAll('.icon-item');
+
+                    iconItems.forEach(item => {
+                        const keywordsAttribute = item.getAttribute('data-filter-name'); 
+                        const isMatch = keywordsAttribute.includes(filterValue);
+                        
+                        // Mostrar u ocultar icono individual
+                        if (filterValue.length === 0 || isMatch) {
+                            item.classList.remove('hidden');
+                            sectionHasVisibleIcons = true;
+                            categoryHasVisibleIcons = true;
+                        } else {
+                            item.classList.add('hidden');
+                        }
+                    });
+                    
+                    // Ocultar/mostrar encabezado H4 y sección (.icon-section)
+                    const h4 = section.previousElementSibling;
+                    
+                    if (filterValue.length === 0 || sectionHasVisibleIcons) {
+                         // Mostrar la sección de iconos
+                        section.classList.remove('hidden-group');
+                        // Mostrar el H4 si existe y tiene iconos visibles
+                        if (h4 && h4.tagName === 'H4') {
+                             h4.classList.remove('hidden-group');
+                        }
+                    } else {
+                        // Ocultar la sección de iconos
+                        section.classList.add('hidden-group');
+                        // Ocultar el H4 si la sección no tiene iconos visibles
+                        if (h4 && h4.tagName === 'H4') {
+                            h4.classList.add('hidden-group');
+                        }
+                    }
+                });
+                
+                // Ocultar/mostrar el encabezado H2 y todo el grupo de categoría
+                const h2 = group.querySelector('.category-header');
+
+                if (filterValue.length === 0 || categoryHasVisibleIcons) {
+                    group.classList.remove('hidden-group');
+                    h2.classList.remove('hidden-group');
+                } else {
+                    group.classList.add('hidden-group');
+                }
+            });
+        }
+        
+        // --- FUNCIONES DE LAZY LOADING, MODAL Y DESCARGA (Mantenidas) ---
+
         function observeIcons() {
             if ('IntersectionObserver' in window) {
                 const lazyImages = document.querySelectorAll('img.lazy');
@@ -239,25 +364,6 @@
                     img.classList.remove('lazy');
                 });
             }
-        }
-
-        function filterIcons() {
-            const filterValue = iconFilter.value.toLowerCase().trim();
-            const iconItems = document.querySelectorAll('.icon-item');
-
-            iconItems.forEach(item => {
-                const keywordsAttribute = item.getAttribute('data-filter-name'); 
-                
-                if (!keywordsAttribute) return; 
-
-                const isMatch = keywordsAttribute.includes(filterValue);
-                
-                if (filterValue.length === 0 || isMatch) {
-                    item.classList.remove('hidden');
-                } else {
-                    item.classList.add('hidden');
-                }
-            });
         }
 
         function downloadVariant(url, baseName, variantLabel) {
@@ -294,21 +400,16 @@
             return box;
         }
 
-        /**
-         * 🚀 Lógica de Rutas Simplificada: Usa solo el baseName (e.g., "House").
-         */
         async function checkAndDisplayVariants(urlBase, baseName, indicator) {
             document.getElementById('popupPreviewContainer').innerHTML = '';
             
-            // 1. Icono Base
             const baseBox = createVariantBox(urlBase, baseName, 'Base', false);
             document.getElementById('popupPreviewContainer').appendChild(baseBox);
             
             const baseDir = urlBase.substring(0, urlBase.lastIndexOf('/') + 1);
-            
             const variantsToCheck = [];
             
-            // 2. Monocromático: img/monocromathic/House.svg
+            // Rutas simplificadas: img/monocromathic/House.svg
             if (indicator.includes('m')) {
                 const monoUrl = baseDir.replace('img/', 'img/monocromathic/') + baseName + '.svg';
                 variantsToCheck.push({
@@ -319,7 +420,7 @@
                 });
             }
             
-            // 3. Negativo: img/negative/House.svg
+            // Rutas simplificadas: img/negative/House.svg
             if (indicator.includes('n')) {
                 const negUrl = baseDir.replace('img/', 'img/negative/') + baseName + '.svg';
                 variantsToCheck.push({
@@ -332,7 +433,6 @@
 
             variantsToCheck.sort((a, b) => a.order - b.order);
 
-            // 4. Verificar y Mostrar
             for (const variant of variantsToCheck) {
                 if (await checkImageExists(variant.url)) {
                     const variantBox = createVariantBox(variant.url, baseName, variant.label, variant.isNegative);
