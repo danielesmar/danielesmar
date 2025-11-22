@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colección de Iconos Dinámica (Carga Inmediata y Agrupación)</title>
+    <title>Colección de Iconos Dinámica (Estructura Corregida)</title>
     <style>
         /* --- ESTILOS GENERALES --- */
         body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -75,7 +75,7 @@
 </head>
 <body>
 
-    <h1>Colección de Iconos Dinámica (Carga Inmediata)</h1>
+    <h1>Colección de Iconos Dinámica (Estructura Corregida)</h1>
 
     <div class="icon-gallery">
         <div class="flow-header">Flow de iconos</div>
@@ -164,7 +164,7 @@
             return {
                 Name: baseName, 
                 Category: category, 
-                Subcategory: subcategory, 
+                Subcategory: subcategory, // Puede ser vacío, lo que representa "sin subcategoría"
                 Keywords: combinedTags, 
                 Indicator: indicator,
                 Url: fullUrl
@@ -193,6 +193,7 @@
                     if (catA < catB) return -1;
                     if (catA > catB) return 1;
 
+                    // IMPORTANTE: Los vacíos (sin subcategoría) irán primero dentro de la categoría.
                     const subCatA = a.Subcategory.toUpperCase();
                     const subCatB = b.Subcategory.toUpperCase();
                     if (subCatA < subCatB) return -1;
@@ -208,14 +209,15 @@
             }
         }
 
-        // --- FUNCIÓN DE GENERACIÓN DE GALERÍA POR BLOQUES (SIN LAZY LOADING) ---
+        // --- FUNCIÓN DE GENERACIÓN DE GALERÍA POR BLOQUES (CORREGIDA) ---
         
         function generateIconGallery(iconDataArray) {
             iconGrid.innerHTML = ''; 
             
             let currentCategory = '';
-            let currentSubcategory = '';
-            let currentSection = null; 
+            let currentSubcategory = null; // Usamos null para diferenciar el estado inicial
+            let currentCategoryGroup = null; // Referencia al div.category-group actual
+            let currentSection = null; // Referencia al div.icon-section (la cuadrícula) actual
 
             iconDataArray.forEach(icon => {
                 
@@ -223,29 +225,27 @@
                 if (icon.Category !== currentCategory) {
                     currentCategory = icon.Category;
                     
-                    const categoryGroup = document.createElement('div');
-                    categoryGroup.className = 'category-group';
-                    categoryGroup.setAttribute('data-category', icon.Category);
+                    // Crear nuevo grupo de categoría (H2)
+                    currentCategoryGroup = document.createElement('div');
+                    currentCategoryGroup.className = 'category-group';
+                    currentCategoryGroup.setAttribute('data-category', icon.Category);
                     
                     const h2 = document.createElement('h2');
                     h2.className = 'category-header';
                     h2.textContent = icon.Category;
-                    categoryGroup.appendChild(h2);
-                    iconGrid.appendChild(categoryGroup);
+                    currentCategoryGroup.appendChild(h2);
+                    iconGrid.appendChild(currentCategoryGroup);
                     
-                    currentSubcategory = ''; 
+                    // Forzar cambio de subcategoría para crear el primer contenedor de iconos
+                    currentSubcategory = undefined; 
                 }
                 
                 // 2. Detección de cambio de Subcategoría (H4)
+                // Esto se activa si:
+                // a) La subcategoría actual es diferente a la del icono (incluyendo pasar de "" a "Nombre")
+                // b) O si la subcategoría es "" (sin subcategoría) pero venimos de una categoría nueva (currentSubcategory = undefined)
                 if (icon.Subcategory !== currentSubcategory) {
                     currentSubcategory = icon.Subcategory;
-                    
-                    if (currentSubcategory) {
-                        const h4 = document.createElement('h4');
-                        h4.className = 'subcategory-header';
-                        h4.textContent = icon.Subcategory;
-                        iconGrid.lastElementChild.appendChild(h4); 
-                    }
                     
                     // 3. Crear el nuevo contenedor de iconos (la cuadrícula)
                     currentSection = document.createElement('div');
@@ -253,7 +253,16 @@
                     
                     currentSection.setAttribute('data-section-id', `${icon.Category}_${icon.Subcategory || 'base'}`);
                     
-                    iconGrid.lastElementChild.appendChild(currentSection);
+                    // Si hay Subcategoría con nombre, añadir el H4 antes de la sección.
+                    if (currentSubcategory) {
+                        const h4 = document.createElement('h4');
+                        h4.className = 'subcategory-header';
+                        h4.textContent = icon.Subcategory;
+                        currentCategoryGroup.appendChild(h4); 
+                    }
+                    // Si NO hay subcategoría, el contenedor se crea inmediatamente después del H2 (o el H4 anterior)
+                    
+                    currentCategoryGroup.appendChild(currentSection);
                 }
                 
                 // 4. Agregar el icono al contenedor de sección actual
@@ -264,7 +273,7 @@
 
                     item.innerHTML = `
                         <div class="icon-wrapper" 
-                             title="${icon.Name} (${icon.Category} / ${icon.Subcategory || 'Base'})" 
+                             title="${icon.Name} (${icon.Category} / ${icon.Subcategory || 'Sin subcategoría'})" 
                              data-svg-url="${icon.Url}">
                             <img src="${icon.Url}" alt="${icon.Name}" onerror="this.src='placeholder.svg';" />
                         </div>
@@ -292,21 +301,26 @@
                 for (let i = 1; i < contents.length; i++) { 
                     const element = contents[i];
                     
+                    // Los elementos a ocultar/mostrar son: subcategory-header (H4) y icon-section (cuadrícula)
                     if (element.classList.contains('subcategory-header') || element.classList.contains('icon-section')) {
                          
                         let sectionElement = element;
                         let headerElement = null;
 
+                        // Si el elemento es un H4, intentamos enlazarlo con la sección siguiente
                         if (element.classList.contains('subcategory-header')) {
                             headerElement = element;
                             if (i + 1 < contents.length && contents[i+1].classList.contains('icon-section')) {
                                 sectionElement = contents[i+1];
-                                i++; 
+                                i++; // Saltar la sección en el siguiente ciclo, ya que la procesaremos ahora
                             } else {
+                                // Caso extraño donde hay H4 sin sección de iconos, lo ocultamos si estamos filtrando
+                                if (filterValue.length > 0) headerElement.classList.add('hidden-group');
                                 continue; 
                             }
                         }
 
+                        // Procesar la sección de iconos
                         if (sectionElement.classList.contains('icon-section')) {
                             let sectionHasVisibleIcons = false;
                             const iconItems = sectionElement.querySelectorAll('.icon-item');
@@ -324,6 +338,7 @@
                                 }
                             });
 
+                            // Mostrar/ocultar la sección y su H4 (si existe)
                             if (filterValue.length === 0 || sectionHasVisibleIcons) {
                                 sectionElement.classList.remove('hidden-group');
                                 if (headerElement) headerElement.classList.remove('hidden-group');
