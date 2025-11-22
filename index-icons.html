@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Colección de Iconos Dinámica (Agrupación por Bloque y Lazy Loading)</title>
+    <title>Colección de Iconos Dinámica (Carga Inmediata)</title>
     <style>
         /* --- ESTILOS GENERALES --- */
         body { font-family: 'Arial', sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -13,11 +13,7 @@
         #iconFilter { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
         
         /* --- ESTILOS DE AGRUPACIÓN POR BLOQUES --- */
-        
-        /* Contenedor principal para la lista de iconos */
         #iconGrid { display: block; }
-        
-        /* H2 para Categoría Principal */
         .category-header { 
             color: #00683B; /* Color Categoría Principal */
             font-size: 16px; 
@@ -29,7 +25,6 @@
             text-transform: uppercase;
         }
 
-        /* H4 para Subcategoría */
         .subcategory-header { 
             color: #69BE28; /* Color Subcategoría */
             font-size: 12px; 
@@ -39,7 +34,6 @@
             text-transform: uppercase;
         }
 
-        /* Contenedor de la cuadrícula de iconos dentro de cada subcategoría/categoría */
         .icon-section {
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
@@ -59,14 +53,11 @@
             padding: 5px 0; 
         }
         
-        /* --- ESTILOS DEL WRAPPER Y LAZY LOADING --- */
+        /* --- ESTILOS DEL WRAPPER Y MODAL (Sin lazy class) --- */
         .icon-wrapper { width: 100%; height: 80px; display: flex; justify-content: center; align-items: center; border: 1px solid #eee; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 5px; position: relative; }
         .icon-wrapper:hover { box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
         .icon-wrapper img { width: 40px; height: 40px; object-fit: contain; }
-        .icon-wrapper img.lazy { filter: blur(2px); transition: filter 0.5s; } /* Efecto visual de carga perezosa */
-        .icon-wrapper img.lazy.loaded { filter: none; }
         
-        /* --- ESTILOS DEL MODAL --- */
         .preview-container { display: flex; justify-content: center; gap: 20px; margin: 20px auto; }
         .variant-box { display: flex; flex-direction: column; align-items: center; }
         .variant-box .preview-image { width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 5px; }
@@ -84,7 +75,7 @@
 </head>
 <body>
 
-    <h1>Colección de Iconos Dinámica (Agrupación y Lazy Loading)</h1>
+    <h1>Colección de Iconos Dinámica (Carga Inmediata)</h1>
 
     <div class="icon-gallery">
         <div class="flow-header">Flow de iconos</div>
@@ -152,7 +143,6 @@
                 }
             }
             
-            // Ajuste final para asegurar que Category no sea nulo/vacío
             if (!category) {
                 category = 'SIN CATEGORÍA';
             }
@@ -210,14 +200,14 @@
             }
         }
 
-        // --- FUNCIÓN DE GENERACIÓN DE GALERÍA POR BLOQUES ---
+        // --- FUNCIÓN DE GENERACIÓN DE GALERÍA POR BLOQUES (SIN LAZY LOADING) ---
         
         function generateIconGallery(iconDataArray) {
             iconGrid.innerHTML = ''; 
             
             let currentCategory = '';
             let currentSubcategory = '';
-            let currentSection = null; // Referencia al contenedor .icon-section actual
+            let currentSection = null; 
 
             iconDataArray.forEach(icon => {
                 
@@ -235,14 +225,13 @@
                     categoryGroup.appendChild(h2);
                     iconGrid.appendChild(categoryGroup);
                     
-                    currentSubcategory = ''; // Reiniciar la subcategoría
+                    currentSubcategory = ''; 
                 }
                 
                 // 2. Detección de cambio de Subcategoría (H4)
                 if (icon.Subcategory !== currentSubcategory) {
                     currentSubcategory = icon.Subcategory;
                     
-                    // Si hay Subcategoría (no vacía)
                     if (currentSubcategory) {
                         const h4 = document.createElement('h4');
                         h4.className = 'subcategory-header';
@@ -254,7 +243,6 @@
                     currentSection = document.createElement('div');
                     currentSection.className = 'icon-section';
                     
-                    // Añadimos un atributo para que el filtrado pueda identificar el bloque
                     currentSection.setAttribute('data-section-id', `${icon.Category}_${icon.Subcategory || 'base'}`);
                     
                     iconGrid.lastElementChild.appendChild(currentSection);
@@ -270,7 +258,7 @@
                         <div class="icon-wrapper" 
                              title="${icon.Name} (${icon.Category} / ${icon.Subcategory || 'Base'})" 
                              data-svg-url="${icon.Url}">
-                            <img class="lazy" data-src="${icon.Url}" alt="${icon.Name}" onerror="this.src='placeholder.svg';" />
+                            <img src="${icon.Url}" alt="${icon.Name}" onerror="this.src='placeholder.svg';" />
                         </div>
                         <span class="icon-name" style="font-size: 0.8em;">${icon.Name}</span>
                     `;
@@ -281,10 +269,10 @@
             const iconWrappers = document.querySelectorAll('.icon-wrapper');
             setupIconClickEvents(iconWrappers);
             
-            observeIcons();
+            // ❌ Función observeIcons() Eliminada
         }
         
-        // --- FUNCIÓN DE FILTRADO (MODIFICADA PARA MANTENER ESTRUCTURA) ---
+        // --- FUNCIÓN DE FILTRADO (Mantenida) ---
         
         function filterIcons() {
             const filterValue = iconFilter.value.toLowerCase().trim();
@@ -293,10 +281,9 @@
             allCategoryGroups.forEach(group => {
                 let categoryHasVisibleIcons = false;
                 
-                // Iterar sobre todas las secciones de iconos y encabezados H4
                 const contents = group.children; 
 
-                for (let i = 1; i < contents.length; i++) { // Empezamos después del H2
+                for (let i = 1; i < contents.length; i++) { 
                     const element = contents[i];
                     
                     if (element.classList.contains('subcategory-header') || element.classList.contains('icon-section')) {
@@ -304,19 +291,16 @@
                         let sectionElement = element;
                         let headerElement = null;
 
-                        // Si el elemento actual es el H4, la siguiente es la sección
                         if (element.classList.contains('subcategory-header')) {
                             headerElement = element;
-                            // Asegurarse de que el siguiente elemento es la sección, si existe
                             if (i + 1 < contents.length && contents[i+1].classList.contains('icon-section')) {
                                 sectionElement = contents[i+1];
-                                i++; // Saltar la sección en el siguiente ciclo
+                                i++; 
                             } else {
-                                continue; // No hay sección asociada, seguir
+                                continue; 
                             }
                         }
 
-                        // Si el elemento actual es una sección, procesarla
                         if (sectionElement.classList.contains('icon-section')) {
                             let sectionHasVisibleIcons = false;
                             const iconItems = sectionElement.querySelectorAll('.icon-item');
@@ -334,7 +318,6 @@
                                 }
                             });
 
-                            // Mostrar/ocultar la sección y su H4 (si existe)
                             if (filterValue.length === 0 || sectionHasVisibleIcons) {
                                 sectionElement.classList.remove('hidden-group');
                                 if (headerElement) headerElement.classList.remove('hidden-group');
@@ -355,34 +338,7 @@
             });
         }
         
-        // --- FUNCIONES DE LAZY LOADING, MODAL Y DESCARGA ---
-
-        function observeIcons() {
-            if ('IntersectionObserver' in window) {
-                const lazyImages = document.querySelectorAll('img.lazy');
-
-                const observer = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const lazyImage = entry.target;
-                            lazyImage.src = lazyImage.dataset.src;
-                            lazyImage.classList.remove('lazy');
-                            lazyImage.classList.add('loaded');
-                            observer.unobserve(lazyImage);
-                        }
-                    });
-                });
-
-                lazyImages.forEach(img => {
-                    observer.observe(img);
-                });
-            } else {
-                document.querySelectorAll('img.lazy').forEach(img => {
-                    img.src = img.dataset.src;
-                    img.classList.remove('lazy');
-                });
-            }
-        }
+        // --- FUNCIONES DEL MODAL Y DESCARGA (Mantenidas) ---
 
         function downloadVariant(url, baseName, variantLabel) {
             const a = document.createElement('a');
@@ -427,11 +383,10 @@
             const baseDir = urlBase.substring(0, urlBase.lastIndexOf('/') + 1);
             const variantsToCheck = [];
             
-            // ⚠️ RUTA AJUSTADA (Usando 'monocromatic/' como se mencionó anteriormente)
-            const MONO_FOLDER = 'img/monocromatic/'; 
+            // ⚠️ Rutas de Carpeta
+            const MONO_FOLDER = 'img/monocromatic/'; // Usando 'monocromatic/'
             const NEG_FOLDER = 'img/negative/'; 
 
-            // Monocromático: baseDir + monocromatic/ + Name.svg
             if (indicator.includes('m')) {
                 const monoUrl = baseDir.replace('img/', MONO_FOLDER) + baseName + '.svg';
                 variantsToCheck.push({
@@ -442,7 +397,6 @@
                 });
             }
             
-            // Negativo: baseDir + negative/ + Name.svg
             if (indicator.includes('n')) {
                 const negUrl = baseDir.replace('img/', NEG_FOLDER) + baseName + '.svg';
                 variantsToCheck.push({
