@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Azure DevOps Board Monitor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Variables CSS - Colores de Azure DevOps */
         :root {
@@ -483,7 +482,7 @@
             font-size: 0.9rem;
         }
 
-        /* Controles de tiempo mejorados para pantallas pequeñas */
+        /* Controles de tiempo */
         .time-controls-container {
             display: flex;
             flex-direction: column;
@@ -540,6 +539,33 @@
 
         .time-input-row select.form-control {
             padding: 8px 5px;
+        }
+
+        /* Campos nuevos de tiempo calculado */
+        .calculated-time-results {
+            background-color: rgba(0, 120, 212, 0.05);
+            border-radius: var(--az-border-radius);
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid var(--az-accent);
+        }
+
+        .calculated-time-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .calculated-label {
+            font-weight: 600;
+            color: var(--az-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .calculated-value {
+            font-weight: 700;
+            color: var(--az-primary);
+            font-size: 1rem;
         }
 
         .time-summary {
@@ -651,7 +677,66 @@
             line-height: 1.4;
         }
 
-        /* ========== TAREAS POR USUARIO - NUEVO DISEÑO ========== */
+        /* Timeline de cambios de estado */
+        .timeline-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--az-border-color);
+        }
+
+        .timeline-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: var(--az-border-radius);
+            border: 1px solid var(--az-border-color);
+            background-color: var(--az-bg-primary);
+        }
+
+        .timeline-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--az-border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-date {
+            font-weight: 600;
+            color: var(--az-text-primary);
+            font-size: 0.9rem;
+        }
+
+        .timeline-user {
+            font-size: 0.85rem;
+            color: var(--az-text-secondary);
+        }
+
+        .timeline-state {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .timeline-duration {
+            font-size: 0.85rem;
+            color: var(--az-text-tertiary);
+            font-style: italic;
+        }
+
+        /* ========== TAREAS POR USUARIO ========== */
         .user-tasks-container {
             display: flex;
             flex-direction: column;
@@ -804,7 +889,7 @@
             background-color: var(--az-bg-secondary);
             border-radius: var(--az-border-radius);
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             max-height: 80vh;
             overflow: hidden;
             display: flex;
@@ -1467,10 +1552,6 @@
                                     <span class="meta-value" id="timeAssignedTo"></span>
                                 </div>
                                 <div class="meta-item">
-                                    <span class="meta-label">Área</span>
-                                    <span class="meta-value" id="timeArea"></span>
-                                </div>
-                                <div class="meta-item">
                                     <span class="meta-label">Iteration</span>
                                     <span class="meta-value" id="timeIteration"></span>
                                 </div>
@@ -1503,6 +1584,9 @@
                                             <option value="PM">PM</option>
                                         </select>
                                     </div>
+                                    <div style="font-size: 0.8rem; color: var(--az-text-tertiary); margin-top: 5px;">
+                                        Último cambio: <span id="lastChangedTime">--:-- --</span>
+                                    </div>
                                 </div>
                                 
                                 <div class="time-input-group">
@@ -1520,16 +1604,41 @@
                                             <option value="PM">PM</option>
                                         </select>
                                     </div>
+                                    <div style="font-size: 0.8rem; color: var(--az-text-tertiary); margin-top: 5px;">
+                                        <button class="btn-sm btn-secondary" id="setToCurrent" style="padding: 4px 8px; font-size: 0.8rem;">
+                                            <i class="fas fa-clock"></i> Usar hora actual
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             
                             <div class="form-group">
-                                <button class="btn btn-primary" id="setCurrentTime">
-                                    <i class="fas fa-sync-alt"></i> Usar Hora Actual
-                                </button>
                                 <button class="btn btn-success" id="calculateTime">
                                     <i class="fas fa-calculator"></i> Calcular Tiempo
                                 </button>
+                            </div>
+                            
+                            <!-- Resultados del cálculo -->
+                            <div class="calculated-time-results" id="calculatedResults" style="display: none;">
+                                <h4 style="margin-bottom: 10px; color: var(--az-accent); font-size: 0.95rem;">
+                                    <i class="fas fa-calculator"></i> Resultados del Cálculo
+                                </h4>
+                                <div class="calculated-time-row">
+                                    <span class="calculated-label">Tiempo transcurrido:</span>
+                                    <span class="calculated-value" id="elapsedTime">0.00h</span>
+                                </div>
+                                <div class="calculated-time-row">
+                                    <span class="calculated-label">Completed Work actual:</span>
+                                    <span class="calculated-value" id="currentCompletedWork">0.00h</span>
+                                </div>
+                                <div class="calculated-time-row">
+                                    <span class="calculated-label">Nuevo Completed Work:</span>
+                                    <span class="calculated-value" id="newCompletedWork">0.00h</span>
+                                </div>
+                                <div class="calculated-time-row">
+                                    <span class="calculated-label">Nuevo Remaining Work:</span>
+                                    <span class="calculated-value" id="newRemainingWork">0.00h</span>
+                                </div>
                             </div>
                             
                             <div class="time-chart" id="timeChart">
@@ -1564,6 +1673,14 @@
                                     <i class="fas fa-download"></i> Exportar Reporte
                                 </button>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline de cambios de estado -->
+                    <div class="timeline-section" id="timelineSection" style="display: none;">
+                        <h3 class="card-title"><i class="fas fa-history"></i> Timeline de Cambios de Estado</h3>
+                        <div class="timeline-container" id="timelineContainer">
+                            <!-- Los eventos del timeline se generarán aquí -->
                         </div>
                     </div>
                     
@@ -1603,7 +1720,8 @@
             originalEstimate: 0,
             completedWork: 0,
             remainingWork: 0,
-            calculatedTime: 0 // Tiempo calculado actual (no acumulado)
+            calculatedResults: null,
+            timeline: []
         };
 
         // Datos para tareas por usuario
@@ -1741,7 +1859,7 @@
             document.getElementById('resetTimeCalculator').addEventListener('click', resetTimeCalculator);
             
             // Usar hora actual
-            document.getElementById('setCurrentTime').addEventListener('click', setEndTimeToCurrent);
+            document.getElementById('setToCurrent').addEventListener('click', setEndTimeToCurrent);
             
             // Calcular tiempo
             document.getElementById('calculateTime').addEventListener('click', calculateElapsedTime);
@@ -2107,90 +2225,100 @@
             // Mostrar loading
             showLoading('timeLoading');
             
-            // Ejecutar consulta
-            const endpoint = `_apis/wit/workitems/${workItemId}?$expand=all`;
-            const result = await callAzureDevOpsAPI(endpoint);
-            
-            // Ocultar loading
-            hideLoading('timeLoading');
-            
-            if (result) {
-                // Guardar work item
-                timeCalculatorData.workItem = result;
+            try {
+                // Ejecutar consulta para obtener el work item
+                const endpoint = `_apis/wit/workitems/${workItemId}?$expand=all`;
+                const result = await callAzureDevOpsAPI(endpoint);
                 
-                // Extraer información relevante
-                const fields = result.fields;
+                // Obtener updates del work item para el timeline
+                const updatesEndpoint = `_apis/wit/workitems/${workItemId}/updates`;
+                const updatesResult = await callAzureDevOpsAPI(updatesEndpoint);
                 
-                // Mostrar información básica
-                document.getElementById('timeWorkItemIdDisplay').textContent = `#${result.id}`;
-                document.getElementById('timeWorkItemTitle').textContent = fields['System.Title'] || 'Sin título';
+                // Ocultar loading
+                hideLoading('timeLoading');
                 
-                // Estado con color
-                const state = fields['System.State'] || 'Unknown';
-                const stateElement = document.getElementById('timeWorkItemState');
-                stateElement.textContent = state;
-                
-                // Aplicar color según estado
-                if (state.toLowerCase().includes('progress')) {
-                    stateElement.style.backgroundColor = 'rgba(0, 120, 212, 0.1)';
-                    stateElement.style.color = 'var(--az-state-inprogress)';
-                } else if (state.toLowerCase().includes('done') || state.toLowerCase().includes('closed')) {
-                    stateElement.style.backgroundColor = 'rgba(16, 124, 16, 0.1)';
-                    stateElement.style.color = 'var(--az-state-done)';
-                } else if (state.toLowerCase().includes('to do') || state.toLowerCase().includes('new')) {
-                    stateElement.style.backgroundColor = 'rgba(161, 159, 157, 0.1)';
-                    stateElement.style.color = 'var(--az-state-todo)';
-                } else {
-                    stateElement.style.backgroundColor = 'rgba(255, 140, 0, 0.1)';
-                    stateElement.style.color = 'var(--az-state-resolved)';
+                if (result) {
+                    // Guardar work item
+                    timeCalculatorData.workItem = result;
+                    timeCalculatorData.timeline = updatesResult ? updatesResult.value : [];
+                    
+                    // Extraer información relevante
+                    const fields = result.fields;
+                    
+                    // Mostrar información básica
+                    document.getElementById('timeWorkItemIdDisplay').textContent = `#${result.id}`;
+                    document.getElementById('timeWorkItemTitle').textContent = fields['System.Title'] || 'Sin título';
+                    
+                    // Estado con color
+                    const state = fields['System.State'] || 'Unknown';
+                    const stateElement = document.getElementById('timeWorkItemState');
+                    stateElement.textContent = state;
+                    
+                    // Aplicar color según estado
+                    if (state.toLowerCase().includes('progress')) {
+                        stateElement.style.backgroundColor = 'rgba(0, 120, 212, 0.1)';
+                        stateElement.style.color = 'var(--az-state-inprogress)';
+                    } else if (state.toLowerCase().includes('done') || state.toLowerCase().includes('closed')) {
+                        stateElement.style.backgroundColor = 'rgba(16, 124, 16, 0.1)';
+                        stateElement.style.color = 'var(--az-state-done)';
+                    } else if (state.toLowerCase().includes('to do') || state.toLowerCase().includes('new')) {
+                        stateElement.style.backgroundColor = 'rgba(161, 159, 157, 0.1)';
+                        stateElement.style.color = 'var(--az-state-todo)';
+                    } else {
+                        stateElement.style.backgroundColor = 'rgba(255, 140, 0, 0.1)';
+                        stateElement.style.color = 'var(--az-state-resolved)';
+                    }
+                    
+                    // Información adicional
+                    document.getElementById('timeAssignedTo').textContent = 
+                        fields['System.AssignedTo'] ? 
+                        (fields['System.AssignedTo'].displayName || fields['System.AssignedTo'].uniqueName) : 
+                        'No asignado';
+                    
+                    document.getElementById('timeIteration').textContent = 
+                        fields['System.IterationPath'] || 'No especificado';
+                    
+                    document.getElementById('timeActivity').textContent = 
+                        fields['Microsoft.VSTS.Common.Activity'] || 'Development';
+                    
+                    // Cargar tiempos
+                    timeCalculatorData.originalEstimate = parseFloat(fields['Microsoft.VSTS.Scheduling.OriginalEstimate']) || 0;
+                    timeCalculatorData.completedWork = parseFloat(fields['Microsoft.VSTS.Scheduling.CompletedWork']) || 0;
+                    timeCalculatorData.remainingWork = parseFloat(fields['Microsoft.VSTS.Scheduling.RemainingWork']) || 0;
+                    
+                    // Actualizar UI con tiempos actuales
+                    document.getElementById('originalEstimate').textContent = timeCalculatorData.originalEstimate.toFixed(2);
+                    document.getElementById('completedWork').textContent = timeCalculatorData.completedWork.toFixed(2);
+                    document.getElementById('remainingWork').textContent = timeCalculatorData.remainingWork.toFixed(2);
+                    
+                    // Calcular overage (si completedWork > originalEstimate)
+                    const overage = Math.max(0, timeCalculatorData.completedWork - timeCalculatorData.originalEstimate);
+                    document.getElementById('timeOverage').textContent = overage.toFixed(2);
+                    
+                    // Mostrar gráfico
+                    updateTimeChart();
+                    
+                    // Establecer hora de inicio basada en System.ChangedDate (ajustado para Nicaragua UTC-6)
+                    setStartTimeFromChangedDate(fields['System.ChangedDate']);
+                    
+                    // Establecer hora de fin como hora actual
+                    setEndTimeToCurrent();
+                    
+                    // Mostrar timeline
+                    displayTimeline();
+                    
+                    // Mostrar contenido de la calculadora
+                    document.getElementById('timeCalculatorContent').style.display = 'block';
+                    
+                    showAlert('success', `Work item #${result.id} cargado correctamente. Timeline con ${timeCalculatorData.timeline.length} cambios.`);
                 }
-                
-                // Información adicional
-                document.getElementById('timeAssignedTo').textContent = 
-                    fields['System.AssignedTo'] ? 
-                    (fields['System.AssignedTo'].displayName || fields['System.AssignedTo'].uniqueName) : 
-                    'No asignado';
-                
-                document.getElementById('timeArea').textContent = 
-                    fields['System.AreaPath'] || 'No especificado';
-                
-                document.getElementById('timeIteration').textContent = 
-                    fields['System.IterationPath'] || 'No especificado';
-                
-                document.getElementById('timeActivity').textContent = 
-                    fields['Microsoft.VSTS.Common.Activity'] || 'Development';
-                
-                // Cargar tiempos
-                timeCalculatorData.originalEstimate = parseFloat(fields['Microsoft.VSTS.Scheduling.OriginalEstimate']) || 0;
-                timeCalculatorData.completedWork = parseFloat(fields['Microsoft.VSTS.Scheduling.CompletedWork']) || 0;
-                timeCalculatorData.remainingWork = parseFloat(fields['Microsoft.VSTS.Scheduling.RemainingWork']) || 0;
-                
-                // Actualizar UI con tiempos
-                document.getElementById('originalEstimate').textContent = timeCalculatorData.originalEstimate.toFixed(2);
-                document.getElementById('completedWork').textContent = timeCalculatorData.completedWork.toFixed(2);
-                document.getElementById('remainingWork').textContent = timeCalculatorData.remainingWork.toFixed(2);
-                
-                // Calcular overage (si completedWork > originalEstimate)
-                const overage = Math.max(0, timeCalculatorData.completedWork - timeCalculatorData.originalEstimate);
-                document.getElementById('timeOverage').textContent = overage.toFixed(2);
-                
-                // Mostrar gráfico
-                updateTimeChart();
-                
-                // Establecer hora de inicio basada en System.ChangedDate (Nicaragua UTC-6)
-                setStartTimeFromChangedDate(fields['System.ChangedDate']);
-                
-                // Establecer hora de fin como hora actual
-                setEndTimeToCurrent();
-                
-                // Mostrar contenido de la calculadora
-                document.getElementById('timeCalculatorContent').style.display = 'block';
-                
-                showAlert('success', `Work item #${result.id} cargado correctamente`);
+            } catch (error) {
+                hideLoading('timeLoading');
+                showAlert('error', `Error al cargar work item: ${error.message}`);
             }
         }
 
-        // Establecer hora de inicio desde System.ChangedDate (ajustado para Nicaragua UTC-6)
+        // Establecer hora de inicio desde System.ChangedDate (corregido para AM/PM)
         function setStartTimeFromChangedDate(changedDateString) {
             if (!changedDateString) {
                 setStartTimeOneHourAgo();
@@ -2202,20 +2330,17 @@
                 const changedDate = new Date(changedDateString);
                 
                 // Ajustar para Nicaragua (UTC-6)
-                const nicaraguaOffset = -6 * 60; // minutos
-                const localOffset = changedDate.getTimezoneOffset(); // minutos
-                const offsetDiff = nicaraguaOffset - localOffset;
+                // Nicaragua está en UTC-6, así que restamos 6 horas
+                const nicaraguaOffset = -6; // horas
+                const localDate = new Date(changedDate.getTime() + (nicaraguaOffset * 60 * 60 * 1000));
                 
-                // Aplicar ajuste de zona horaria
-                const adjustedDate = new Date(changedDate.getTime() + offsetDiff * 60000);
+                // Extraer hora y minutos
+                let hours = localDate.getUTCHours(); // Usamos getUTCHours porque ajustamos manualmente
+                const minutes = localDate.getUTCMinutes();
                 
-                // Extraer componentes de la hora
-                let hours = adjustedDate.getHours();
-                const minutes = adjustedDate.getMinutes();
-                
-                // Convertir a formato 12 horas
+                // Convertir a formato 12 horas CORRECTAMENTE
                 const period = hours >= 12 ? 'PM' : 'AM';
-                const displayHours = hours % 12 || 12;
+                const displayHours = hours % 12 || 12; // 0 se convierte en 12, 13 se convierte en 1, etc.
                 
                 // Redondear minutos al múltiplo de 5 más cercano
                 const roundedMinutes = Math.round(minutes / 5) * 5;
@@ -2225,28 +2350,156 @@
                 document.getElementById('startMinute').value = roundedMinutes;
                 document.getElementById('startPeriod').value = period;
                 
+                // Mostrar la hora original
+                const formattedTime = `${displayHours}:${roundedMinutes.toString().padStart(2, '0')} ${period}`;
+                document.getElementById('lastChangedTime').textContent = formattedTime;
+                
             } catch (error) {
                 console.error('Error al procesar fecha:', error);
                 setStartTimeOneHourAgo();
             }
         }
 
+        // Mostrar timeline de cambios
+        function displayTimeline() {
+            const timelineContainer = document.getElementById('timelineContainer');
+            timelineContainer.innerHTML = '';
+            
+            if (!timeCalculatorData.timeline || timeCalculatorData.timeline.length === 0) {
+                timelineContainer.innerHTML = '<div class="timeline-item" style="text-align: center; color: var(--az-text-tertiary); padding: 20px;">No hay cambios de estado registrados</div>';
+                return;
+            }
+            
+            // Filtrar solo cambios de estado
+            const stateChanges = timeCalculatorData.timeline.filter(update => {
+                return update.fields && update.fields['System.State'];
+            });
+            
+            if (stateChanges.length === 0) {
+                timelineContainer.innerHTML = '<div class="timeline-item" style="text-align: center; color: var(--az-text-tertiary); padding: 20px;">No hay cambios de estado registrados</div>';
+                return;
+            }
+            
+            // Ordenar por fecha (más reciente primero)
+            stateChanges.sort((a, b) => new Date(b.revisedDate) - new Date(a.revisedDate));
+            
+            // Mostrar máximo 10 cambios
+            const recentChanges = stateChanges.slice(0, 10);
+            
+            recentChanges.forEach((change, index) => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+                
+                const revisedDate = new Date(change.revisedDate);
+                const formattedDate = formatDateTime(revisedDate);
+                
+                // Obtener información del cambio
+                const oldState = change.fields['System.State'].oldValue || 'N/A';
+                const newState = change.fields['System.State'].newValue || 'N/A';
+                const revisedBy = change.revisedBy ? change.revisedBy.displayName : 'Desconocido';
+                
+                // Calcular duración si no es el último
+                let durationText = '';
+                if (index < recentChanges.length - 1) {
+                    const nextChange = recentChanges[index + 1];
+                    const nextDate = new Date(nextChange.revisedDate);
+                    const durationMs = revisedDate.getTime() - nextDate.getTime();
+                    const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+                    const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    if (durationHours > 0) {
+                        durationText = `${durationHours}h ${durationMinutes}m`;
+                    } else {
+                        durationText = `${durationMinutes}m`;
+                    }
+                }
+                
+                timelineItem.innerHTML = `
+                    <div class="timeline-header">
+                        <div class="timeline-date">${formattedDate}</div>
+                        <div class="timeline-user">${revisedBy}</div>
+                    </div>
+                    <div>
+                        <span class="timeline-state" style="background-color: ${getStateColor(oldState)}; color: ${getStateTextColor(oldState)};">
+                            ${oldState}
+                        </span>
+                        <i class="fas fa-arrow-right" style="color: var(--az-text-tertiary); margin-right: 8px;"></i>
+                        <span class="timeline-state" style="background-color: ${getStateColor(newState)}; color: ${getStateTextColor(newState)};">
+                            ${newState}
+                        </span>
+                    </div>
+                    ${durationText ? `<div class="timeline-duration">Duración: ${durationText}</div>` : ''}
+                `;
+                
+                timelineContainer.appendChild(timelineItem);
+            });
+            
+            // Mostrar la sección de timeline
+            document.getElementById('timelineSection').style.display = 'block';
+        }
+
+        // Obtener color para estado
+        function getStateColor(state) {
+            if (!state) return 'var(--az-bg-tertiary)';
+            
+            const stateLower = state.toLowerCase();
+            if (stateLower.includes('progress')) {
+                return 'rgba(0, 120, 212, 0.2)';
+            } else if (stateLower.includes('done') || stateLower.includes('closed')) {
+                return 'rgba(16, 124, 16, 0.2)';
+            } else if (stateLower.includes('to do') || stateLower.includes('new')) {
+                return 'rgba(161, 159, 157, 0.2)';
+            } else {
+                return 'rgba(255, 140, 0, 0.2)';
+            }
+        }
+
+        // Obtener color de texto para estado
+        function getStateTextColor(state) {
+            if (!state) return 'var(--az-text-primary)';
+            
+            const stateLower = state.toLowerCase();
+            if (stateLower.includes('progress')) {
+                return 'var(--az-state-inprogress)';
+            } else if (stateLower.includes('done') || stateLower.includes('closed')) {
+                return 'var(--az-state-done)';
+            } else if (stateLower.includes('to do') || stateLower.includes('new')) {
+                return 'var(--az-state-todo)';
+            } else {
+                return 'var(--az-state-resolved)';
+            }
+        }
+
+        // Formatear fecha y hora
+        function formatDateTime(date) {
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+
         // Establecer hora de fin como hora actual
         function setEndTimeToCurrent() {
             const now = new Date();
-            const hours = now.getHours();
+            let hours = now.getHours();
             const minutes = now.getMinutes();
             
-            // Convertir a formato 12 horas
-            const displayHours = hours % 12 || 12;
-            const ampm = hours >= 12 ? 'PM' : 'AM';
+            // Convertir a formato 12 horas CORRECTAMENTE
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12; // 0 se convierte en 12, 13 se convierte en 1, etc.
             
             // Redondear minutos al múltiplo de 5 más cercano
             const roundedMinutes = Math.round(minutes / 5) * 5;
             
             document.getElementById('endHour').value = displayHours;
             document.getElementById('endMinute').value = roundedMinutes;
-            document.getElementById('endPeriod').value = ampm;
+            document.getElementById('endPeriod').value = period;
+            
+            // Actualizar display de hora actual
+            updateCurrentTime();
         }
 
         // Establecer hora de inicio como una hora atrás
@@ -2254,25 +2507,28 @@
             const now = new Date();
             const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
             
-            const hours = oneHourAgo.getHours();
+            let hours = oneHourAgo.getHours();
             const minutes = oneHourAgo.getMinutes();
             
             // Convertir a formato 12 horas
+            const period = hours >= 12 ? 'PM' : 'AM';
             const displayHours = hours % 12 || 12;
-            const ampm = hours >= 12 ? 'PM' : 'AM';
             
             // Redondear minutos al múltiplo de 5 más cercano
             const roundedMinutes = Math.round(minutes / 5) * 5;
             
             document.getElementById('startHour').value = displayHours;
             document.getElementById('startMinute').value = roundedMinutes;
-            document.getElementById('startPeriod').value = ampm;
+            document.getElementById('startPeriod').value = period;
         }
 
         // Reiniciar calculadora de tiempos
         function resetTimeCalculator() {
             document.getElementById('timeWorkItemId').value = '';
             document.getElementById('timeCalculatorContent').style.display = 'none';
+            document.getElementById('calculatedResults').style.display = 'none';
+            document.getElementById('timelineSection').style.display = 'none';
+            
             timeCalculatorData = {
                 workItem: null,
                 timeLogs: [],
@@ -2280,7 +2536,8 @@
                 originalEstimate: 0,
                 completedWork: 0,
                 remainingWork: 0,
-                calculatedTime: 0
+                calculatedResults: null,
+                timeline: []
             };
             
             // Restablecer controles de tiempo
@@ -2292,12 +2549,14 @@
         // Actualizar hora actual en la UI
         function updateCurrentTime() {
             const now = new Date();
-            const hours = now.getHours();
+            let hours = now.getHours();
             const minutes = now.getMinutes().toString().padStart(2, '0');
-            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            // Convertir a formato 12 horas
+            const period = hours >= 12 ? 'PM' : 'AM';
             const displayHours = hours % 12 || 12;
             
-            document.getElementById('currentTime').textContent = `${displayHours}:${minutes} ${ampm}`;
+            document.getElementById('currentTime').textContent = `${displayHours}:${minutes} ${period}`;
         }
 
         // Calcular tiempo transcurrido entre dos horas
@@ -2307,42 +2566,74 @@
                 return;
             }
             
-            // Obtener valores de inicio
-            const startHour = parseInt(document.getElementById('startHour').value);
-            const startMinute = parseInt(document.getElementById('startMinute').value);
-            const startPeriod = document.getElementById('startPeriod').value;
-            
-            // Obtener valores de fin
-            const endHour = parseInt(document.getElementById('endHour').value);
-            const endMinute = parseInt(document.getElementById('endMinute').value);
-            const endPeriod = document.getElementById('endPeriod').value;
-            
-            // Convertir a formato 24 horas
-            const start24Hour = convertTo24Hour(startHour, startPeriod);
-            const end24Hour = convertTo24Hour(endHour, endPeriod);
-            
-            // Calcular diferencia en minutos
-            let totalMinutes = (end24Hour * 60 + endMinute) - (start24Hour * 60 + startMinute);
-            
-            // Si el tiempo es negativo, asumir que pasó la medianoche
-            if (totalMinutes < 0) {
-                totalMinutes += 24 * 60;
+            try {
+                // Obtener valores de inicio
+                const startHour = parseInt(document.getElementById('startHour').value);
+                const startMinute = parseInt(document.getElementById('startMinute').value);
+                const startPeriod = document.getElementById('startPeriod').value;
+                
+                // Obtener valores de fin
+                const endHour = parseInt(document.getElementById('endHour').value);
+                const endMinute = parseInt(document.getElementById('endMinute').value);
+                const endPeriod = document.getElementById('endPeriod').value;
+                
+                // Convertir a formato 24 horas
+                const start24Hour = convertTo24Hour(startHour, startPeriod);
+                const end24Hour = convertTo24Hour(endHour, endPeriod);
+                
+                // Calcular diferencia en minutos
+                let totalMinutes = (end24Hour * 60 + endMinute) - (start24Hour * 60 + startMinute);
+                
+                // Si el tiempo es negativo, asumir que pasó la medianoche
+                if (totalMinutes < 0) {
+                    totalMinutes += 24 * 60;
+                }
+                
+                // Convertir a horas en formato decimal
+                const hoursDecimal = totalMinutes / 60;
+                
+                // Redondear a cuartos de hora
+                const roundedHours = roundToQuarterHour(hoursDecimal);
+                
+                // Calcular el nuevo Completed Work y Remaining Work
+                const newCompletedWork = timeCalculatorData.completedWork + roundedHours;
+                const newRemainingWork = Math.max(0, timeCalculatorData.originalEstimate - newCompletedWork);
+                
+                // Calcular overage
+                const overage = Math.max(0, newCompletedWork - timeCalculatorData.originalEstimate);
+                
+                // Guardar resultados
+                timeCalculatorData.calculatedResults = {
+                    elapsedTime: roundedHours,
+                    newCompletedWork: newCompletedWork,
+                    newRemainingWork: newRemainingWork,
+                    overage: overage
+                };
+                
+                // Mostrar resultados
+                document.getElementById('elapsedTime').textContent = roundedHours.toFixed(2) + 'h';
+                document.getElementById('currentCompletedWork').textContent = timeCalculatorData.completedWork.toFixed(2) + 'h';
+                document.getElementById('newCompletedWork').textContent = newCompletedWork.toFixed(2) + 'h';
+                document.getElementById('newRemainingWork').textContent = newRemainingWork.toFixed(2) + 'h';
+                
+                // Mostrar sección de resultados
+                document.getElementById('calculatedResults').style.display = 'block';
+                
+                // Actualizar gráfico con valores calculados
+                updateTimeChartForCalculated(newCompletedWork, newRemainingWork);
+                
+                // Mostrar mensaje
+                const hours = Math.floor(totalMinutes / 60);
+                const minutes = totalMinutes % 60;
+                showAlert('success', `Tiempo calculado: ${hours}h ${minutes}m = ${roundedHours.toFixed(2)}h en cuartos`);
+                
+                return roundedHours;
+                
+            } catch (error) {
+                console.error('Error en cálculo de tiempo:', error);
+                showAlert('error', 'Error al calcular el tiempo. Verifique los valores ingresados.');
+                return 0;
             }
-            
-            // Convertir a horas en formato decimal con cuartos
-            const hoursDecimal = totalMinutes / 60;
-            const roundedHours = roundToQuarterHour(hoursDecimal);
-            
-            // Guardar el tiempo calculado (no acumular)
-            timeCalculatorData.calculatedTime = roundedHours;
-            
-            // Mostrar resultado
-            const hours = Math.floor(totalMinutes / 60);
-            const minutes = totalMinutes % 60;
-            
-            showAlert('success', `Tiempo transcurrido: ${hours} horas y ${minutes} minutos (${roundedHours.toFixed(2)} horas en cuartos)`);
-            
-            return roundedHours;
         }
 
         // Convertir hora 12h a 24h
@@ -2357,64 +2648,20 @@
         // Redondear a cuartos de hora (0.00, 0.25, 0.50, 0.75)
         function roundToQuarterHour(hoursDecimal) {
             const totalMinutes = hoursDecimal * 60;
-            const remainder = totalMinutes % 15;
+            const quarterHours = totalMinutes / 15;
             
-            if (remainder <= 7) {
-                // Redondear hacia abajo
-                return Math.floor(totalMinutes / 15) * 0.25;
-            } else {
-                // Redondear hacia arriba
-                return Math.ceil(totalMinutes / 15) * 0.25;
-            }
+            // Redondear al cuarto más cercano
+            const roundedQuarterHours = Math.round(quarterHours);
+            
+            return roundedQuarterHours * 0.25;
         }
 
-        // Actualizar completed work con tiempo calculado
-        function updateCompletedWork() {
-            if (!timeCalculatorData.workItem) {
-                showAlert('error', 'Primero cargue un work item');
-                return;
-            }
-            
-            // Usar el tiempo calculado (no acumular)
-            const additionalHours = timeCalculatorData.calculatedTime;
-            
-            // Sumar tiempo calculado al completed work
-            const newCompletedWork = timeCalculatorData.completedWork + additionalHours;
-            
-            // Actualizar en memoria
-            timeCalculatorData.completedWork = newCompletedWork;
-            
-            // Calcular remaining work
-            const newRemainingWork = Math.max(0, timeCalculatorData.originalEstimate - newCompletedWork);
-            timeCalculatorData.remainingWork = newRemainingWork;
-            
-            // Calcular overage
-            const overage = Math.max(0, newCompletedWork - timeCalculatorData.originalEstimate);
-            
-            // Actualizar UI
-            document.getElementById('completedWork').textContent = newCompletedWork.toFixed(2);
-            document.getElementById('remainingWork').textContent = newRemainingWork.toFixed(2);
-            document.getElementById('timeOverage').textContent = overage.toFixed(2);
-            
-            // Actualizar gráfico
-            updateTimeChart();
-            
-            // Agregar a log de tiempos
-            timeCalculatorData.timeLogs.push({
-                date: new Date().toISOString(),
-                additionalHours: additionalHours,
-                newCompletedWork: newCompletedWork,
-                newRemainingWork: newRemainingWork
-            });
-            
-            return newCompletedWork;
-        }
-
-        // Actualizar gráfico de tiempos
-        function updateTimeChart() {
+        // Actualizar gráfico de tiempos con valores calculados
+        function updateTimeChartForCalculated(completed, remaining) {
             if (!timeCalculatorData.workItem) return;
             
-            const inProgressPercentage = Math.min(100, (timeCalculatorData.completedWork / timeCalculatorData.originalEstimate) * 100) || 0;
+            const total = Math.max(timeCalculatorData.originalEstimate, completed + remaining);
+            const inProgressPercentage = total > 0 ? (completed / total) * 100 : 0;
             const otherPercentage = 100 - inProgressPercentage;
             
             document.getElementById('inProgressBar').style.width = `${inProgressPercentage}%`;
@@ -2422,8 +2669,25 @@
             document.getElementById('otherBar').style.left = `${inProgressPercentage}%`;
             
             // Actualizar texto de las barras
-            document.getElementById('inProgressBar').textContent = `In Progress: ${timeCalculatorData.completedWork.toFixed(2)}h`;
-            document.getElementById('otherBar').textContent = `Restante: ${timeCalculatorData.remainingWork.toFixed(2)}h`;
+            document.getElementById('inProgressBar').textContent = `Completed: ${completed.toFixed(2)}h`;
+            document.getElementById('otherBar').textContent = remaining > 0 ? `Remaining: ${remaining.toFixed(2)}h` : 'Completado';
+        }
+
+        // Actualizar gráfico con valores actuales
+        function updateTimeChart() {
+            if (!timeCalculatorData.workItem) return;
+            
+            const total = Math.max(timeCalculatorData.originalEstimate, timeCalculatorData.completedWork + timeCalculatorData.remainingWork);
+            const inProgressPercentage = total > 0 ? (timeCalculatorData.completedWork / total) * 100 : 0;
+            const otherPercentage = 100 - inProgressPercentage;
+            
+            document.getElementById('inProgressBar').style.width = `${inProgressPercentage}%`;
+            document.getElementById('otherBar').style.width = `${otherPercentage}%`;
+            document.getElementById('otherBar').style.left = `${inProgressPercentage}%`;
+            
+            // Actualizar texto de las barras
+            document.getElementById('inProgressBar').textContent = `Completed: ${timeCalculatorData.completedWork.toFixed(2)}h`;
+            document.getElementById('otherBar').textContent = timeCalculatorData.remainingWork > 0 ? `Remaining: ${timeCalculatorData.remainingWork.toFixed(2)}h` : 'Completado';
         }
 
         // Actualizar work item con nuevos tiempos
@@ -2433,8 +2697,10 @@
                 return;
             }
             
-            // Primero actualizar el completed work con el tiempo calculado
-            const newCompletedWork = updateCompletedWork();
+            if (!timeCalculatorData.calculatedResults) {
+                showAlert('error', 'Primero calcule el tiempo transcurrido');
+                return;
+            }
             
             const workItemId = timeCalculatorData.workItem.id;
             
@@ -2443,12 +2709,12 @@
                 {
                     op: "add",
                     path: "/fields/Microsoft.VSTS.Scheduling.CompletedWork",
-                    value: newCompletedWork.toString()
+                    value: timeCalculatorData.calculatedResults.newCompletedWork.toString()
                 },
                 {
                     op: "add",
                     path: "/fields/Microsoft.VSTS.Scheduling.RemainingWork",
-                    value: timeCalculatorData.remainingWork.toString()
+                    value: timeCalculatorData.calculatedResults.newRemainingWork.toString()
                 }
             ];
             
@@ -2466,8 +2732,27 @@
                 hideLoading('timeLoading');
                 
                 if (result) {
-                    showAlert('success', `Work item #${workItemId} actualizado correctamente. Nuevo Completed Work: ${newCompletedWork.toFixed(2)}h`);
-                    console.log('Work item actualizado:', result);
+                    // Actualizar valores en memoria
+                    timeCalculatorData.completedWork = timeCalculatorData.calculatedResults.newCompletedWork;
+                    timeCalculatorData.remainingWork = timeCalculatorData.calculatedResults.newRemainingWork;
+                    
+                    // Actualizar UI
+                    document.getElementById('completedWork').textContent = timeCalculatorData.completedWork.toFixed(2);
+                    document.getElementById('remainingWork').textContent = timeCalculatorData.remainingWork.toFixed(2);
+                    document.getElementById('timeOverage').textContent = timeCalculatorData.calculatedResults.overage.toFixed(2);
+                    
+                    // Actualizar gráfico
+                    updateTimeChart();
+                    
+                    // Agregar a log de tiempos
+                    timeCalculatorData.timeLogs.push({
+                        date: new Date().toISOString(),
+                        additionalHours: timeCalculatorData.calculatedResults.elapsedTime,
+                        newCompletedWork: timeCalculatorData.completedWork,
+                        newRemainingWork: timeCalculatorData.remainingWork
+                    });
+                    
+                    showAlert('success', `Work item #${workItemId} actualizado correctamente. Nuevo Completed Work: ${timeCalculatorData.completedWork.toFixed(2)}h`);
                 }
             } catch (error) {
                 hideLoading('timeLoading');
@@ -2490,6 +2775,7 @@
                 remainingWork: timeCalculatorData.remainingWork,
                 overage: Math.max(0, timeCalculatorData.completedWork - timeCalculatorData.originalEstimate),
                 timeLogs: timeCalculatorData.timeLogs,
+                timeline: timeCalculatorData.timeline,
                 generatedAt: new Date().toISOString()
             };
             
@@ -2534,7 +2820,7 @@
             const formattedDate = limitDate.toISOString().split('T')[0];
             
             // Crear condiciones para cada usuario
-            const userConditions = users.map(user => `[System.AssignedTo] = '${user}'`).join(' OR ');
+            const userConditions = users.map(user => `[System.AssignedTo] CONTAINS '${user}'`).join(' OR ');
             
             // Crear condiciones para tipos
             const typeConditions = workItemTypes.split(',').map(type => `[System.WorkItemType] = '${type.trim()}'`).join(' OR ');
@@ -2544,9 +2830,13 @@
                 query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.State], [System.AssignedTo], [System.CreatedDate], [System.ChangedDate], [System.AreaPath], [System.IterationPath], [Microsoft.VSTS.Scheduling.OriginalEstimate], [Microsoft.VSTS.Scheduling.CompletedWork], [Microsoft.VSTS.Scheduling.RemainingWork] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND (${userConditions}) AND (${typeConditions}) AND ([System.ChangedDate] >= '${formattedDate}') ORDER BY [System.ChangedDate] DESC`
             };
             
+            console.log('Consultando work items con WIQL:', wiqlQuery.query);
+            
             // Ejecutar consulta WIQL
             const endpoint = '_apis/wit/wiql';
             const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
+            
+            console.log('Resultado WIQL:', wiqlResult);
             
             if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
                 hideLoading('userLoading');
@@ -2558,15 +2848,20 @@
             // Obtener IDs de work items (limitado a 200)
             const workItemIds = wiqlResult.workItems.slice(0, 200).map(item => item.id);
             
+            console.log(`Obteniendo detalles para ${workItemIds.length} work items`);
+            
             // Obtener detalles de los work items
             const fields = 'System.Id,System.Title,System.WorkItemType,System.State,System.AssignedTo,System.CreatedDate,System.ChangedDate,System.AreaPath,System.IterationPath,Microsoft.VSTS.Scheduling.OriginalEstimate,Microsoft.VSTS.Scheduling.CompletedWork,Microsoft.VSTS.Scheduling.RemainingWork';
             const detailsEndpoint = `_apis/wit/workitems?ids=${workItemIds.join(',')}&fields=${fields}`;
             const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
             
+            console.log('Detalles obtenidos:', detailsResult);
+            
             // Ocultar loading
             hideLoading('userLoading');
             
-            if (detailsResult) {
+            if (detailsResult && detailsResult.value && detailsResult.value.length > 0) {
+                console.log(`Procesando ${detailsResult.value.length} work items`);
                 // Procesar work items para consolidar horas por día
                 processUserHours(detailsResult.value, users);
                 
@@ -2574,32 +2869,53 @@
                 displayUserHoursGrid();
                 
                 showAlert('success', `${detailsResult.value.length} work items procesados. Consolidado de horas generado.`);
+            } else {
+                showAlert('error', 'No se pudieron obtener los detalles de los work items');
             }
         }
 
         // Procesar work items para consolidar horas por día
         function processUserHours(workItems, users) {
+            console.log('Procesando horas para usuarios:', users);
+            console.log('Total work items:', workItems.length);
+            
             // Reiniciar datos
             userTasksData.dailyHours = {};
             userTasksData.workItemsByDay = {};
             
             // Procesar cada work item
-            workItems.forEach(item => {
+            workItems.forEach((item, index) => {
                 const fields = item.fields;
                 const changedDate = fields['System.ChangedDate'];
                 const state = fields['System.State'] || '';
                 const assignedTo = fields['System.AssignedTo'] ? 
-                    (fields['System.AssignedTo'].displayName || fields['System.AssignedTo'].uniqueName) : 
-                    'No asignado';
+                    (fields['System.AssignedTo'].displayName || fields['System.AssignedTo'].uniqueName || '') : 
+                    '';
                 
-                // Verificar si el usuario está en la lista
-                const matchingUser = users.find(u => {
-                    const userLower = u.toLowerCase();
-                    const assignedLower = assignedTo.toLowerCase();
-                    return assignedLower.includes(userLower) || userLower.includes(assignedLower);
+                console.log(`Work item ${index + 1}:`, {
+                    id: item.id,
+                    assignedTo: assignedTo,
+                    state: state,
+                    changedDate: changedDate
                 });
                 
-                if (!matchingUser) return;
+                // Verificar si el usuario está en la lista (comparación más flexible)
+                const matchingUser = users.find(user => {
+                    const userLower = user.toLowerCase();
+                    const assignedLower = assignedTo.toLowerCase();
+                    
+                    // Comparación más flexible
+                    return assignedLower.includes(userLower) || 
+                           userLower.includes(assignedLower) ||
+                           assignedTo.toLowerCase().includes(user.split('@')[0].toLowerCase());
+                });
+                
+                if (!matchingUser) {
+                    console.log(`  No coincide con usuarios: ${assignedTo} vs ${users.join(', ')}`);
+                    return;
+                }
+                
+                console.log(`  Coincide con usuario: ${matchingUser}`);
                 
                 // Obtener fecha (solo día, sin hora)
                 const dateObj = new Date(changedDate);
@@ -2625,8 +2941,8 @@
                 // Calcular horas automáticas (si el estado es In Progress)
                 let autoHours = 0;
                 if (state.toLowerCase().includes('progress')) {
-                    // Para este ejemplo, asumimos 1 hora por cada work item en estado In Progress
-                    // En un sistema real, esto se calcularía basado en System.ChangedDate
+                    // Estimación simple: 1 hora por defecto para cada work item en estado In Progress
+                    // En producción, esto debería calcularse basándose en el tiempo real
                     autoHours = 1.0;
                 }
                 
@@ -2642,6 +2958,8 @@
                 userTasksData.dailyHours[dateKey].workItems.push(item);
                 userTasksData.workItemsByDay[dateKey].push(item);
             });
+            
+            console.log('Días procesados:', Object.keys(userTasksData.dailyHours).length);
             
             // Ordenar días por fecha (más reciente primero)
             const sortedDates = Object.keys(userTasksData.dailyHours).sort((a, b) => {
@@ -2680,6 +2998,8 @@
                 document.getElementById('userResultsContainer').style.display = 'block';
                 return;
             }
+            
+            console.log('Mostrando grid con días:', Object.keys(userTasksData.dailyHours));
             
             // Crear tarjetas para cada día
             Object.entries(userTasksData.dailyHours).forEach(([dateKey, dayData]) => {
@@ -2795,22 +3115,6 @@
             
             // Mostrar modal
             document.getElementById('dayDetailsModal').classList.add('active');
-        }
-
-        // Obtener color para estado
-        function getStateColor(state) {
-            if (!state) return 'var(--az-bg-tertiary)';
-            
-            const stateLower = state.toLowerCase();
-            if (stateLower.includes('progress')) {
-                return 'rgba(0, 120, 212, 0.1)';
-            } else if (stateLower.includes('done') || stateLower.includes('closed')) {
-                return 'rgba(16, 124, 16, 0.1)';
-            } else if (stateLower.includes('to do') || stateLower.includes('new')) {
-                return 'rgba(161, 159, 157, 0.1)';
-            } else {
-                return 'rgba(255, 140, 0, 0.1)';
-            }
         }
 
         // ========== FUNCIONES DE UTILIDAD ==========
