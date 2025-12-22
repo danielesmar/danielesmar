@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<title>Azure DevOps Dashboard</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<header>Azure DevOps Control Panel</header>
+
+<nav>
+<button onclick="show('item')">Work Item</button>
+<button onclick="show('sprint')">Sprint</button>
+<button onclick="show('team')">Equipo</button>
+</nav>
+
+<section id="item">
+<h2>Consultar Work Item</h2>
+<input id="wid" placeholder="ID"/>
+<button onclick="loadItem()">Consultar</button>
+</section>
+
+<section id="sprint" hidden>
+<h2>Working de Sprint</h2>
+<input id="team" placeholder="Equipo"/>
+<button onclick="loadSprint()">Consultar</button>
+</section>
+
+<section id="team" hidden>
+<h2>Estado del Equipo</h2>
+<p>Vista agregada por usuario (extensible)</p>
+</section>
+
+<pre id="out"></pre>
+
+<script type="module">
+import { workItem } from './api.js';
+
+window.show = id => {
+ document.querySelectorAll('section').forEach(s=>s.hidden=true);
+ document.getElementById(id).hidden=false;
+};
+
+window.loadItem = async () => {
+ const d = await workItem(document.getElementById('wid').value);
+ out.textContent = JSON.stringify(d,null,2);
+};
+
+window.loadSprint = async () => {
+ out.textContent = "Sprint view placeholder (WIQL extensible)";
+};
+</script>
+</body>
+</html>

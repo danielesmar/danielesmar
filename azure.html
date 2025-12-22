@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure DevOps Board Monitor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .json-container { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen">
+        <aside class="w-64 bg-slate-800 text-white p-6 shadow-lg">
+            <h1 class="text-xl font-bold mb-8 text-blue-400">DevOps Monitor</h1>
+            <nav class="space-y-4">
+                <button onclick="showSection('generic')" class="block w-full text-left hover:text-blue-300">Consulta Genérica</button>
+                <button onclick="showSection('predefined')" class="block w-full text-left hover:text-blue-300">Items (Épicas/Tasks)</button>
+                <button onclick="showSection('sprint')" class="block w-full text-left hover:text-blue-300">Working del Sprint</button>
+            </nav>
+        </aside>
+
+        <main class="flex-1 p-10 overflow-y-auto">
+            <section id="generic-section" class="section-content">
+                <h2 class="text-2xl font-semibold mb-4">Consulta Genérica (JSON)</h2>
+                <input type="text" id="generic-id" placeholder="ID del Work Item" class="border p-2 rounded mr-2">
+                <button onclick="queryItem()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Consultar</button>
+                <div class="mt-6">
+                    <pre id="json-output" class="json-container text-sm">Esperando consulta...</pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="settings.js"></script>
+    <script src="api-wrapper.js"></script>
+    <script>
+        function showSection(id) {
+            // Lógica para alternar visibilidad de secciones
+        }
+
+        async function queryItem() {
+            const id = document.getElementById('generic-id').value;
+            const output = document.getElementById('json-output');
+            output.textContent = "Cargando...";
+            try {
+                const data = await AzureDevOpsAPI.getWorkItem(id);
+                output.textContent = JSON.stringify(data, null, 4);
+            } catch (error) {
+                output.textContent = "Error: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

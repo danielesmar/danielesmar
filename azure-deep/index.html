@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azure DevOps Board Monitor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --secondary-color: #005a9e;
+            --success-color: #107c10;
+            --warning-color: #ff8c00;
+            --danger-color: #d13438;
+            --light-color: #f3f2f1;
+            --dark-color: #323130;
+            --gray-color: #8a8886;
+            --border-radius: 4px;
+            --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #faf9f8;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px 0;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h1 i {
+            font-size: 2.5rem;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4caf50;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .tabs {
+            display: flex;
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 18px 25px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray-color);
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            background-color: #f5f5f5;
+            color: var(--primary-color);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+            background-color: rgba(0, 120, 212, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e1dfdd;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #d2d0ce;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-color);
+        }
+
+        .input-with-icon input {
+            padding-left: 45px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background-color: #e1dfdd;
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #d2d0ce;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #0e6b0e;
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c02a2e;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .predefined-queries {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .query-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.3s;
+        }
+
+        .query-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .query-card h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .query-card p {
+            color: var(--gray-color);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .results-container {
+            margin-top: 30px;
+        }
+
+        .json-viewer {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            overflow: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-height: 500px;
+            white-space: pre-wrap;
+            box-shadow: var(--box-shadow);
+        }
+
+        .json-key {
+            color: #9cdcfe;
+        }
+
+        .json-string {
+            color: #ce9178;
+        }
+
+        .json-number {
+            color: #b5cea8;
+        }
+
+        .json-boolean {
+            color: #569cd6;
+        }
+
+        .json-null {
+            color: #569cd6;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 120, 212, 0.2);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            border-top: 1px solid #e1dfdd;
+            margin-top: 30px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.success {
+            background-color: #dff6dd;
+            color: #107c10;
+            border-left: 4px solid #107c10;
+            display: block;
+        }
+
+        .alert.error {
+            background-color: #fde7e9;
+            color: #a4262c;
+            border-left: 4px solid #a4262c;
+            display: block;
+        }
+
+        .work-item-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .work-item-type {
+            background-color: #e1dfdd;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .work-item-type:hover {
+            background-color: #d2d0ce;
+        }
+
+        .work-item-type.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-chart-line"></i> Azure DevOps Board Monitor</h1>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>Sistema Conectado</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="settings">Configuración</div>
+            <div class="tab" data-tab="custom-query">Consulta Personalizada</div>
+            <div class="tab" data-tab="predefined-queries">Consultas Predefinidas</div>
+            <div class="tab" data-tab="sprint-work">Sprint Working</div>
+            <div class="tab" data-tab="user-tasks">Tareas por Usuario</div>
+        </div>
+
+        <div class="alert success" id="successAlert">
+            <i class="fas fa-check-circle"></i> Operación completada con éxito
+        </div>
+
+        <div class="alert error" id="errorAlert">
+            <i class="fas fa-exclamation-circle"></i> Error en la operación
+        </div>
+
+        <div class="tab-content active" id="settings">
+            <h2 class="section-title"><i class="fas fa-cog"></i> Configuración del Sistema</h2>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="baseUrl">URL Base de Azure DevOps</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-link"></i>
+                            <input type="text" id="baseUrl" placeholder="https://dev.azure.com/{organization}" value="https://dev.azure.com/{organization}">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">Usuario</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="username" placeholder="usuario@ejemplo.com">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pat">Personal Access Token (PAT)</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-key"></i>
+                            <input type="password" id="pat" placeholder="Token de acceso personal">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="form-group">
+                        <label for="project">Proyecto</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-project-diagram"></i>
+                            <input type="text" id="project" placeholder="Nombre del proyecto">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="team">Equipo</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-users"></i>
+                            <input type="text" id="team" placeholder="Nombre del equipo">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="apiVersion">Versión de API</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-code"></i>
+                            <input type="text" id="apiVersion" value="7.1" placeholder="Versión de API">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <button class="btn btn-primary btn-block" id="saveSettings">
+                    <i class="fas fa-save"></i> Guardar Configuración
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <div class="json-viewer" id="currentSettings"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="custom-query">
+            <h2 class="section-title"><i class="fas fa-search"></i> Consulta Personalizada</h2>
+            
+            <div class="form-group">
+                <label for="queryEndpoint">Endpoint de API</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-terminal"></i>
+                    <input type="text" id="queryEndpoint" placeholder="_apis/wit/workitems?ids=123&api-version=7.1">
+                </div>
+                <small>Ejemplos: _apis/wit/workitems?ids=123, _apis/wit/wiql?api-version=7.1, _apis/git/repositories?api-version=7.1</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="queryMethod">Método HTTP</label>
+                <select id="queryMethod">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PATCH">PATCH</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="queryBody">Cuerpo de la Solicitud (JSON)</label>
+                <textarea id="queryBody" rows="6" placeholder='{"query": "SELECT [System.Id] FROM WorkItems WHERE [System.WorkItemType] = \u0027Task\u0027"}'></textarea>
+            </div>
+            
+            <div class="form-group">
+                <button class="btn btn-primary" id="executeQuery">
+                    <i class="fas fa-play"></i> Ejecutar Consulta
+                </button>
+                <button class="btn btn-secondary" id="clearQuery">
+                    <i class="fas fa-eraser"></i> Limpiar
+                </button>
+            </div>
+            
+            <div class="results-container">
+                <h3 class="section-title"><i class="fas fa-file-code"></i> Resultados</h3>
+                <div class="loading" id="queryLoading">
+                    <div class="spinner"></div>
+                    <p>Ejecutando consulta...</p>
+                </div>
+                <div class="json-viewer" id="queryResults"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="predefined-queries">
+            <h2 class="section-title"><i class="fas fa-list"></i> Consultas Predefinidas</h2>
+            
+            <div class="work-item-types">
+                <div class="work-item-type active" data-type="all">Todos</div>
+                <div class="work-item-type" data-type="Iniciativa">Iniciativa</div>
+                <div class="work-item-type" data-type="Epica">Épica</div>
+                <div class="work-item-type" data-type="Feature">Feature</div>
+                <div class="work-item-type" data-type="Product Backlog Item">PBI</div>
+                <div class="work-item-type" data-type="Task">Task</div>
+                <div class="work-item-type" data-type="Issue">Issue</div>
+            </div>
+            
+            <div class="predefined-queries">
+                <div class="query-card" data-type="all">
+                    <h3><i class="fas fa-info-circle"></i> Detalles de Work Item</h3>
+                    <p>Consulta todos los detalles de un elemento específico del board por su ID.</p>
+                    <div class="form-group">
+                        <label for="workItemId">ID del Work Item</label>
+                        <input type="number" id="workItemId" placeholder="12345" min="1">
+                    </div>
+                    <button class="btn btn-primary btn-block get-work-item">
+                        <i class="fas fa-search"></i> Consultar Work Item
+                    </button>
+                </div>
+                
+                <div class="query-card" data-type="all Iniciativa Epica Feature">
+                    <h3><i class="fas fa-layer-group"></i> Work Items por Tipo</h3>
+                    <p>Obtiene todos los work items de un tipo específico en el proyecto.</p>
+                    <div class="form-group">
+                        <label for="workItemType">Tipo de Work Item</label>
+                        <select id="workItemType">
+                            <option value="Iniciativa">Iniciativa</option>
+                            <option value="Epica">Épica</option>
+                            <option value="Feature">Feature</option>
+                            <option value="Product Backlog Item">Product Backlog Item</option>
+                            <option value="Task">Task</option>
+                            <option value="Issue">Issue</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-block get-by-type">
+                        <i class="fas fa-filter"></i> Consultar por Tipo
+                    </button>
+                </div>
+                
+                <div class="query-card" data-type="all Task Issue">
+                    <h3><i class="fas fa-tasks"></i> Work Items por Estado</h3>
+                    <p>Consulta work items filtrados por estado (To Do, In Progress, Done, etc.).</p>
+                    <div class="form-group">
+                        <label for="workItemState">Estado</label>
+                        <select id="workItemState">
+                            <option value="To Do">To Do</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Done">Done</option>
+                            <option value="Removed">Removed</option>
+                            <option value="New">New</option>
+                            <option value="Active">Active</option>
+                            <option value="Resolved">Resolved</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-block get-by-state">
+                        <i class="fas fa-chart-bar"></i> Consultar por Estado
+                    </button>
+                </div>
+                
+                <div class="query-card" data-type="all">
+                    <h3><i class="fas fa-user-check"></i> Work Items Asignados</h3>
+                    <p>Obtiene todos los work items asignados a un usuario específico.</p>
+                    <div class="form-group">
+                        <label for="assignedTo">Asignado a</label>
+                        <input type="text" id="assignedTo" placeholder="usuario@ejemplo.com">
+                    </div>
+                    <button class="btn btn-primary btn-block get-by-assigned">
+                        <i class="fas fa-user-tag"></i> Consultar por Asignación
+                    </button>
+                </div>
+                
+                <div class="query-card" data-type="all">
+                    <h3><i class="fas fa-calendar-alt"></i> Work Items Recientes</h3>
+                    <p>Consulta los work items creados o modificados en los últimos días.</p>
+                    <div class="form-group">
+                        <label for="daysAgo">Días atrás</label>
+                        <input type="number" id="daysAgo" placeholder="7" min="1" max="365" value="7">
+                    </div>
+                    <button class="btn btn-primary btn-block get-recent">
+                        <i class="fas fa-history"></i> Consultar Recientes
+                    </button>
+                </div>
+                
+                <div class="query-card" data-type="all">
+                    <h3><i class="fas fa-tags"></i> Work Items por Etiqueta</h3>
+                    <p>Obtiene work items filtrados por una etiqueta específica.</p>
+                    <div class="form-group">
+                        <label for="tagName">Nombre de Etiqueta</label>
+                        <input type="text" id="tagName" placeholder="urgente, bloqueado, etc.">
+                    </div>
+                    <button class="btn btn-primary btn-block get-by-tag">
+                        <i class="fas fa-tag"></i> Consultar por Etiqueta
+                    </button>
+                </div>
+            </div>
+            
+            <div class="results-container">
+                <h3 class="section-title"><i class="fas fa-file-code"></i> Resultados</h3>
+                <div class="loading" id="predefinedLoading">
+                    <div class="spinner"></div>
+                    <p>Ejecutando consulta...</p>
+                </div>
+                <div class="json-viewer" id="predefinedResults"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="sprint-work">
+            <h2 class="section-title"><i class="fas fa-running"></i> Sprint Working</h2>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="sprintId">ID del Sprint</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-flag"></i>
+                            <input type="text" id="sprintId" placeholder="Sprint 1 o Iteration\\Sprint 1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sprintFields">Campos a Mostrar</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-list-ul"></i>
+                            <input type="text" id="sprintFields" placeholder="System.Id,System.Title,System.State,System.AssignedTo" value="System.Id,System.Title,System.State,System.AssignedTo,System.WorkItemType,System.CreatedDate,System.ChangedDate">
+                        </div>
+                        <small>Separar campos por coma</small>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="form-group">
+                        <label for="sprintStates">Estados a Incluir</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-chart-line"></i>
+                            <input type="text" id="sprintStates" placeholder="To Do,In Progress,Done" value="To Do,In Progress,Done">
+                        </div>
+                        <small>Separar estados por coma</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sprintWorkItemTypes">Tipos de Work Items</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-shapes"></i>
+                            <input type="text" id="sprintWorkItemTypes" placeholder="Task,Issue" value="Task,Issue,Bug">
+                        </div>
+                        <small>Separar tipos por coma</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <button class="btn btn-success btn-block" id="getSprintWork">
+                    <i class="fas fa-chart-pie"></i> Obtener Trabajo del Sprint
+                </button>
+            </div>
+            
+            <div class="results-container">
+                <h3 class="section-title"><i class="fas fa-file-code"></i> Resultados</h3>
+                <div class="loading" id="sprintLoading">
+                    <div class="spinner"></div>
+                    <p>Cargando trabajo del sprint...</p>
+                </div>
+                <div class="json-viewer" id="sprintResults"></div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="user-tasks">
+            <h2 class="section-title"><i class="fas fa-user-friends"></i> Tareas por Usuario</h2>
+            
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="userList">Lista de Usuarios (separados por coma)</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-users"></i>
+                            <input type="text" id="userList" placeholder="usuario1@ejemplo.com, usuario2@ejemplo.com">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="timeRange">Rango de Tiempo</label>
+                        <select id="timeRange">
+                            <option value="7">Última semana</option>
+                            <option value="30">Último mes</option>
+                            <option value="90">Último trimestre</option>
+                            <option value="365">Último año</option>
+                            <option value="0">Todo el tiempo</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="form-group">
+                        <label for="userStates">Estados a Incluir</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-chart-bar"></i>
+                            <input type="text" id="userStates" placeholder="To Do,In Progress,Done" value="To Do,In Progress,Done">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userWorkItemTypes">Tipos de Work Items</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-tasks"></i>
+                            <input type="text" id="userWorkItemTypes" placeholder="Task,Issue,Bug" value="Task,Issue,Bug">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <button class="btn btn-primary btn-block" id="getUserTasks">
+                    <i class="fas fa-user-cog"></i> Obtener Tareas por Usuario
+                </button>
+            </div>
+            
+            <div class="results-container">
+                <h3 class="section-title"><i class="fas fa-file-code"></i> Resultados</h3>
+                <div class="loading" id="userLoading">
+                    <div class="spinner"></div>
+                    <p>Cargando tareas por usuario...</p>
+                </div>
+                <div class="json-viewer" id="userResults"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Azure DevOps Board Monitor &copy; 2023 | Sistema para consultas personalizadas al board de Azure DevOps</p>
+        </footer>
+    </div>
+
+    <script>
+        // Configuración del sistema
+        const settings = {
+            baseUrl: localStorage.getItem('azBaseUrl') || 'https://dev.azure.com/{organization}',
+            username: localStorage.getItem('azUsername') || '',
+            pat: localStorage.getItem('azPat') || '',
+            project: localStorage.getItem('azProject') || '',
+            team: localStorage.getItem('azTeam') || '',
+            apiVersion: localStorage.getItem('azApiVersion') || '7.1'
+        };
+
+        // Inicialización de la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar configuración almacenada
+            loadSettings();
+            
+            // Configurar eventos de pestañas
+            setupTabs();
+            
+            // Configurar eventos de botones
+            setupButtons();
+            
+            // Configurar filtros de tipos de work items
+            setupWorkItemTypeFilters();
+            
+            // Mostrar configuración actual
+            displayCurrentSettings();
+        });
+
+        // Cargar configuración en los campos del formulario
+        function loadSettings() {
+            document.getElementById('baseUrl').value = settings.baseUrl;
+            document.getElementById('username').value = settings.username;
+            document.getElementById('pat').value = settings.pat;
+            document.getElementById('project').value = settings.project;
+            document.getElementById('team').value = settings.team;
+            document.getElementById('apiVersion').value = settings.apiVersion;
+        }
+
+        // Guardar configuración
+        function saveSettings() {
+            settings.baseUrl = document.getElementById('baseUrl').value.trim();
+            settings.username = document.getElementById('username').value.trim();
+            settings.pat = document.getElementById('pat').value.trim();
+            settings.project = document.getElementById('project').value.trim();
+            settings.team = document.getElementById('team').value.trim();
+            settings.apiVersion = document.getElementById('apiVersion').value.trim();
+            
+            // Guardar en localStorage
+            localStorage.setItem('azBaseUrl', settings.baseUrl);
+            localStorage.setItem('azUsername', settings.username);
+            localStorage.setItem('azPat', settings.pat);
+            localStorage.setItem('azProject', settings.project);
+            localStorage.setItem('azTeam', settings.team);
+            localStorage.setItem('azApiVersion', settings.apiVersion);
+            
+            // Mostrar mensaje de éxito
+            showAlert('success', 'Configuración guardada correctamente');
+            
+            // Actualizar visualización de configuración
+            displayCurrentSettings();
+        }
+
+        // Mostrar configuración actual en formato JSON
+        function displayCurrentSettings() {
+            const safeSettings = { ...settings };
+            // Ocultar el PAT por seguridad
+            if (safeSettings.pat) {
+                safeSettings.pat = '••••••••' + safeSettings.pat.substring(safeSettings.pat.length - 4);
+            }
+            
+            document.getElementById('currentSettings').textContent = JSON.stringify(safeSettings, null, 2);
+            highlightJSON('currentSettings');
+        }
+
+        // Configurar eventos de pestañas
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remover clase active de todas las pestañas y contenidos
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Agregar clase active a la pestaña y contenido seleccionados
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // Configurar eventos de botones
+        function setupButtons() {
+            // Guardar configuración
+            document.getElementById('saveSettings').addEventListener('click', saveSettings);
+            
+            // Ejecutar consulta personalizada
+            document.getElementById('executeQuery').addEventListener('click', executeCustomQuery);
+            document.getElementById('clearQuery').addEventListener('click', clearQuery);
+            
+            // Consultas predefinidas
+            document.querySelectorAll('.get-work-item').forEach(btn => {
+                btn.addEventListener('click', getWorkItemById);
+            });
+            
+            document.querySelectorAll('.get-by-type').forEach(btn => {
+                btn.addEventListener('click', getWorkItemsByType);
+            });
+            
+            document.querySelectorAll('.get-by-state').forEach(btn => {
+                btn.addEventListener('click', getWorkItemsByState);
+            });
+            
+            document.querySelectorAll('.get-by-assigned').forEach(btn => {
+                btn.addEventListener('click', getWorkItemsByAssigned);
+            });
+            
+            document.querySelectorAll('.get-recent').forEach(btn => {
+                btn.addEventListener('click', getRecentWorkItems);
+            });
+            
+            document.querySelectorAll('.get-by-tag').forEach(btn => {
+                btn.addEventListener('click', getWorkItemsByTag);
+            });
+            
+            // Sprint work
+            document.getElementById('getSprintWork').addEventListener('click', getSprintWork);
+            
+            // User tasks
+            document.getElementById('getUserTasks').addEventListener('click', getUserTasks);
+        }
+
+        // Configurar filtros de tipos de work items
+        function setupWorkItemTypeFilters() {
+            const typeFilters = document.querySelectorAll('.work-item-type');
+            
+            typeFilters.forEach(filter => {
+                filter.addEventListener('click', () => {
+                    // Remover clase active de todos los filtros
+                    typeFilters.forEach(f => f.classList.remove('active'));
+                    
+                    // Agregar clase active al filtro seleccionado
+                    filter.classList.add('active');
+                    
+                    // Filtrar tarjetas de consulta
+                    const selectedType = filter.getAttribute('data-type');
+                    filterQueryCards(selectedType);
+                });
+            });
+        }
+
+        // Filtrar tarjetas de consulta por tipo
+        function filterQueryCards(type) {
+            const queryCards = document.querySelectorAll('.query-card');
+            
+            queryCards.forEach(card => {
+                const cardTypes = card.getAttribute('data-type').split(' ');
+                
+                if (type === 'all' || cardTypes.includes(type)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Wrapper para Azure DevOps API
+        async function callAzureDevOpsAPI(endpoint, method = 'GET', body = null) {
+            // Validar configuración
+            if (!settings.baseUrl || !settings.username || !settings.pat || !settings.project) {
+                showAlert('error', 'Por favor, complete la configuración antes de ejecutar consultas');
+                return null;
+            }
+            
+            // Construir URL completa
+            let url = `${settings.baseUrl}/${settings.project}`;
+            if (settings.team) {
+                url += `/${settings.team}`;
+            }
+            url += `/${endpoint}`;
+            
+            // Asegurarse de que el endpoint tenga la versión de API
+            if (!endpoint.includes('api-version')) {
+                url += endpoint.includes('?') ? '&' : '?';
+                url += `api-version=${settings.apiVersion}`;
+            }
+            
+            // Configurar headers
+            const headers = new Headers();
+            headers.append('Authorization', 'Basic ' + btoa(settings.username + ':' + settings.pat));
+            headers.append('Content-Type', 'application/json');
+            
+            // Configurar opciones de la solicitud
+            const options = {
+                method: method,
+                headers: headers,
+                mode: 'cors'
+            };
+            
+            // Agregar cuerpo si es necesario
+            if (body && (method === 'POST' || method === 'PATCH')) {
+                options.body = JSON.stringify(body);
+            }
+            
+            try {
+                const response = await fetch(url, options);
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error en la consulta a Azure DevOps:', error);
+                showAlert('error', `Error en la consulta: ${error.message}`);
+                return null;
+            }
+        }
+
+        // Ejecutar consulta personalizada
+        async function executeCustomQuery() {
+            const endpoint = document.getElementById('queryEndpoint').value.trim();
+            const method = document.getElementById('queryMethod').value;
+            const bodyText = document.getElementById('queryBody').value.trim();
+            
+            if (!endpoint) {
+                showAlert('error', 'Por favor, ingrese un endpoint válido');
+                return;
+            }
+            
+            let body = null;
+            if (bodyText) {
+                try {
+                    body = JSON.parse(bodyText);
+                } catch (e) {
+                    showAlert('error', 'El cuerpo de la solicitud no es un JSON válido');
+                    return;
+                }
+            }
+            
+            // Mostrar loading
+            showLoading('queryLoading');
+            
+            // Ejecutar consulta
+            const result = await callAzureDevOpsAPI(endpoint, method, body);
+            
+            // Ocultar loading
+            hideLoading('queryLoading');
+            
+            // Mostrar resultados
+            if (result) {
+                document.getElementById('queryResults').textContent = JSON.stringify(result, null, 2);
+                highlightJSON('queryResults');
+                showAlert('success', 'Consulta ejecutada correctamente');
+            }
+        }
+
+        // Limpiar consulta personalizada
+        function clearQuery() {
+            document.getElementById('queryEndpoint').value = '';
+            document.getElementById('queryBody').value = '';
+            document.getElementById('queryResults').textContent = '';
+        }
+
+        // Obtener work item por ID
+        async function getWorkItemById() {
+            const workItemId = document.getElementById('workItemId').value.trim();
+            
+            if (!workItemId) {
+                showAlert('error', 'Por favor, ingrese un ID de work item válido');
+                return;
+            }
+            
+            // Mostrar loading
+            showLoading('predefinedLoading');
+            
+            // Ejecutar consulta
+            const endpoint = `_apis/wit/workitems/${workItemId}?$expand=all`;
+            const result = await callAzureDevOpsAPI(endpoint);
+            
+            // Ocultar loading
+            hideLoading('predefinedLoading');
+            
+            // Mostrar resultados
+            if (result) {
+                document.getElementById('predefinedResults').textContent = JSON.stringify(result, null, 2);
+                highlightJSON('predefinedResults');
+                showAlert('success', `Work item ${workItemId} obtenido correctamente`);
+            }
+        }
+
+        // Obtener work items por tipo
+        async function getWorkItemsByType() {
+            const workItemType = document.getElementById('workItemType').value;
+            
+            // Mostrar loading
+            showLoading('predefinedLoading');
+            
+            // Crear consulta WIQL
+            const wiqlQuery = {
+                query: `SELECT [System.Id], [System.Title], [System.State], [System.AssignedTo], [System.CreatedDate] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND [System.WorkItemType] = '${workItemType}' ORDER BY [System.CreatedDate] DESC`
+            };
+            
+            // Ejecutar consulta WIQL
+            const endpoint = '_apis/wit/wiql';
+            const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
+            
+            if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
+                hideLoading('predefinedLoading');
+                document.getElementById('predefinedResults').textContent = 'No se encontraron work items del tipo especificado';
+                return;
+            }
+            
+            // Obtener IDs de work items
+            const workItemIds = wiqlResult.workItems.map(item => item.id);
+            
+            // Obtener detalles de los work items
+            const detailsEndpoint = `_apis/wit/workitems?ids=${workItemIds.join(',')}&$expand=relations`;
+            const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
+            
+            // Ocultar loading
+            hideLoading('predefinedLoading');
+            
+            // Mostrar resultados
+            if (detailsResult) {
+                document.getElementById('predefinedResults').textContent = JSON.stringify(detailsResult, null, 2);
+                highlightJSON('predefinedResults');
+                showAlert('success', `${detailsResult.value.length} work items de tipo '${workItemType}' obtenidos correctamente`);
+            }
+        }
+
+        // Obtener work items por estado
+        async function getWorkItemsByState() {
+            const workItemState = document.getElementById('workItemState').value;
+            
+            // Mostrar loading
+            showLoading('predefinedLoading');
+            
+            // Crear consulta WIQL
+            const wiqlQuery = {
+                query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.AssignedTo], [System.CreatedDate] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND [System.State] = '${workItemState}' ORDER BY [System.CreatedDate] DESC`
+            };
+            
+            // Ejecutar consulta WIQL
+            const endpoint = '_apis/wit/wiql';
+            const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
+            
+            if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
+                hideLoading('predefinedLoading');
+                document.getElementById('predefinedResults').textContent = 'No se encontraron work items con el estado especificado';
+                return;
+            }
+            
+            // Obtener IDs de work items
+            const workItemIds = wiqlResult.workItems.map(item => item.id);
+            
+            // Obtener detalles de los work items (limitado a 50 para evitar problemas de rendimiento)
+            const limitedIds = workItemIds.slice(0, 50);
+            const detailsEndpoint = `_apis/wit/workitems?ids=${limitedIds.join(',')}`;
+            const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
+            
+            // Ocultar loading
+            hideLoading('predefinedLoading');
+            
+            // Mostrar resultados
+            if (detailsResult) {
+                document.getElementById('predefinedResults').textContent = JSON.stringify(detailsResult, null, 2);
+                highlightJSON('predefinedResults');
+                showAlert('success', `${detailsResult.value.length} work items con estado '${workItemState}' obtenidos correctamente`);
+            }
+        }
+
+        // Obtener work items por asignación
+        async function getWorkItemsByAssigned() {
+            const assignedTo = document.getElementById('assignedTo').value.trim();
+            
+            if (!assignedTo) {
+                showAlert('error', 'Por favor, ingrese un usuario para filtrar');
+                return;
+            }
+            
+            // Mostrar loading
+            showLoading('predefinedLoading');
+            
+            // Crear consulta WIQL
+            const wiqlQuery = {
+                query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.State], [System.CreatedDate] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND [System.AssignedTo] = '${assignedTo}' ORDER BY [System.CreatedDate] DESC`
+            };
+            
+            // Ejecutar consulta WIQL
+            const endpoint = '_apis/wit/wiql';
+            const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
+            
+            if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
+                hideLoading('predefinedLoading');
+                document.getElementById('predefinedResults').textContent = `No se encontraron work items asignados a '${assignedTo}'`;
+                return;
+            }
+            
+            // Obtener IDs de work items
+            const workItemIds = wiqlResult.workItems.map(item => item.id);
+            
+            // Obtener detalles de los work items (limitado a 50)
+            const limitedIds = workItemIds.slice(0, 50);
+            const detailsEndpoint = `_apis/wit/workitems?ids=${limitedIds.join(',')}`;
+            const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
+            
+            // Ocultar loading
+            hideLoading('predefinedLoading');
+            
+            // Mostrar resultados
+            if (detailsResult) {
+                document.getElementById('predefinedResults').textContent = JSON.stringify(detailsResult, null, 2);
+                highlightJSON('predefinedResults');
+                showAlert('success', `${detailsResult.value.length} work items asignados a '${assignedTo}' obtenidos correctamente`);
+            }
+        }
+
+        // Obtener work items recientes
+        async function getRecentWorkItems() {
+            const daysAgo = parseInt(document.getElementById('daysAgo').value) || 7;
+            
+            // Calcular fecha límite
+            const limitDate = new Date();
+            limitDate.setDate(limitDate.getDate() - daysAgo);
+            const formattedDate = limitDate.toISOString().split('T')[0];
+            
+            // Mostrar loading
+            showLoading('predefinedLoading');
+            
+            // Crear consulta WIQL
+            const wiqlQuery = {
+                query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.State], [System.AssignedTo], [System.CreatedDate], [System.ChangedDate] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND ([System.CreatedDate] >= '${formattedDate}' OR [System.ChangedDate] >= '${formattedDate}') ORDER BY [System.ChangedDate] DESC`
+            };
+            
+            // Ejecutar consulta WIQL
+            const endpoint = '_apis/wit/wiql';
+            const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
+            
+            if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
+                hideLoading('predefinedLoading');
+                document.getElementById('predefinedResults').textContent = `No se encontraron work items creados o modificados en los últimos ${daysAgo} días`;
+                return;
+            }
+            
+            // Obtener IDs de work items (limitado a 100)
+            const workItemIds = wiqlResult.workItems.slice(0, 100).map(item => item.id);
+            
+            // Obtener detalles de los work items
+            const detailsEndpoint = `_apis/wit/workitems?ids=${workItemIds.join(',')}`;
+            const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
+            
+            // Ocultar loading
+            hideLoading('predefinedLoading');
+            
+            // Mostrar resultados
+            if (detailsResult) {
+                document.getElementById('predefinedResults').textContent = JSON.stringify(detailsResult, null, 2);
+                highlightJSON('predefinedResults');
+                showAlert('success', `${detailsResult.value.length} work items recientes obtenidos correctamente`);
+            }
+        }
+
+        // Obtener work items por etiqueta
+        async function getWorkItemsByTag() {
+            const tagName = document.getElementById('tagName').value.trim();
+            
+            if (!tagName) {
+                showAlert('error', 'Por favor, ingrese una etiqueta para filtrar');
+                return;
+            }
+            
+            // Mostrar loading
+            showLoading('predefinedLoading');
+            
+            // Crear consulta WIQL
+            const wiqlQuery = {
+                query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.State], [System.AssignedTo], [System.Tags] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND [System.Tags] CONTAINS '${tagName}' ORDER BY [System.CreatedDate] DESC`
+            };
+            
+            // Ejecutar consulta WIQL
+            const endpoint = '_apis/wit/wiql';
+            const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
+            
+            if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
+                hideLoading('predefinedLoading');
+                document.getElementById('predefinedResults').textContent = `No se encontraron work items con la etiqueta '${tagName}'`;
+                return;
+            }
+            
+            // Obtener IDs de work items (limitado a 50)
+            const workItemIds = wiqlResult.workItems.slice(0, 50).map(item => item.id);
+            
+            // Obtener detalles de los work items
+            const detailsEndpoint = `_apis/wit/workitems?ids=${workItemIds.join(',')}`;
+            const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
+            
+            // Ocultar loading
+            hideLoading('predefinedLoading');
+            
+            // Mostrar resultados
+            if (detailsResult) {
+                document.getElementById('predefinedResults').textContent = JSON.stringify(detailsResult, null, 2);
+                highlightJSON('predefinedResults');
+                showAlert('success', `${detailsResult.value.length} work items con etiqueta '${tagName}' obtenidos correctamente`);
+            }
+        }
+
+        // Obtener trabajo del sprint
+        async function getSprintWork() {
+            const sprintId = document.getElementById('sprintId').value.trim();
+            const fields = document.getElementById('sprintFields').value.trim();
+            const states = document.getElementById('sprintStates').value.trim();
+            const workItemTypes = document.getElementById('sprintWorkItemTypes').value.trim();
+            
+            if (!sprintId) {
+                showAlert('error', 'Por favor, ingrese un ID de sprint válido');
+                return;
+            }
+            
+            // Mostrar loading
+            showLoading('sprintLoading');
+            
+            // Crear consulta WIQL
+            const stateConditions = states.split(',').map(state => `[System.State] = '${state.trim()}'`).join(' OR ');
+            const typeConditions = workItemTypes.split(',').map(type => `[System.WorkItemType] = '${type.trim()}'`).join(' OR ');
+            
+            const wiqlQuery = {
+                query: `SELECT ${fields} FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND ([System.IterationPath] UNDER '${sprintId}') AND (${stateConditions}) AND (${typeConditions}) ORDER BY [System.State], [System.AssignedTo], [System.Id]`
+            };
+            
+            // Ejecutar consulta WIQL
+            const endpoint = '_apis/wit/wiql';
+            const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
+            
+            if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
+                hideLoading('sprintLoading');
+                document.getElementById('sprintResults').textContent = `No se encontraron work items para el sprint '${sprintId}' con los filtros especificados`;
+                return;
+            }
+            
+            // Obtener IDs de work items (limitado a 200)
+            const workItemIds = wiqlResult.workItems.slice(0, 200).map(item => item.id);
+            
+            // Obtener detalles de los work items
+            const detailsEndpoint = `_apis/wit/workitems?ids=${workItemIds.join(',')}&fields=${fields}`;
+            const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
+            
+            // Ocultar loading
+            hideLoading('sprintLoading');
+            
+            // Mostrar resultados
+            if (detailsResult) {
+                // Agregar metadatos de la consulta
+                const enhancedResult = {
+                    queryInfo: {
+                        sprint: sprintId,
+                        totalItems: wiqlResult.workItems.length,
+                        returnedItems: detailsResult.value.length,
+                        fields: fields.split(','),
+                        states: states.split(','),
+                        workItemTypes: workItemTypes.split(',')
+                    },
+                    workItems: detailsResult.value
+                };
+                
+                document.getElementById('sprintResults').textContent = JSON.stringify(enhancedResult, null, 2);
+                highlightJSON('sprintResults');
+                showAlert('success', `${detailsResult.value.length} work items del sprint obtenidos correctamente`);
+            }
+        }
+
+        // Obtener tareas por usuario
+        async function getUserTasks() {
+            const userList = document.getElementById('userList').value.trim();
+            const timeRange = parseInt(document.getElementById('timeRange').value);
+            const states = document.getElementById('userStates').value.trim();
+            const workItemTypes = document.getElementById('userWorkItemTypes').value.trim();
+            
+            if (!userList) {
+                showAlert('error', 'Por favor, ingrese al menos un usuario');
+                return;
+            }
+            
+            // Mostrar loading
+            showLoading('userLoading');
+            
+            // Procesar lista de usuarios
+            const users = userList.split(',').map(user => user.trim());
+            
+            // Crear condiciones para cada usuario
+            const userConditions = users.map(user => `[System.AssignedTo] = '${user}'`).join(' OR ');
+            
+            // Calcular fecha límite si es necesario
+            let dateCondition = '';
+            if (timeRange > 0) {
+                const limitDate = new Date();
+                limitDate.setDate(limitDate.getDate() - timeRange);
+                const formattedDate = limitDate.toISOString().split('T')[0];
+                dateCondition = ` AND ([System.CreatedDate] >= '${formattedDate}' OR [System.ChangedDate] >= '${formattedDate}')`;
+            }
+            
+            // Crear condiciones para estados y tipos
+            const stateConditions = states.split(',').map(state => `[System.State] = '${state.trim()}'`).join(' OR ');
+            const typeConditions = workItemTypes.split(',').map(type => `[System.WorkItemType] = '${type.trim()}'`).join(' OR ');
+            
+            // Crear consulta WIQL
+            const wiqlQuery = {
+                query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.State], [System.AssignedTo], [System.CreatedDate], [System.ChangedDate], [Microsoft.VSTS.Scheduling.CompletedWork], [Microsoft.VSTS.Scheduling.RemainingWork] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND (${userConditions}) AND (${stateConditions}) AND (${typeConditions})${dateCondition} ORDER BY [System.AssignedTo], [System.State], [System.ChangedDate] DESC`
+            };
+            
+            // Ejecutar consulta WIQL
+            const endpoint = '_apis/wit/wiql';
+            const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
+            
+            if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
+                hideLoading('userLoading');
+                document.getElementById('userResults').textContent = `No se encontraron work items para los usuarios especificados con los filtros aplicados`;
+                return;
+            }
+            
+            // Obtener IDs de work items (limitado a 200)
+            const workItemIds = wiqlResult.workItems.slice(0, 200).map(item => item.id);
+            
+            // Obtener detalles de los work items
+            const fields = 'System.Id,System.Title,System.WorkItemType,System.State,System.AssignedTo,System.CreatedDate,System.ChangedDate,Microsoft.VSTS.Scheduling.CompletedWork,Microsoft.VSTS.Scheduling.RemainingWork';
+            const detailsEndpoint = `_apis/wit/workitems?ids=${workItemIds.join(',')}&fields=${fields}`;
+            const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
+            
+            // Ocultar loading
+            hideLoading('userLoading');
+            
+            // Mostrar resultados
+            if (detailsResult) {
+                // Organizar resultados por usuario
+                const resultsByUser = {};
+                users.forEach(user => {
+                    resultsByUser[user] = [];
+                });
+                
+                detailsResult.value.forEach(item => {
+                    const assignedTo = item.fields['System.AssignedTo'] ? 
+                        item.fields['System.AssignedTo'].displayName || 
+                        item.fields['System.AssignedTo'].uniqueName : 
+                        'No asignado';
+                    
+                    // Encontrar el usuario correspondiente
+                    const matchingUser = users.find(u => {
+                        const userLower = u.toLowerCase();
+                        const assignedLower = assignedTo.toLowerCase();
+                        return assignedLower.includes(userLower) || userLower.includes(assignedLower);
+                    });
+                    
+                    if (matchingUser) {
+                        if (!resultsByUser[matchingUser]) {
+                            resultsByUser[matchingUser] = [];
+                        }
+                        resultsByUser[matchingUser].push(item);
+                    } else {
+                        // Si no coincide exactamente, agregar a un grupo "otros"
+                        if (!resultsByUser['Otros']) {
+                            resultsByUser['Otros'] = [];
+                        }
+                        resultsByUser['Otros'].push(item);
+                    }
+                });
+                
+                // Agregar metadatos de la consulta
+                const enhancedResult = {
+                    queryInfo: {
+                        users: users,
+                        timeRange: timeRange === 0 ? 'Todo el tiempo' : `${timeRange} días`,
+                        totalItems: wiqlResult.workItems.length,
+                        returnedItems: detailsResult.value.length,
+                        states: states.split(','),
+                        workItemTypes: workItemTypes.split(',')
+                    },
+                    resultsByUser: resultsByUser
+                };
+                
+                document.getElementById('userResults').textContent = JSON.stringify(enhancedResult, null, 2);
+                highlightJSON('userResults');
+                showAlert('success', `${detailsResult.value.length} work items por usuario obtenidos correctamente`);
+            }
+        }
+
+        // Mostrar loading
+        function showLoading(elementId) {
+            document.getElementById(elementId).classList.add('active');
+        }
+
+        // Ocultar loading
+        function hideLoading(elementId) {
+            document.getElementById(elementId).classList.remove('active');
+        }
+
+        // Mostrar alerta
+        function showAlert(type, message) {
+            const alertElement = type === 'success' ? 
+                document.getElementById('successAlert') : 
+                document.getElementById('errorAlert');
+            
+            // Actualizar mensaje
+            const icon = alertElement.querySelector('i');
+            const text = alertElement.querySelector('.alert-text') || document.createElement('span');
+            
+            if (!alertElement.querySelector('.alert-text')) {
+                text.className = 'alert-text';
+                alertElement.appendChild(text);
+            }
+            
+            text.textContent = message;
+            
+            // Mostrar alerta
+            alertElement.style.display = 'block';
+            
+            // Ocultar alerta después de 5 segundos
+            setTimeout(() => {
+                alertElement.style.display = 'none';
+            }, 5000);
+        }
+
+        // Resaltar JSON (sintaxis básica)
+        function highlightJSON(elementId) {
+            const element = document.getElementById(elementId);
+            let jsonText = element.textContent;
+            
+            // Intentar analizar el JSON
+            try {
+                const jsonObj = JSON.parse(jsonText);
+                jsonText = JSON.stringify(jsonObj, null, 2);
+                
+                // Aplicar colores básicos (para una solución más completa se podría usar una librería)
+                jsonText = jsonText
+                    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)/g, function(match) {
+                        let cls = 'json-key';
+                        if (/:$/.test(match)) {
+                            cls = 'json-key';
+                        } else if (/^"/.test(match)) {
+                            if (/:$/.test(match.replace(/":$/, ''))) {
+                                cls = 'json-key';
+                            } else {
+                                cls = 'json-string';
+                            }
+                        }
+                        return `<span class="${cls}">${match}</span>`;
+                    })
+                    .replace(/\b(true|false|null)\b/g, '<span class="json-boolean">$1</span>')
+                    .replace(/\b-?\d+(\.\d+)?([eE][+-]?\d+)?\b/g, '<span class="json-number">$&</span>');
+                
+                element.innerHTML = jsonText;
+            } catch (e) {
+                // Si no es JSON válido, mantener el texto original
+                console.log('No es JSON válido para resaltar');
+            }
+        }
+    </script>
+</body>
+</html>
