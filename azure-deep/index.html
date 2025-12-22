@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Azure DevOps Board Monitor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <style>
         /* Variables CSS - Colores de Azure DevOps */
         :root {
@@ -596,10 +597,6 @@
             border-top-color: var(--az-state-inprogress);
         }
 
-        .summary-card.overage {
-            border-top-color: var(--az-error);
-        }
-
         .summary-value {
             font-size: 1.5rem;
             font-weight: 700;
@@ -650,31 +647,6 @@
         .time-action-buttons .btn {
             flex: 1;
             min-width: 140px;
-        }
-
-        .quarter-hour-explanation {
-            background-color: rgba(0, 120, 212, 0.05);
-            border-radius: var(--az-border-radius);
-            padding: 12px;
-            margin-top: 20px;
-            border-left: 4px solid var(--az-primary);
-            font-size: 0.85rem;
-        }
-
-        .quarter-hour-explanation h4 {
-            margin-bottom: 8px;
-            color: var(--az-primary);
-            font-size: 0.95rem;
-        }
-
-        .quarter-hour-explanation ul {
-            padding-left: 18px;
-            color: var(--az-text-secondary);
-        }
-
-        .quarter-hour-explanation li {
-            margin-bottom: 4px;
-            line-height: 1.4;
         }
 
         /* Timeline de cambios de estado */
@@ -1008,6 +980,53 @@
         .time-badge.remaining {
             background-color: rgba(255, 140, 0, 0.1);
             color: var(--az-warning);
+        }
+
+        /* Select2 personalizado para Azure DevOps */
+        .select2-container--default .select2-selection--multiple {
+            border: 1px solid var(--az-border-color);
+            border-radius: var(--az-border-radius);
+            background-color: var(--az-bg-primary);
+            min-height: 42px;
+            padding: 5px;
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border-color: var(--az-primary);
+            box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: var(--az-primary);
+            border: 1px solid var(--az-secondary);
+            border-radius: 12px;
+            color: white;
+            padding: 3px 8px;
+            font-size: 0.85rem;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: white;
+            margin-right: 5px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #ffd6d6;
+        }
+
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: var(--az-primary);
+            color: white;
+        }
+
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            background-color: var(--az-bg-tertiary);
+        }
+
+        .select2-dropdown {
+            border: 1px solid var(--az-border-color);
+            border-radius: var(--az-border-radius);
+            background-color: var(--az-bg-secondary);
         }
 
         /* Responsive */
@@ -1359,6 +1378,7 @@
             </div>
         </div>
 
+        <!-- SPRINT WORKING CON SELECT2 -->
         <div class="tab-content" id="sprint-work">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-running"></i> Sprint Working</h2>
@@ -1375,28 +1395,51 @@
                         
                         <div class="form-group">
                             <label for="sprintFields" class="form-label">Campos a Mostrar</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-list-ul"></i>
-                                <input type="text" id="sprintFields" class="form-control" placeholder="System.Id,System.Title,System.State,System.AssignedTo" value="System.Id,System.Title,System.State,System.AssignedTo,System.WorkItemType,System.CreatedDate,System.ChangedDate">
-                            </div>
+                            <select id="sprintFields" class="form-control" multiple="multiple" style="width: 100%;">
+                                <option value="System.Id" selected>ID</option>
+                                <option value="System.Title" selected>Título</option>
+                                <option value="System.State" selected>Estado</option>
+                                <option value="System.AssignedTo" selected>Asignado a</option>
+                                <option value="System.WorkItemType" selected>Tipo de Work Item</option>
+                                <option value="System.CreatedDate" selected>Fecha de Creación</option>
+                                <option value="System.ChangedDate" selected>Fecha de Modificación</option>
+                                <option value="System.AreaPath">Área</option>
+                                <option value="System.IterationPath">Iteration</option>
+                                <option value="Microsoft.VSTS.Scheduling.OriginalEstimate">Original Estimate</option>
+                                <option value="Microsoft.VSTS.Scheduling.CompletedWork">Completed Work</option>
+                                <option value="Microsoft.VSTS.Scheduling.RemainingWork">Remaining Work</option>
+                                <option value="Microsoft.VSTS.Common.Activity">Activity</option>
+                            </select>
                         </div>
                     </div>
                     
                     <div class="col">
                         <div class="form-group">
                             <label for="sprintStates" class="form-label">Estados a Incluir</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-chart-line"></i>
-                                <input type="text" id="sprintStates" class="form-control" placeholder="To Do,In Progress,Done" value="To Do,In Progress,Done">
-                            </div>
+                            <select id="sprintStates" class="form-control" multiple="multiple" style="width: 100%;">
+                                <option value="New" selected>New</option>
+                                <option value="Active" selected>Active</option>
+                                <option value="Resolved">Resolved</option>
+                                <option value="Closed">Closed</option>
+                                <option value="Removed">Removed</option>
+                                <option value="To Do" selected>To Do</option>
+                                <option value="In Progress" selected>In Progress</option>
+                                <option value="Done" selected>Done</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
                             <label for="sprintWorkItemTypes" class="form-label">Tipos de Work Items</label>
-                            <div class="input-with-icon">
-                                <i class="fas fa-shapes"></i>
-                                <input type="text" id="sprintWorkItemTypes" class="form-control" placeholder="Task,Issue" value="Task,Issue,Bug">
-                            </div>
+                            <select id="sprintWorkItemTypes" class="form-control" multiple="multiple" style="width: 100%;">
+                                <option value="Task" selected>Task</option>
+                                <option value="Issue" selected>Issue</option>
+                                <option value="Bug" selected>Bug</option>
+                                <option value="Product Backlog Item">Product Backlog Item</option>
+                                <option value="User Story">User Story</option>
+                                <option value="Feature">Feature</option>
+                                <option value="Epica">Épica</option>
+                                <option value="Iniciativa">Iniciativa</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -1419,7 +1462,7 @@
             </div>
         </div>
 
-        <!-- TAREAS POR USUARIO - NUEVO DISEÑO -->
+        <!-- TAREAS POR USUARIO CON SELECT2 -->
         <div class="tab-content" id="user-tasks">
             <div class="user-tasks-container">
                 <div class="card">
@@ -1428,21 +1471,22 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="userList" class="form-label">Lista de Usuarios (separados por coma)</label>
-                                <div class="input-with-icon">
-                                    <i class="fas fa-users"></i>
-                                    <input type="text" id="userList" class="form-control" placeholder="usuario1@ejemplo.com, usuario2@ejemplo.com">
-                                </div>
+                                <label for="userList" class="form-label">Lista de Usuarios (separar por Enter o punto y coma)</label>
+                                <textarea id="userList" class="form-control" rows="3" placeholder="usuario1@ejemplo.com&#10;usuario2@ejemplo.com"></textarea>
+                                <small style="color: var(--az-text-tertiary); font-size: 0.8rem;">Puede ingresar nombres de usuario, emails o dejar vacío para todos los usuarios</small>
                             </div>
                         </div>
                         
                         <div class="col">
                             <div class="form-group">
                                 <label for="userWorkItemTypes" class="form-label">Tipos de Work Items</label>
-                                <div class="input-with-icon">
-                                    <i class="fas fa-tasks"></i>
-                                    <input type="text" id="userWorkItemTypes" class="form-control" placeholder="Task,Issue,Bug" value="Task,Issue,Bug">
-                                </div>
+                                <select id="userWorkItemTypes" class="form-control" multiple="multiple" style="width: 100%;">
+                                    <option value="Task" selected>Task</option>
+                                    <option value="Issue" selected>Issue</option>
+                                    <option value="Bug" selected>Bug</option>
+                                    <option value="Product Backlog Item">Product Backlog Item</option>
+                                    <option value="User Story">User Story</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -1642,8 +1686,8 @@
                             </div>
                             
                             <div class="time-chart" id="timeChart">
-                                <div class="chart-bar in-progress" id="inProgressBar" style="width: 0%;">In Progress</div>
-                                <div class="chart-bar other" id="otherBar" style="width: 100%; left: 0%;">Restante</div>
+                                <div class="chart-bar in-progress" id="inProgressBar" style="width: 0%;">Completed Work</div>
+                                <div class="chart-bar other" id="otherBar" style="width: 100%; left: 0%;">Remaining Work</div>
                             </div>
                             
                             <div class="time-summary">
@@ -1653,15 +1697,11 @@
                                 </div>
                                 <div class="summary-card completed">
                                     <div class="summary-value" id="completedWork">0.00</div>
-                                    <div class="summary-label">Completed Work</div>
+                                    <div class="summary-label">Nuevo Completed</div>
                                 </div>
                                 <div class="summary-card remaining">
                                     <div class="summary-value" id="remainingWork">0.00</div>
-                                    <div class="summary-label">Remaining Work</div>
-                                </div>
-                                <div class="summary-card overage">
-                                    <div class="summary-value" id="timeOverage">0.00</div>
-                                    <div class="summary-label">Overage</div>
+                                    <div class="summary-label">Nuevo Remaining</div>
                                 </div>
                             </div>
                             
@@ -1683,24 +1723,14 @@
                             <!-- Los eventos del timeline se generarán aquí -->
                         </div>
                     </div>
-                    
-                    <div class="quarter-hour-explanation">
-                        <h4><i class="fas fa-info-circle"></i> Sistema de Cuartos de Hora</h4>
-                        <p>Los tiempos se calculan en cuartos de hora (0.25 = 15 minutos):</p>
-                        <ul>
-                            <li><strong>0.00</strong> = 0-7 minutos (redondeo hacia abajo)</li>
-                            <li><strong>0.25</strong> = 8-22 minutos (redondeo al cuarto más cercano)</li>
-                            <li><strong>0.50</strong> = 23-37 minutos (redondeo al cuarto más cercano)</li>
-                            <li><strong>0.75</strong> = 38-52 minutos (redondeo al cuarto más cercano)</li>
-                            <li><strong>1.00</strong> = 53-60 minutos (redondeo hacia arriba)</li>
-                        </ul>
-                        <p>Ejemplo: 1 hora y 13 minutos = 1.25 horas | 1 hora y 5 minutos = 1.00 horas</p>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/es.js"></script>
     <script>
         // Configuración del sistema
         const settings = {
@@ -1748,6 +1778,9 @@
             // Configurar eventos de tareas por usuario
             setupUserTasks();
             
+            // Inicializar Select2
+            initSelect2();
+            
             // Mostrar configuración actual
             displayCurrentSettings();
             
@@ -1761,6 +1794,39 @@
             // Establecer hora actual en los controles
             setEndTimeToCurrent();
         });
+
+        // Inicializar Select2 para campos múltiples
+        function initSelect2() {
+            // Sprint Work
+            $('#sprintFields').select2({
+                placeholder: 'Seleccione los campos a mostrar',
+                allowClear: true,
+                language: 'es',
+                width: '100%'
+            });
+            
+            $('#sprintStates').select2({
+                placeholder: 'Seleccione los estados',
+                allowClear: true,
+                language: 'es',
+                width: '100%'
+            });
+            
+            $('#sprintWorkItemTypes').select2({
+                placeholder: 'Seleccione los tipos de work items',
+                allowClear: true,
+                language: 'es',
+                width: '100%'
+            });
+            
+            // User Tasks
+            $('#userWorkItemTypes').select2({
+                placeholder: 'Seleccione los tipos de work items',
+                allowClear: true,
+                language: 'es',
+                width: '100%'
+            });
+        }
 
         // Cargar configuración en los campos del formulario
         function loadSettings() {
@@ -2147,12 +2213,12 @@
             }
         }
 
-        // Obtener trabajo del sprint
+        // Obtener trabajo del sprint (corregido con Select2)
         async function getSprintWork() {
             const sprintId = document.getElementById('sprintId').value.trim();
-            const fields = document.getElementById('sprintFields').value.trim();
-            const states = document.getElementById('sprintStates').value.trim();
-            const workItemTypes = document.getElementById('sprintWorkItemTypes').value.trim();
+            const fields = $('#sprintFields').val() ? $('#sprintFields').val().join(',') : 'System.Id,System.Title,System.State,System.AssignedTo,System.WorkItemType,System.CreatedDate,System.ChangedDate';
+            const states = $('#sprintStates').val() ? $('#sprintStates').val().join(',') : 'To Do,In Progress,Done';
+            const workItemTypes = $('#sprintWorkItemTypes').val() ? $('#sprintWorkItemTypes').val().join(',') : 'Task,Issue,Bug';
             
             if (!sprintId) {
                 showAlert('error', 'Por favor, ingrese un ID de sprint válido');
@@ -2169,6 +2235,8 @@
             const wiqlQuery = {
                 query: `SELECT ${fields} FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND ([System.IterationPath] UNDER '${sprintId}') AND (${stateConditions}) AND (${typeConditions}) ORDER BY [System.State], [System.AssignedTo], [System.Id]`
             };
+            
+            console.log('Consulta WIQL Sprint:', wiqlQuery.query);
             
             // Ejecutar consulta WIQL
             const endpoint = '_apis/wit/wiql';
@@ -2291,14 +2359,10 @@
                     document.getElementById('completedWork').textContent = timeCalculatorData.completedWork.toFixed(2);
                     document.getElementById('remainingWork').textContent = timeCalculatorData.remainingWork.toFixed(2);
                     
-                    // Calcular overage (si completedWork > originalEstimate)
-                    const overage = Math.max(0, timeCalculatorData.completedWork - timeCalculatorData.originalEstimate);
-                    document.getElementById('timeOverage').textContent = overage.toFixed(2);
-                    
                     // Mostrar gráfico
                     updateTimeChart();
                     
-                    // Establecer hora de inicio basada en System.ChangedDate (ajustado para Nicaragua UTC-6)
+                    // Establecer hora de inicio basada en System.ChangedDate
                     setStartTimeFromChangedDate(fields['System.ChangedDate']);
                     
                     // Establecer hora de fin como hora actual
@@ -2318,7 +2382,7 @@
             }
         }
 
-        // Establecer hora de inicio desde System.ChangedDate (corregido para AM/PM)
+        // Establecer hora de inicio desde System.ChangedDate (corregido)
         function setStartTimeFromChangedDate(changedDateString) {
             if (!changedDateString) {
                 setStartTimeOneHourAgo();
@@ -2329,18 +2393,13 @@
                 // Parsear la fecha de Azure DevOps (formato ISO)
                 const changedDate = new Date(changedDateString);
                 
-                // Ajustar para Nicaragua (UTC-6)
-                // Nicaragua está en UTC-6, así que restamos 6 horas
-                const nicaraguaOffset = -6; // horas
-                const localDate = new Date(changedDate.getTime() + (nicaraguaOffset * 60 * 60 * 1000));
-                
                 // Extraer hora y minutos
-                let hours = localDate.getUTCHours(); // Usamos getUTCHours porque ajustamos manualmente
-                const minutes = localDate.getUTCMinutes();
+                let hours = changedDate.getHours();
+                const minutes = changedDate.getMinutes();
                 
-                // Convertir a formato 12 horas CORRECTAMENTE
+                // Convertir a formato 12 horas
                 const period = hours >= 12 ? 'PM' : 'AM';
-                const displayHours = hours % 12 || 12; // 0 se convierte en 12, 13 se convierte en 1, etc.
+                const displayHours = hours % 12 || 12;
                 
                 // Redondear minutos al múltiplo de 5 más cercano
                 const roundedMinutes = Math.round(minutes / 5) * 5;
@@ -2360,7 +2419,7 @@
             }
         }
 
-        // Mostrar timeline de cambios
+        // Mostrar timeline de cambios (corregido)
         function displayTimeline() {
             const timelineContainer = document.getElementById('timelineContainer');
             timelineContainer.innerHTML = '';
@@ -2382,6 +2441,22 @@
             
             // Ordenar por fecha (más reciente primero)
             stateChanges.sort((a, b) => new Date(b.revisedDate) - new Date(a.revisedDate));
+            
+            // Si el estado actual no es "Done", agregar el estado actual con fecha actual
+            const currentState = timeCalculatorData.workItem.fields['System.State'] || '';
+            if (!currentState.toLowerCase().includes('done') && !currentState.toLowerCase().includes('closed')) {
+                const currentStateEvent = {
+                    revisedDate: new Date().toISOString(),
+                    fields: {
+                        'System.State': {
+                            oldValue: currentState,
+                            newValue: currentState
+                        }
+                    },
+                    revisedBy: { displayName: 'Actual' }
+                };
+                stateChanges.unshift(currentStateEvent);
+            }
             
             // Mostrar máximo 10 cambios
             const recentChanges = stateChanges.slice(0, 10);
@@ -2487,9 +2562,9 @@
             let hours = now.getHours();
             const minutes = now.getMinutes();
             
-            // Convertir a formato 12 horas CORRECTAMENTE
+            // Convertir a formato 12 horas
             const period = hours >= 12 ? 'PM' : 'AM';
-            const displayHours = hours % 12 || 12; // 0 se convierte en 12, 13 se convierte en 1, etc.
+            const displayHours = hours % 12 || 12;
             
             // Redondear minutos al múltiplo de 5 más cercano
             const roundedMinutes = Math.round(minutes / 5) * 5;
@@ -2599,15 +2674,11 @@
                 const newCompletedWork = timeCalculatorData.completedWork + roundedHours;
                 const newRemainingWork = Math.max(0, timeCalculatorData.originalEstimate - newCompletedWork);
                 
-                // Calcular overage
-                const overage = Math.max(0, newCompletedWork - timeCalculatorData.originalEstimate);
-                
                 // Guardar resultados
                 timeCalculatorData.calculatedResults = {
                     elapsedTime: roundedHours,
                     newCompletedWork: newCompletedWork,
-                    newRemainingWork: newRemainingWork,
-                    overage: overage
+                    newRemainingWork: newRemainingWork
                 };
                 
                 // Mostrar resultados
@@ -2622,10 +2693,14 @@
                 // Actualizar gráfico con valores calculados
                 updateTimeChartForCalculated(newCompletedWork, newRemainingWork);
                 
+                // Actualizar summary cards
+                document.getElementById('completedWork').textContent = newCompletedWork.toFixed(2);
+                document.getElementById('remainingWork').textContent = newRemainingWork.toFixed(2);
+                
                 // Mostrar mensaje
                 const hours = Math.floor(totalMinutes / 60);
                 const minutes = totalMinutes % 60;
-                showAlert('success', `Tiempo calculado: ${hours}h ${minutes}m = ${roundedHours.toFixed(2)}h en cuartos`);
+                showAlert('success', `Tiempo calculado: ${hours}h ${minutes}m = ${roundedHours.toFixed(2)}h`);
                 
                 return roundedHours;
                 
@@ -2739,7 +2814,6 @@
                     // Actualizar UI
                     document.getElementById('completedWork').textContent = timeCalculatorData.completedWork.toFixed(2);
                     document.getElementById('remainingWork').textContent = timeCalculatorData.remainingWork.toFixed(2);
-                    document.getElementById('timeOverage').textContent = timeCalculatorData.calculatedResults.overage.toFixed(2);
                     
                     // Actualizar gráfico
                     updateTimeChart();
@@ -2773,7 +2847,6 @@
                 originalEstimate: timeCalculatorData.originalEstimate,
                 completedWork: timeCalculatorData.completedWork,
                 remainingWork: timeCalculatorData.remainingWork,
-                overage: Math.max(0, timeCalculatorData.completedWork - timeCalculatorData.originalEstimate),
                 timeLogs: timeCalculatorData.timeLogs,
                 timeline: timeCalculatorData.timeline,
                 generatedAt: new Date().toISOString()
@@ -2793,25 +2866,25 @@
             showAlert('success', 'Reporte exportado correctamente');
         }
 
-        // ========== NUEVA FUNCIONALIDAD: TAREAS POR USUARIO CON CONSOLIDADO DE HORAS ==========
+        // ========== NUEVA FUNCIONALIDAD: TAREAS POR USUARIO CORREGIDA ==========
 
-        // Obtener tareas por usuario con consolidado de horas
+        // Obtener tareas por usuario con consolidado de horas (CORREGIDA)
         async function getUserTasksWithHours() {
-            const userList = document.getElementById('userList').value.trim();
-            const workItemTypes = document.getElementById('userWorkItemTypes').value.trim();
+            const userListText = document.getElementById('userList').value.trim();
+            const workItemTypes = $('#userWorkItemTypes').val() ? $('#userWorkItemTypes').val().join(',') : 'Task,Issue,Bug';
             const timeRangeBtn = document.querySelector('.time-range-btn.active');
             const days = timeRangeBtn ? parseInt(timeRangeBtn.getAttribute('data-days')) : 30;
-            
-            if (!userList) {
-                showAlert('error', 'Por favor, ingrese al menos un usuario');
-                return;
-            }
             
             // Mostrar loading
             showLoading('userLoading');
             
             // Procesar lista de usuarios
-            const users = userList.split(',').map(user => user.trim());
+            let users = [];
+            if (userListText) {
+                // Separar por nuevas líneas, comas o punto y coma
+                users = userListText.split(/[\n,;]/).map(user => user.trim()).filter(user => user.length > 0);
+            }
+            
             userTasksData.users = users;
             
             // Calcular fecha límite
@@ -2819,16 +2892,31 @@
             limitDate.setDate(limitDate.getDate() - days);
             const formattedDate = limitDate.toISOString().split('T')[0];
             
-            // Crear condiciones para cada usuario
-            const userConditions = users.map(user => `[System.AssignedTo] CONTAINS '${user}'`).join(' OR ');
+            // Crear condiciones para usuarios (si se especificaron)
+            let userConditions = '';
+            if (users.length > 0) {
+                const userConditionsArray = users.map(user => {
+                    // Usar CONTAINS para búsqueda más flexible
+                    return `[System.AssignedTo] CONTAINS '${user}'`;
+                });
+                userConditions = `AND (${userConditionsArray.join(' OR ')})`;
+            }
             
             // Crear condiciones para tipos
             const typeConditions = workItemTypes.split(',').map(type => `[System.WorkItemType] = '${type.trim()}'`).join(' OR ');
             
             // Crear consulta WIQL para obtener work items
-            const wiqlQuery = {
-                query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.State], [System.AssignedTo], [System.CreatedDate], [System.ChangedDate], [System.AreaPath], [System.IterationPath], [Microsoft.VSTS.Scheduling.OriginalEstimate], [Microsoft.VSTS.Scheduling.CompletedWork], [Microsoft.VSTS.Scheduling.RemainingWork] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND (${userConditions}) AND (${typeConditions}) AND ([System.ChangedDate] >= '${formattedDate}') ORDER BY [System.ChangedDate] DESC`
-            };
+            let wiqlQuery;
+            if (users.length > 0) {
+                wiqlQuery = {
+                    query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.State], [System.AssignedTo], [System.CreatedDate], [System.ChangedDate], [System.AreaPath], [System.IterationPath], [Microsoft.VSTS.Scheduling.OriginalEstimate], [Microsoft.VSTS.Scheduling.CompletedWork], [Microsoft.VSTS.Scheduling.RemainingWork] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' ${userConditions} AND (${typeConditions}) AND ([System.ChangedDate] >= '${formattedDate}') ORDER BY [System.ChangedDate] DESC`
+                };
+            } else {
+                // Si no se especificaron usuarios, obtener todos los work items
+                wiqlQuery = {
+                    query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.State], [System.AssignedTo], [System.CreatedDate], [System.ChangedDate], [System.AreaPath], [System.IterationPath], [Microsoft.VSTS.Scheduling.OriginalEstimate], [Microsoft.VSTS.Scheduling.CompletedWork], [Microsoft.VSTS.Scheduling.RemainingWork] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND (${typeConditions}) AND ([System.ChangedDate] >= '${formattedDate}') ORDER BY [System.ChangedDate] DESC`
+                };
+            }
             
             console.log('Consultando work items con WIQL:', wiqlQuery.query);
             
@@ -2841,9 +2929,11 @@
             if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
                 hideLoading('userLoading');
                 document.getElementById('userResultsContainer').style.display = 'none';
-                showAlert('error', `No se encontraron work items para los usuarios especificados en los últimos ${days} días`);
+                showAlert('error', `No se encontraron work items ${users.length > 0 ? 'para los usuarios especificados' : ''} en los últimos ${days} días`);
                 return;
             }
+            
+            console.log(`Se encontraron ${wiqlResult.workItems.length} work items`);
             
             // Obtener IDs de work items (limitado a 200)
             const workItemIds = wiqlResult.workItems.slice(0, 200).map(item => item.id);
@@ -2874,7 +2964,7 @@
             }
         }
 
-        // Procesar work items para consolidar horas por día
+        // Procesar work items para consolidar horas por día (CORREGIDA)
         function processUserHours(workItems, users) {
             console.log('Procesando horas para usuarios:', users);
             console.log('Total work items:', workItems.length);
@@ -2892,30 +2982,21 @@
                     (fields['System.AssignedTo'].displayName || fields['System.AssignedTo'].uniqueName || '') : 
                     '';
                 
-                console.log(`Work item ${index + 1}:`, {
-                    id: item.id,
-                    assignedTo: assignedTo,
-                    state: state,
-                    changedDate: changedDate
-                });
-                
-                // Verificar si el usuario está en la lista (comparación más flexible)
-                const matchingUser = users.find(user => {
-                    const userLower = user.toLowerCase();
-                    const assignedLower = assignedTo.toLowerCase();
+                // Si se especificaron usuarios, verificar si este work item corresponde a alguno
+                if (users.length > 0) {
+                    const matchingUser = users.find(user => {
+                        const userLower = user.toLowerCase();
+                        const assignedLower = assignedTo.toLowerCase();
+                        
+                        // Comparación más flexible
+                        return assignedLower.includes(userLower) || 
+                               assignedTo.toLowerCase().includes(user.split('@')[0].toLowerCase());
+                    });
                     
-                    // Comparación más flexible
-                    return assignedLower.includes(userLower) || 
-                           userLower.includes(assignedLower) ||
-                           assignedTo.toLowerCase().includes(user.split('@')[0].toLowerCase());
-                });
-                
-                if (!matchingUser) {
-                    console.log(`  No coincide con usuarios: ${assignedTo} vs ${users.join(', ')}`);
-                    return;
+                    if (!matchingUser) {
+                        return; // Saltar este work item si no coincide con ningún usuario
+                    }
                 }
-                
-                console.log(`  Coincide con usuario: ${matchingUser}`);
                 
                 // Obtener fecha (solo día, sin hora)
                 const dateObj = new Date(changedDate);
@@ -2942,7 +3023,6 @@
                 let autoHours = 0;
                 if (state.toLowerCase().includes('progress')) {
                     // Estimación simple: 1 hora por defecto para cada work item en estado In Progress
-                    // En producción, esto debería calcularse basándose en el tiempo real
                     autoHours = 1.0;
                 }
                 
