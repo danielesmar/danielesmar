@@ -2690,13 +2690,13 @@
                 
                 // Calcular duración con el siguiente cambio (si existe)
                 let durationText = '';
+                let durationClass = '';
                 if (index < stateChanges.length - 1) {
                     const nextChange = stateChanges[index + 1];
                     const durationMs = nextChange.date.getTime() - change.date.getTime();
                     const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
                     const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
                     
-                    let durationClass = '';
                     if (durationMs < 0) {
                         durationClass = 'negative';
                         durationText = `Duración: -${Math.abs(durationMinutes)}m`;
@@ -2727,7 +2727,7 @@
                             <span class="timeline-arrow"><i class="fas fa-arrow-right"></i></span>
                             <span class="timeline-state-badge timeline-state-to">${change.newValue}</span>
                         </div>
-                        <div class="timeline-duration ${durationMs < 0 ? 'negative' : ''}">${durationText}</div>
+                        <div class="timeline-duration ${durationClass}">${durationText}</div>
                         <div class="timeline-user">${change.revisedBy}</div>
                     </div>
                 `;
