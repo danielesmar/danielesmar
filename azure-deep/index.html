@@ -649,63 +649,123 @@
             min-width: 140px;
         }
 
-        /* Timeline de cambios de estado */
+        /* ========== NUEVO TIMELINE VERTICAL ========== */
         .timeline-section {
             margin-top: 20px;
             padding-top: 15px;
             border-top: 1px solid var(--az-border-color);
         }
 
-        .timeline-container {
-            max-height: 300px;
+        .timeline-vertical-container {
+            max-height: 400px;
             overflow-y: auto;
             border-radius: var(--az-border-radius);
             border: 1px solid var(--az-border-color);
             background-color: var(--az-bg-primary);
+            padding: 15px;
         }
 
-        .timeline-item {
-            padding: 12px 15px;
+        .timeline-vertical {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-vertical::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--az-border-color);
+        }
+
+        .timeline-item-vertical {
+            position: relative;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
             border-bottom: 1px solid var(--az-border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
         }
 
-        .timeline-item:last-child {
+        .timeline-item-vertical:last-child {
             border-bottom: none;
+            margin-bottom: 0;
         }
 
-        .timeline-header {
+        .timeline-item-vertical::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--az-primary);
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px var(--az-primary);
+            z-index: 1;
+        }
+
+        .timeline-state-change {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+            flex-wrap: wrap;
         }
 
-        .timeline-date {
-            font-weight: 600;
-            color: var(--az-text-primary);
-            font-size: 0.9rem;
-        }
-
-        .timeline-user {
-            font-size: 0.85rem;
-            color: var(--az-text-secondary);
-        }
-
-        .timeline-state {
-            display: inline-block;
-            padding: 3px 10px;
+        .timeline-date-badge {
+            background-color: var(--az-bg-tertiary);
+            padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8rem;
             font-weight: 600;
-            margin-right: 8px;
+            color: var(--az-text-primary);
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .timeline-state-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .timeline-state-from {
+            background-color: rgba(161, 159, 157, 0.2);
+            color: var(--az-text-secondary);
+        }
+
+        .timeline-state-to {
+            background-color: rgba(0, 120, 212, 0.2);
+            color: var(--az-state-inprogress);
+        }
+
+        .timeline-arrow {
+            color: var(--az-text-tertiary);
+            font-size: 0.9rem;
         }
 
         .timeline-duration {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--az-text-tertiary);
+            margin-top: 5px;
+            padding-left: 10px;
             font-style: italic;
+        }
+
+        .timeline-duration.negative {
+            color: var(--az-error);
+        }
+
+        .timeline-user {
+            font-size: 0.75rem;
+            color: var(--az-text-tertiary);
+            margin-top: 3px;
+            padding-left: 10px;
         }
 
         /* ========== TAREAS POR USUARIO ========== */
@@ -982,7 +1042,7 @@
             color: var(--az-warning);
         }
 
-        /* Select2 personalizado para Azure DevOps */
+        /* ========== CORRECCIONES SELECT2 ========== */
         .select2-container--default .select2-selection--multiple {
             border: 1px solid var(--az-border-color);
             border-radius: var(--az-border-radius);
@@ -998,20 +1058,56 @@
 
         .select2-container--default .select2-selection--multiple .select2-selection__choice {
             background-color: var(--az-primary);
-            border: 1px solid var(--az-secondary);
+            border: none !important;
             border-radius: 12px;
             color: white;
-            padding: 3px 8px;
+            padding: 4px 28px 4px 12px !important;
             font-size: 0.85rem;
+            position: relative;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            min-height: 24px;
         }
 
+        /* Botón eliminar mejorado */
         .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-            color: white;
-            margin-right: 5px;
+            color: white !important;
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem !important;
+            font-weight: bold;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+            opacity: 0.8;
+            border: none !important;
+            background: none !important;
         }
 
         .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
-            color: #ffd6d6;
+            color: #ffd6d6 !important;
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border-radius: 50%;
+        }
+
+        /* Ajustar el texto dentro del choice */
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+            padding-right: 5px;
+        }
+
+        /* Placeholder más visible */
+        .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+            color: var(--az-text-tertiary) !important;
+            font-size: 0.9rem;
         }
 
         .select2-container--default .select2-results__option--highlighted[aria-selected] {
@@ -1028,6 +1124,128 @@
             border-radius: var(--az-border-radius);
             background-color: var(--az-bg-secondary);
         }
+
+        /* ========== NUEVA TABLA PARA TAREAS POR USUARIO ========== */
+        .user-hours-table {
+            margin-top: 20px;
+            border-radius: var(--az-border-radius);
+            overflow: hidden;
+        }
+
+        .user-hours-table table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background-color: var(--az-bg-secondary);
+            border-radius: var(--az-border-radius);
+            overflow: hidden;
+            box-shadow: var(--az-box-shadow);
+            min-width: 700px;
+        }
+
+        .user-hours-table th {
+            background-color: var(--az-primary);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-hours-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--az-border-color);
+            color: var(--az-text-primary);
+            vertical-align: middle;
+        }
+
+        .user-hours-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .user-hours-table tr:hover {
+            background-color: rgba(0, 120, 212, 0.05);
+            cursor: pointer;
+        }
+
+        .user-hours-table .date-cell {
+            font-weight: 600;
+            color: var(--az-text-primary);
+            min-width: 100px;
+        }
+
+        .user-hours-table .hours-cell {
+            text-align: right;
+            font-family: 'Consolas', 'Monaco', monospace;
+            min-width: 80px;
+        }
+
+        .user-hours-table .auto-hours {
+            color: var(--az-primary);
+            font-weight: 600;
+        }
+
+        .user-hours-table .manual-hours {
+            color: var(--az-accent);
+            font-weight: 600;
+        }
+
+        .user-hours-table .diff-hours {
+            color: var(--az-error);
+            font-weight: 600;
+        }
+
+        .user-hours-table .user-cell {
+            color: var(--az-text-primary);
+            font-weight: 500;
+        }
+
+        .user-hours-table .positive-diff {
+            color: var(--az-accent) !important;
+        }
+
+        .user-hours-table .items-count {
+            display: inline-block;
+            background-color: var(--az-bg-tertiary);
+            color: var(--az-text-secondary);
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        /* Responsive para la tabla */
+        @media (max-width: 768px) {
+            .user-hours-table {
+                font-size: 0.8rem;
+            }
+            
+            .user-hours-table th,
+            .user-hours-table td {
+                padding: 8px 10px;
+            }
+            
+            .user-hours-table .items-count {
+                display: block;
+                margin-left: 0;
+                margin-top: 4px;
+            }
+        }
+
+        /* Mejoras para el modal de detalles */
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .work-items-table th:nth-child(1) { width: 100px; }
+        .work-items-table th:nth-child(2) { width: 250px; }
+        .work-items-table th:nth-child(3) { width: 120px; }
+        .work-items-table th:nth-child(4) { width: 150px; }
+        .work-items-table th:nth-child(5) { width: 150px; }
+        .work-items-table th:nth-child(6) { width: 150px; }
 
         /* Responsive */
         @media (max-width: 992px) {
@@ -1088,6 +1306,14 @@
             
             .time-action-buttons .btn {
                 min-width: 120px;
+            }
+            
+            .timeline-vertical {
+                padding-left: 20px;
+            }
+            
+            .timeline-item-vertical::before {
+                left: -15px;
             }
         }
 
@@ -1517,7 +1743,7 @@
                     <div class="card">
                         <h3 class="card-title"><i class="fas fa-chart-bar"></i> Consolidado de Horas por Día</h3>
                         <div class="user-hours-grid" id="userHoursGrid">
-                            <!-- Las tarjetas de días se generarán aquí dinámicamente -->
+                            <!-- La tabla se generará aquí dinámicamente -->
                         </div>
                     </div>
                 </div>
@@ -1538,8 +1764,8 @@
                                 <th>ID</th>
                                 <th>Título</th>
                                 <th>Estado</th>
+                                <th>Última Actualización</th>
                                 <th>Área</th>
-                                <th>Sprint</th>
                                 <th>Tiempos</th>
                             </tr>
                         </thead>
@@ -1716,10 +1942,10 @@
                         </div>
                     </div>
                     
-                    <!-- Timeline de cambios de estado -->
+                    <!-- Timeline de cambios de estado CORREGIDO -->
                     <div class="timeline-section" id="timelineSection" style="display: none;">
                         <h3 class="card-title"><i class="fas fa-history"></i> Timeline de Cambios de Estado</h3>
-                        <div class="timeline-container" id="timelineContainer">
+                        <div class="timeline-vertical-container" id="timelineContainer">
                             <!-- Los eventos del timeline se generarán aquí -->
                         </div>
                     </div>
@@ -2368,8 +2594,8 @@
                     // Establecer hora de fin como hora actual
                     setEndTimeToCurrent();
                     
-                    // Mostrar timeline
-                    displayTimeline();
+                    // Mostrar timeline (NUEVA VERSIÓN)
+                    displayTimelineVertical();
                     
                     // Mostrar contenido de la calculadora
                     document.getElementById('timeCalculatorContent').style.display = 'block';
@@ -2419,134 +2645,103 @@
             }
         }
 
-        // Mostrar timeline de cambios (corregido)
-        function displayTimeline() {
+        // NUEVA FUNCIÓN: Mostrar timeline vertical (corregida)
+        function displayTimelineVertical() {
             const timelineContainer = document.getElementById('timelineContainer');
             timelineContainer.innerHTML = '';
             
             if (!timeCalculatorData.timeline || timeCalculatorData.timeline.length === 0) {
-                timelineContainer.innerHTML = '<div class="timeline-item" style="text-align: center; color: var(--az-text-tertiary); padding: 20px;">No hay cambios de estado registrados</div>';
+                timelineContainer.innerHTML = '<div style="text-align: center; color: var(--az-text-tertiary); padding: 30px;"><i class="fas fa-history" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>No hay cambios de estado registrados</div>';
+                document.getElementById('timelineSection').style.display = 'block';
                 return;
             }
             
-            // Filtrar solo cambios de estado
+            // Filtrar solo cambios de estado válidos
             const stateChanges = timeCalculatorData.timeline.filter(update => {
                 return update.fields && update.fields['System.State'];
+            }).map(update => {
+                return {
+                    date: new Date(update.revisedDate),
+                    oldValue: update.fields['System.State'].oldValue || 'N/A',
+                    newValue: update.fields['System.State'].newValue || 'N/A',
+                    revisedBy: update.revisedBy ? update.revisedBy.displayName : 'Desconocido'
+                };
+            }).filter(change => {
+                // Filtrar fechas inválidas (futuras extremas)
+                const currentYear = new Date().getFullYear();
+                return change.date.getFullYear() <= currentYear + 10; // Solo fechas hasta 10 años en el futuro
             });
             
             if (stateChanges.length === 0) {
-                timelineContainer.innerHTML = '<div class="timeline-item" style="text-align: center; color: var(--az-text-tertiary); padding: 20px;">No hay cambios de estado registrados</div>';
+                timelineContainer.innerHTML = '<div style="text-align: center; color: var(--az-text-tertiary); padding: 30px;"><i class="fas fa-history" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>No hay cambios de estado válidos registrados</div>';
+                document.getElementById('timelineSection').style.display = 'block';
                 return;
             }
             
-            // Ordenar por fecha (más reciente primero)
-            stateChanges.sort((a, b) => new Date(b.revisedDate) - new Date(a.revisedDate));
+            // Ordenar por fecha (más antiguo primero)
+            stateChanges.sort((a, b) => a.date - b.date);
             
-            // Si el estado actual no es "Done", agregar el estado actual con fecha actual
-            const currentState = timeCalculatorData.workItem.fields['System.State'] || '';
-            if (!currentState.toLowerCase().includes('done') && !currentState.toLowerCase().includes('closed')) {
-                const currentStateEvent = {
-                    revisedDate: new Date().toISOString(),
-                    fields: {
-                        'System.State': {
-                            oldValue: currentState,
-                            newValue: currentState
-                        }
-                    },
-                    revisedBy: { displayName: 'Actual' }
-                };
-                stateChanges.unshift(currentStateEvent);
-            }
+            // Crear HTML del timeline vertical
+            let timelineHTML = '<div class="timeline-vertical">';
             
-            // Mostrar máximo 10 cambios
-            const recentChanges = stateChanges.slice(0, 10);
-            
-            recentChanges.forEach((change, index) => {
-                const timelineItem = document.createElement('div');
-                timelineItem.className = 'timeline-item';
+            stateChanges.forEach((change, index) => {
+                // Formatear fecha
+                const formattedDate = formatDateForTimeline(change.date);
                 
-                const revisedDate = new Date(change.revisedDate);
-                const formattedDate = formatDateTime(revisedDate);
-                
-                // Obtener información del cambio
-                const oldState = change.fields['System.State'].oldValue || 'N/A';
-                const newState = change.fields['System.State'].newValue || 'N/A';
-                const revisedBy = change.revisedBy ? change.revisedBy.displayName : 'Desconocido';
-                
-                // Calcular duración si no es el último
+                // Calcular duración con el siguiente cambio (si existe)
                 let durationText = '';
-                if (index < recentChanges.length - 1) {
-                    const nextChange = recentChanges[index + 1];
-                    const nextDate = new Date(nextChange.revisedDate);
-                    const durationMs = revisedDate.getTime() - nextDate.getTime();
+                if (index < stateChanges.length - 1) {
+                    const nextChange = stateChanges[index + 1];
+                    const durationMs = nextChange.date.getTime() - change.date.getTime();
+                    const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+                    const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    let durationClass = '';
+                    if (durationMs < 0) {
+                        durationClass = 'negative';
+                        durationText = `Duración: -${Math.abs(durationMinutes)}m`;
+                    } else if (durationHours > 0) {
+                        durationText = `Duración: ${durationHours}h ${durationMinutes}m`;
+                    } else {
+                        durationText = `Duración: ${durationMinutes}m`;
+                    }
+                } else {
+                    // Último cambio: calcular duración hasta ahora
+                    const now = new Date();
+                    const durationMs = now.getTime() - change.date.getTime();
                     const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
                     const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
                     
                     if (durationHours > 0) {
-                        durationText = `${durationHours}h ${durationMinutes}m`;
+                        durationText = `Duración actual: ${durationHours}h ${durationMinutes}m`;
                     } else {
-                        durationText = `${durationMinutes}m`;
+                        durationText = `Duración actual: ${durationMinutes}m`;
                     }
                 }
                 
-                timelineItem.innerHTML = `
-                    <div class="timeline-header">
-                        <div class="timeline-date">${formattedDate}</div>
-                        <div class="timeline-user">${revisedBy}</div>
+                timelineHTML += `
+                    <div class="timeline-item-vertical">
+                        <div class="timeline-date-badge">${formattedDate}</div>
+                        <div class="timeline-state-change">
+                            <span class="timeline-state-badge timeline-state-from">${change.oldValue}</span>
+                            <span class="timeline-arrow"><i class="fas fa-arrow-right"></i></span>
+                            <span class="timeline-state-badge timeline-state-to">${change.newValue}</span>
+                        </div>
+                        <div class="timeline-duration ${durationMs < 0 ? 'negative' : ''}">${durationText}</div>
+                        <div class="timeline-user">${change.revisedBy}</div>
                     </div>
-                    <div>
-                        <span class="timeline-state" style="background-color: ${getStateColor(oldState)}; color: ${getStateTextColor(oldState)};">
-                            ${oldState}
-                        </span>
-                        <i class="fas fa-arrow-right" style="color: var(--az-text-tertiary); margin-right: 8px;"></i>
-                        <span class="timeline-state" style="background-color: ${getStateColor(newState)}; color: ${getStateTextColor(newState)};">
-                            ${newState}
-                        </span>
-                    </div>
-                    ${durationText ? `<div class="timeline-duration">Duración: ${durationText}</div>` : ''}
                 `;
-                
-                timelineContainer.appendChild(timelineItem);
             });
+            
+            timelineHTML += '</div>';
+            timelineContainer.innerHTML = timelineHTML;
             
             // Mostrar la sección de timeline
             document.getElementById('timelineSection').style.display = 'block';
         }
 
-        // Obtener color para estado
-        function getStateColor(state) {
-            if (!state) return 'var(--az-bg-tertiary)';
-            
-            const stateLower = state.toLowerCase();
-            if (stateLower.includes('progress')) {
-                return 'rgba(0, 120, 212, 0.2)';
-            } else if (stateLower.includes('done') || stateLower.includes('closed')) {
-                return 'rgba(16, 124, 16, 0.2)';
-            } else if (stateLower.includes('to do') || stateLower.includes('new')) {
-                return 'rgba(161, 159, 157, 0.2)';
-            } else {
-                return 'rgba(255, 140, 0, 0.2)';
-            }
-        }
-
-        // Obtener color de texto para estado
-        function getStateTextColor(state) {
-            if (!state) return 'var(--az-text-primary)';
-            
-            const stateLower = state.toLowerCase();
-            if (stateLower.includes('progress')) {
-                return 'var(--az-state-inprogress)';
-            } else if (stateLower.includes('done') || stateLower.includes('closed')) {
-                return 'var(--az-state-done)';
-            } else if (stateLower.includes('to do') || stateLower.includes('new')) {
-                return 'var(--az-state-todo)';
-            } else {
-                return 'var(--az-state-resolved)';
-            }
-        }
-
-        // Formatear fecha y hora
-        function formatDateTime(date) {
+        // Función auxiliar para formatear fecha para el timeline
+        function formatDateForTimeline(date) {
             const day = date.getDate().toString().padStart(2, '0');
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const year = date.getFullYear();
@@ -2896,10 +3091,12 @@
             let userConditions = '';
             if (users.length > 0) {
                 const userConditionsArray = users.map(user => {
-                    // Usar CONTAINS para búsqueda más flexible
-                    return `[System.AssignedTo] CONTAINS '${user}'`;
+                    const userClean = user.trim();
+                    // Usar CONTAINS para buscar por uniqueName (correo)
+                    return `[System.AssignedTo] CONTAINS '${userClean}'`;
                 });
                 userConditions = `AND (${userConditionsArray.join(' OR ')})`;
+                console.log('Condiciones de usuario:', userConditions);
             }
             
             // Crear condiciones para tipos
@@ -2952,6 +3149,10 @@
             
             if (detailsResult && detailsResult.value && detailsResult.value.length > 0) {
                 console.log(`Procesando ${detailsResult.value.length} work items`);
+                
+                // Debug
+                debugUserMatching(users, detailsResult.value);
+                
                 // Procesar work items para consolidar horas por día
                 processUserHours(detailsResult.value, users);
                 
@@ -2964,181 +3165,261 @@
             }
         }
 
-        // Procesar work items para consolidar horas por día (CORREGIDA)
+        // Función para debug de usuarios - Muestra cómo se están comparando
+        function debugUserMatching(users, workItems) {
+            console.log('=== DEBUG USER MATCHING ===');
+            console.log('Usuarios buscados (correos):', users);
+            
+            const uniqueNames = new Set();
+            
+            workItems.forEach((item, index) => {
+                const assignedTo = item.fields['System.AssignedTo'];
+                const uniqueName = assignedTo ? assignedTo.uniqueName : 'No asignado';
+                const displayName = assignedTo ? assignedTo.displayName : 'No asignado';
+                
+                if (uniqueName) uniqueNames.add(uniqueName);
+                
+                console.log(`Item ${index+1}: ID=${item.id}, UniqueName="${uniqueName}", Display="${displayName}"`);
+            });
+            
+            console.log('UniqueNames encontrados:', Array.from(uniqueNames));
+        }
+
+        // Procesar work items para consolidar horas por día (VERSIÓN CORREGIDA - POR UNIQUENAME)
         function processUserHours(workItems, users) {
             console.log('Procesando horas para usuarios:', users);
-            console.log('Total work items:', workItems.length);
+            console.log('Total work items a procesar:', workItems.length);
             
-            // Reiniciar datos
-            userTasksData.dailyHours = {};
-            userTasksData.workItemsByDay = {};
+            // Reiniciar datos - Ahora estructura diferente para consolidar por día y usuario
+            userTasksData.dailyHours = {}; // Clave: "YYYY-MM-DD_username"
+            userTasksData.workItemsByDay = {}; // Clave: "YYYY-MM-DD_username"
+            
+            let processedCount = 0;
             
             // Procesar cada work item
-            workItems.forEach((item, index) => {
+            workItems.forEach((item) => {
                 const fields = item.fields;
                 const changedDate = fields['System.ChangedDate'];
                 const state = fields['System.State'] || '';
-                const assignedTo = fields['System.AssignedTo'] ? 
-                    (fields['System.AssignedTo'].displayName || fields['System.AssignedTo'].uniqueName || '') : 
-                    '';
                 
-                // Si se especificaron usuarios, verificar si este work item corresponde a alguno
+                // Extraer uniqueName (correo) y displayName
+                let assignedUniqueName = '';
+                let assignedDisplayName = '';
+                
+                if (fields['System.AssignedTo']) {
+                    assignedUniqueName = fields['System.AssignedTo'].uniqueName || ''; // Correo electrónico
+                    assignedDisplayName = fields['System.AssignedTo'].displayName || assignedUniqueName;
+                }
+                
+                // Si no hay usuario asignado, saltar
+                if (!assignedUniqueName) {
+                    return;
+                }
+                
+                // Verificar si este work item corresponde a los usuarios filtrados
                 if (users.length > 0) {
-                    const matchingUser = users.find(user => {
-                        const userLower = user.toLowerCase();
-                        const assignedLower = assignedTo.toLowerCase();
+                    let userMatched = false;
+                    
+                    users.forEach(user => {
+                        const userClean = user.trim().toLowerCase();
+                        const assignedClean = assignedUniqueName.toLowerCase();
                         
-                        // Comparación más flexible
-                        return assignedLower.includes(userLower) || 
-                               assignedTo.toLowerCase().includes(user.split('@')[0].toLowerCase());
+                        // Comparar por uniqueName (correo)
+                        if (assignedClean.includes(userClean) || 
+                            assignedClean === userClean ||
+                            (userClean.includes('@') && assignedClean === userClean) ||
+                            assignedClean.includes(userClean.split('@')[0])) {
+                            userMatched = true;
+                        }
                     });
                     
-                    if (!matchingUser) {
+                    if (!userMatched) {
                         return; // Saltar este work item si no coincide con ningún usuario
                     }
+                }
+                
+                // Validar fecha de cambio
+                if (!changedDate) {
+                    console.log('Work item sin fecha de cambio:', item.id);
+                    return;
                 }
                 
                 // Obtener fecha (solo día, sin hora)
                 const dateObj = new Date(changedDate);
                 const dateKey = dateObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
-                const formattedDate = formatDate(dateObj);
+                const userDateKey = `${dateKey}_${assignedUniqueName}`; // Clave única por día y usuario
                 
-                // Inicializar datos para este día si no existen
-                if (!userTasksData.dailyHours[dateKey]) {
-                    userTasksData.dailyHours[dateKey] = {
-                        date: formattedDate,
+                console.log(`Work item ${item.id} - Fecha: ${dateKey}, Usuario: ${assignedUniqueName}, Display: ${assignedDisplayName}`);
+                
+                // Inicializar datos para este día-usuario si no existen
+                if (!userTasksData.dailyHours[userDateKey]) {
+                    userTasksData.dailyHours[userDateKey] = {
+                        date: dateKey,
                         dateObj: dateObj,
-                        autoHours: 0, // Horas automáticas (tiempo en estado In Progress)
-                        manualHours: 0, // Horas manuales (Completed Work registrado)
-                        diffHours: 0, // Diferencia
+                        uniqueName: assignedUniqueName,
+                        displayName: assignedDisplayName,
+                        autoHours: 0,
+                        manualHours: 0,
+                        diffHours: 0,
                         workItems: []
                     };
                 }
                 
-                if (!userTasksData.workItemsByDay[dateKey]) {
-                    userTasksData.workItemsByDay[dateKey] = [];
+                if (!userTasksData.workItemsByDay[userDateKey]) {
+                    userTasksData.workItemsByDay[userDateKey] = [];
                 }
                 
-                // Calcular horas automáticas (si el estado es In Progress)
+                // Calcular horas automáticas
                 let autoHours = 0;
-                if (state.toLowerCase().includes('progress')) {
-                    // Estimación simple: 1 hora por defecto para cada work item en estado In Progress
-                    autoHours = 1.0;
+                const stateLower = state.toLowerCase();
+                if (stateLower.includes('progress') || stateLower.includes('active') || 
+                    stateLower.includes('in progress') || stateLower === 'inprogress') {
+                    autoHours = 1.0; // Estimación simple
                 }
                 
                 // Obtener horas manuales (Completed Work)
                 const manualHours = parseFloat(fields['Microsoft.VSTS.Scheduling.CompletedWork']) || 0;
                 
-                // Agregar al consolidado del día
-                userTasksData.dailyHours[dateKey].autoHours += autoHours;
-                userTasksData.dailyHours[dateKey].manualHours += manualHours;
-                userTasksData.dailyHours[dateKey].diffHours = userTasksData.dailyHours[dateKey].manualHours - userTasksData.dailyHours[dateKey].autoHours;
+                // Agregar al consolidado del día-usuario
+                userTasksData.dailyHours[userDateKey].autoHours += autoHours;
+                userTasksData.dailyHours[userDateKey].manualHours += manualHours;
+                userTasksData.dailyHours[userDateKey].diffHours = 
+                    userTasksData.dailyHours[userDateKey].manualHours - userTasksData.dailyHours[userDateKey].autoHours;
                 
-                // Agregar work item a la lista del día
-                userTasksData.dailyHours[dateKey].workItems.push(item);
-                userTasksData.workItemsByDay[dateKey].push(item);
+                // Agregar work item a la lista del día-usuario
+                userTasksData.dailyHours[userDateKey].workItems.push(item);
+                userTasksData.workItemsByDay[userDateKey].push(item);
+                
+                processedCount++;
             });
             
-            console.log('Días procesados:', Object.keys(userTasksData.dailyHours).length);
+            console.log(`Total work items procesados: ${processedCount}`);
+            console.log('Días-usuarios con datos:', Object.keys(userTasksData.dailyHours).length);
             
-            // Ordenar días por fecha (más reciente primero)
-            const sortedDates = Object.keys(userTasksData.dailyHours).sort((a, b) => {
-                return new Date(b) - new Date(a);
+            // Ordenar por fecha (más reciente primero) y luego por usuario
+            const sortedEntries = Object.entries(userTasksData.dailyHours).sort((a, b) => {
+                // Primero por fecha
+                const dateCompare = new Date(b[1].date) - new Date(a[1].date);
+                if (dateCompare !== 0) return dateCompare;
+                
+                // Luego por nombre de usuario
+                return a[1].displayName.localeCompare(b[1].displayName);
             });
             
             // Crear objeto ordenado
             const orderedDailyHours = {};
-            sortedDates.forEach(date => {
-                orderedDailyHours[date] = userTasksData.dailyHours[date];
+            sortedEntries.forEach(([key, value]) => {
+                orderedDailyHours[key] = value;
             });
             
             userTasksData.dailyHours = orderedDailyHours;
         }
 
-        // Formatear fecha
+        // Formatear fecha en formato DD/MM (versión mejorada)
         function formatDate(date) {
-            const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-            const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-            
-            const dayName = days[date.getDay()];
-            const day = date.getDate();
-            const month = months[date.getMonth()];
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const year = date.getFullYear();
             
-            return `${dayName}, ${day} ${month} ${year}`;
+            // También obtener nombre del día
+            const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            const dayName = days[date.getDay()];
+            
+            return `${dayName}, ${day}/${month}/${year}`;
         }
 
-        // Mostrar grid de horas por día
+        // Mostrar resultados en formato tabla (NUEVA VERSIÓN)
         function displayUserHoursGrid() {
             const gridContainer = document.getElementById('userHoursGrid');
             gridContainer.innerHTML = '';
             
+            console.log('Datos a mostrar en tabla:', userTasksData.dailyHours);
+            console.log('Número de registros (día-usuario):', Object.keys(userTasksData.dailyHours).length);
+            
             if (Object.keys(userTasksData.dailyHours).length === 0) {
-                gridContainer.innerHTML = '<p style="color: var(--az-text-tertiary); text-align: center; padding: 20px;">No hay datos para mostrar</p>';
+                gridContainer.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <i class="fas fa-chart-bar" style="font-size: 3rem; color: var(--az-text-tertiary); margin-bottom: 15px;"></i>
+                        <p style="color: var(--az-text-tertiary); font-size: 1rem; margin-bottom: 10px;">
+                            No hay datos para mostrar
+                        </p>
+                        <p style="color: var(--az-text-secondary); font-size: 0.9rem;">
+                            Verifique que los usuarios especificados existan y tengan work items asignados.
+                        </p>
+                    </div>
+                `;
                 document.getElementById('userResultsContainer').style.display = 'block';
                 return;
             }
             
-            console.log('Mostrando grid con días:', Object.keys(userTasksData.dailyHours));
+            // Crear tabla en lugar de tarjetas
+            const table = document.createElement('div');
+            table.className = 'user-hours-table';
+            table.style.overflowX = 'auto';
             
-            // Crear tarjetas para cada día
-            Object.entries(userTasksData.dailyHours).forEach(([dateKey, dayData]) => {
-                const dayCard = document.createElement('div');
-                dayCard.className = 'day-card';
-                dayCard.dataset.date = dateKey;
-                
-                // Obtener día de la semana
-                const dayOfWeek = dayData.dateObj.toLocaleDateString('es-ES', { weekday: 'long' });
-                const capitalizedDay = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1);
-                
-                dayCard.innerHTML = `
-                    <div class="day-header">
-                        <div class="day-date">${dayData.date}</div>
-                        <div class="day-of-week">${capitalizedDay}</div>
-                    </div>
-                    <div class="day-stats">
-                        <div class="stat-item auto">
-                            <div class="stat-value">${dayData.autoHours.toFixed(2)}</div>
-                            <div class="stat-label">Horas Auto</div>
-                        </div>
-                        <div class="stat-item manual">
-                            <div class="stat-value">${dayData.manualHours.toFixed(2)}</div>
-                            <div class="stat-label">Horas Manual</div>
-                        </div>
-                        <div class="stat-item diff">
-                            <div class="stat-value">${dayData.diffHours.toFixed(2)}</div>
-                            <div class="stat-label">Diferencia</div>
-                        </div>
-                    </div>
-                    <div class="day-work-items">
-                        ${dayData.workItems.length} tarea(s)
-                    </div>
-                `;
-                
-                // Agregar evento click para mostrar detalles
-                dayCard.addEventListener('click', () => {
-                    showDayDetails(dateKey, dayData.date);
+            table.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Horas Auto</th>
+                            <th>Horas Manual</th>
+                            <th>Diferencia</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(userTasksData.dailyHours).map(([key, dayData]) => {
+                            const formattedDate = formatDate(dayData.dateObj);
+                            const diffClass = dayData.diffHours >= 0 ? 'positive-diff' : '';
+                            
+                            return `
+                                <tr data-key="${key}">
+                                    <td class="date-cell">
+                                        ${formattedDate}
+                                        <span class="items-count">${dayData.workItems.length} tareas</span>
+                                    </td>
+                                    <td class="hours-cell auto-hours">${dayData.autoHours.toFixed(2)}h</td>
+                                    <td class="hours-cell manual-hours">${dayData.manualHours.toFixed(2)}h</td>
+                                    <td class="hours-cell diff-hours ${diffClass}">${dayData.diffHours.toFixed(2)}h</td>
+                                    <td class="user-cell">${dayData.displayName}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            // Agregar evento click a cada fila
+            setTimeout(() => {
+                table.querySelectorAll('tbody tr').forEach(row => {
+                    row.addEventListener('click', () => {
+                        const key = row.dataset.key;
+                        const dayData = userTasksData.dailyHours[key];
+                        showDayDetails(key, dayData);
+                    });
                 });
-                
-                gridContainer.appendChild(dayCard);
-            });
+            }, 100);
             
+            gridContainer.appendChild(table);
             document.getElementById('userResultsContainer').style.display = 'block';
         }
 
-        // Mostrar detalles del día en modal
-        function showDayDetails(dateKey, dateTitle) {
-            const workItems = userTasksData.workItemsByDay[dateKey] || [];
+        // Mostrar detalles del día-usuario en modal (VERSIÓN MEJORADA)
+        function showDayDetails(key, dayData) {
+            const workItems = userTasksData.workItemsByDay[key] || [];
             const modalTitle = document.getElementById('dayModalTitle');
             const tableBody = document.getElementById('dayWorkItemsBody');
             
-            modalTitle.textContent = `Tareas del ${dateTitle}`;
+            const formattedDate = formatDate(dayData.dateObj);
+            modalTitle.textContent = `Tareas de ${dayData.displayName} - ${formattedDate}`;
             tableBody.innerHTML = '';
             
             if (workItems.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="6" style="text-align: center; color: var(--az-text-tertiary); padding: 20px;">
+                            <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>
                             No hay tareas para este día
                         </td>
                     </tr>
@@ -3148,19 +3429,19 @@
                     const fields = item.fields;
                     const row = document.createElement('tr');
                     
-                    // Botón para copiar código
-                    const copyButton = document.createElement('button');
-                    copyButton.className = 'copy-code-btn';
-                    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-                    copyButton.title = 'Copiar ID';
-                    copyButton.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        navigator.clipboard.writeText(item.id.toString()).then(() => {
-                            showAlert('success', `ID ${item.id} copiado al portapapeles`);
-                        });
-                    });
+                    // Formatear fecha de última actualización
+                    const changedDate = fields['System.ChangedDate'];
+                    let formattedChangedDate = 'No disponible';
+                    if (changedDate) {
+                        const dateObj = new Date(changedDate);
+                        formattedChangedDate = dateObj.toLocaleDateString('es-ES') + ' ' + 
+                                              dateObj.toLocaleTimeString('es-ES', { 
+                                                  hour: '2-digit', 
+                                                  minute: '2-digit' 
+                                              });
+                    }
                     
-                    // Badges de tiempos
+                    // Tiempos
                     const originalEstimate = parseFloat(fields['Microsoft.VSTS.Scheduling.OriginalEstimate']) || 0;
                     const completedWork = parseFloat(fields['Microsoft.VSTS.Scheduling.CompletedWork']) || 0;
                     const remainingWork = parseFloat(fields['Microsoft.VSTS.Scheduling.RemainingWork']) || 0;
@@ -3169,7 +3450,9 @@
                         <td>
                             <div style="display: flex; align-items: center; gap: 5px;">
                                 <span class="work-item-code">${item.id}</span>
-                                ${copyButton.outerHTML}
+                                <button class="copy-code-btn" data-id="${item.id}" title="Copiar ID">
+                                    <i class="fas fa-copy"></i>
+                                </button>
                             </div>
                         </td>
                         <td>${fields['System.Title'] || 'Sin título'}</td>
@@ -3178,8 +3461,10 @@
                                 ${fields['System.State'] || 'Unknown'}
                             </span>
                         </td>
+                        <td style="font-size: 0.85rem; color: var(--az-text-secondary);">
+                            ${formattedChangedDate}
+                        </td>
                         <td>${fields['System.AreaPath'] || 'No especificado'}</td>
-                        <td>${fields['System.IterationPath'] || 'No especificado'}</td>
                         <td>
                             <div style="display: flex; flex-wrap: wrap; gap: 3px;">
                                 <span class="time-badge original" title="Original Estimate">${originalEstimate.toFixed(2)}h</span>
@@ -3191,6 +3476,37 @@
                     
                     tableBody.appendChild(row);
                 });
+                
+                // Agregar eventos a los botones de copiar después de crear las filas
+                setTimeout(() => {
+                    tableBody.querySelectorAll('.copy-code-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            const id = btn.dataset.id;
+                            
+                            try {
+                                await navigator.clipboard.writeText(id);
+                                
+                                // Mostrar mensaje de éxito
+                                showAlert('success', `ID ${id} copiado al portapapeles`);
+                                
+                                // Efecto visual de confirmación
+                                btn.innerHTML = '<i class="fas fa-check"></i>';
+                                btn.style.backgroundColor = 'var(--az-accent)';
+                                btn.style.color = 'white';
+                                
+                                setTimeout(() => {
+                                    btn.innerHTML = '<i class="fas fa-copy"></i>';
+                                    btn.style.backgroundColor = '';
+                                    btn.style.color = '';
+                                }, 1500);
+                            } catch (err) {
+                                console.error('Error al copiar:', err);
+                                showAlert('error', 'Error al copiar el ID');
+                            }
+                        });
+                    });
+                }, 100);
             }
             
             // Mostrar modal
@@ -3198,6 +3514,22 @@
         }
 
         // ========== FUNCIONES DE UTILIDAD ==========
+
+        // Obtener color para estado
+        function getStateColor(state) {
+            if (!state) return 'var(--az-bg-tertiary)';
+            
+            const stateLower = state.toLowerCase();
+            if (stateLower.includes('progress')) {
+                return 'rgba(0, 120, 212, 0.2)';
+            } else if (stateLower.includes('done') || stateLower.includes('closed')) {
+                return 'rgba(16, 124, 16, 0.2)';
+            } else if (stateLower.includes('to do') || stateLower.includes('new')) {
+                return 'rgba(161, 159, 157, 0.2)';
+            } else {
+                return 'rgba(255, 140, 0, 0.2)';
+            }
+        }
 
         // Mostrar loading
         function showLoading(elementId) {
