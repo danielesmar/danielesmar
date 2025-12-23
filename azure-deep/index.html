@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,19 +17,19 @@
             --az-warning: #ff8c00;
             --az-error: #d13438;
             --az-info: #00bcf2;
-            
+
             /* Colores de fondo */
             --az-bg-primary: #faf9f8;
             --az-bg-secondary: #ffffff;
             --az-bg-tertiary: #f3f2f1;
             --az-bg-dark: #323130;
-            
+
             /* Colores de texto */
             --az-text-primary: #323130;
             --az-text-secondary: #605e5c;
             --az-text-tertiary: #a19f9d;
             --az-text-white: #ffffff;
-            
+
             /* Colores de estado */
             --az-state-new: #107c10;
             --az-state-active: #0078d4;
@@ -37,13 +38,13 @@
             --az-state-todo: #a19f9d;
             --az-state-inprogress: #0078d4;
             --az-state-done: #107c10;
-            
+
             /* Bordes y sombras */
             --az-border-color: #d2d0ce;
             --az-border-radius: 4px;
             --az-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             --az-box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.1);
-            
+
             /* Dimensiones */
             --az-sidebar-width: 260px;
             --az-sidebar-collapsed: 60px;
@@ -194,9 +195,17 @@
         }
 
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         /* Contenido de las pestañas */
@@ -212,8 +221,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Estilos comunes para tarjetas y formularios */
@@ -411,8 +427,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* ========== CALCULADORA DE TIEMPOS ========== */
@@ -1221,12 +1242,12 @@
             .user-hours-table {
                 font-size: 0.8rem;
             }
-            
+
             .user-hours-table th,
             .user-hours-table td {
                 padding: 8px 10px;
             }
-            
+
             .user-hours-table .items-count {
                 display: block;
                 margin-left: 0;
@@ -1240,38 +1261,55 @@
             overflow-y: auto;
         }
 
-        .work-items-table th:nth-child(1) { width: 100px; }
-        .work-items-table th:nth-child(2) { width: 250px; }
-        .work-items-table th:nth-child(3) { width: 120px; }
-        .work-items-table th:nth-child(4) { width: 150px; }
-        .work-items-table th:nth-child(5) { width: 150px; }
-        .work-items-table th:nth-child(6) { width: 150px; }
+        .work-items-table th:nth-child(1) {
+            width: 100px;
+        }
+
+        .work-items-table th:nth-child(2) {
+            width: 250px;
+        }
+
+        .work-items-table th:nth-child(3) {
+            width: 120px;
+        }
+
+        .work-items-table th:nth-child(4) {
+            width: 150px;
+        }
+
+        .work-items-table th:nth-child(5) {
+            width: 150px;
+        }
+
+        .work-items-table th:nth-child(6) {
+            width: 150px;
+        }
 
         /* Responsive */
         @media (max-width: 992px) {
             .sidebar {
                 width: var(--az-sidebar-collapsed);
             }
-            
+
             .sidebar .app-name,
             .sidebar .nav-item span,
             .sidebar-footer {
                 display: none;
             }
-            
+
             .main-content {
                 margin-left: var(--az-sidebar-collapsed);
             }
-            
+
             .sidebar-header {
                 justify-content: center;
                 padding: 12px;
             }
-            
+
             .sidebar-nav {
                 padding: 12px 0;
             }
-            
+
             .nav-item {
                 justify-content: center;
                 padding: 12px;
@@ -1282,36 +1320,36 @@
             .header {
                 padding: 0 15px;
             }
-            
+
             .tab-content {
                 padding: 15px;
             }
-            
+
             .card {
                 padding: 15px;
             }
-            
+
             .row {
                 flex-direction: column;
             }
-            
+
             .col {
                 min-width: 100%;
             }
-            
+
             .work-items-table {
                 display: block;
                 overflow-x: auto;
             }
-            
+
             .time-action-buttons .btn {
                 min-width: 120px;
             }
-            
+
             .timeline-vertical {
                 padding-left: 20px;
             }
-            
+
             .timeline-item-vertical::before {
                 left: -15px;
             }
@@ -1321,20 +1359,20 @@
             .header-title {
                 font-size: 1rem;
             }
-            
+
             .card-title {
                 font-size: 1rem;
             }
-            
+
             .btn {
                 padding: 8px 12px;
                 font-size: 0.85rem;
             }
-            
+
             .time-summary {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
+
             .modal-content {
                 max-height: 90vh;
             }
@@ -1344,23 +1382,24 @@
             .time-input-row {
                 flex-wrap: wrap;
             }
-            
+
             .time-input-row .form-control {
                 min-width: 60px;
                 font-size: 0.85rem;
                 padding: 6px 4px;
             }
-            
+
             .time-action-buttons {
                 flex-direction: column;
             }
-            
+
             .time-action-buttons .btn {
                 min-width: 100%;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
@@ -1368,7 +1407,7 @@
             <i class="fas fa-chart-line logo"></i>
             <span class="app-name">Azure DevOps Monitor</span>
         </div>
-        
+
         <div class="sidebar-nav">
             <a href="#" class="nav-item active" data-tab="settings">
                 <i class="fas fa-cog"></i>
@@ -1395,7 +1434,7 @@
                 <span>Calculadora de Tiempos</span>
             </a>
         </div>
-        
+
         <div class="sidebar-footer">
             <p>Azure DevOps Monitor &copy; 2023</p>
         </div>
@@ -1426,17 +1465,19 @@
         <div class="tab-content active" id="settings">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-cog"></i> Configuración del Sistema</h2>
-                
+
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
                             <label for="baseUrl" class="form-label">URL Base de Azure DevOps</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-link"></i>
-                                <input type="text" id="baseUrl" class="form-control" placeholder="https://dev.azure.com/{organization}" value="https://dev.azure.com/{organization}">
+                                <input type="text" id="baseUrl" class="form-control"
+                                    placeholder="https://dev.azure.com/{organization}"
+                                    value="https://dev.azure.com/{organization}">
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="username" class="form-label">Usuario</label>
                             <div class="input-with-icon">
@@ -1444,16 +1485,17 @@
                                 <input type="text" id="username" class="form-control" placeholder="usuario@ejemplo.com">
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="pat" class="form-label">Personal Access Token (PAT)</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-key"></i>
-                                <input type="password" id="pat" class="form-control" placeholder="Token de acceso personal">
+                                <input type="password" id="pat" class="form-control"
+                                    placeholder="Token de acceso personal">
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col">
                         <div class="form-group">
                             <label for="project" class="form-label">Proyecto</label>
@@ -1462,7 +1504,7 @@
                                 <input type="text" id="project" class="form-control" placeholder="Nombre del proyecto">
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="team" class="form-label">Equipo</label>
                             <div class="input-with-icon">
@@ -1470,23 +1512,24 @@
                                 <input type="text" id="team" class="form-control" placeholder="Nombre del equipo">
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="apiVersion" class="form-label">Versión de API</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-code"></i>
-                                <input type="text" id="apiVersion" class="form-control" value="7.1" placeholder="Versión de API">
+                                <input type="text" id="apiVersion" class="form-control" value="7.1"
+                                    placeholder="Versión de API">
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <button class="btn btn-primary btn-block" id="saveSettings">
                         <i class="fas fa-save"></i> Guardar Configuración
                     </button>
                 </div>
-                
+
                 <div class="form-group">
                     <h3 class="card-title"><i class="fas fa-info-circle"></i> Configuración Actual</h3>
                     <div class="json-viewer" id="currentSettings"></div>
@@ -1497,16 +1540,18 @@
         <div class="tab-content" id="custom-query">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-search"></i> Consulta Personalizada</h2>
-                
+
                 <div class="form-group">
                     <label for="queryEndpoint" class="form-label">Endpoint de API</label>
                     <div class="input-with-icon">
                         <i class="fas fa-terminal"></i>
-                        <input type="text" id="queryEndpoint" class="form-control" placeholder="_apis/wit/workitems?ids=123&api-version=7.1">
+                        <input type="text" id="queryEndpoint" class="form-control"
+                            placeholder="_apis/wit/workitems?ids=123&api-version=7.1">
                     </div>
-                    <small style="color: var(--az-text-tertiary); font-size: 0.8rem;">Ejemplos: _apis/wit/workitems?ids=123, _apis/wit/wiql?api-version=7.1</small>
+                    <small style="color: var(--az-text-tertiary); font-size: 0.8rem;">Ejemplos:
+                        _apis/wit/workitems?ids=123, _apis/wit/wiql?api-version=7.1</small>
                 </div>
-                
+
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
@@ -1522,11 +1567,12 @@
                     <div class="col">
                         <div class="form-group">
                             <label for="queryBody" class="form-label">Cuerpo de la Solicitud (JSON)</label>
-                            <textarea id="queryBody" class="form-control" rows="4" placeholder='{"query": "SELECT [System.Id] FROM WorkItems WHERE [System.WorkItemType] = \u0027Task\u0027"}'></textarea>
+                            <textarea id="queryBody" class="form-control" rows="4"
+                                placeholder='{"query": "SELECT [System.Id] FROM WorkItems WHERE [System.WorkItemType] = \u0027Task\u0027"}'></textarea>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <button class="btn btn-primary" id="executeQuery">
                         <i class="fas fa-play"></i> Ejecutar Consulta
@@ -1535,12 +1581,12 @@
                         <i class="fas fa-eraser"></i> Limpiar
                     </button>
                 </div>
-                
+
                 <div class="loading" id="queryLoading">
                     <div class="spinner"></div>
                     <p>Ejecutando consulta...</p>
                 </div>
-                
+
                 <div class="form-group">
                     <h3 class="card-title"><i class="fas fa-file-code"></i> Resultados</h3>
                     <div class="json-viewer" id="queryResults"></div>
@@ -1551,30 +1597,46 @@
         <div class="tab-content" id="predefined-queries">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-list"></i> Consultas Predefinidas</h2>
-                
+
                 <div class="work-item-types" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px;">
-                    <div class="work-item-type active" data-type="all" style="background-color: var(--az-bg-tertiary); padding: 6px 12px; border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s;">Todos</div>
-                    <div class="work-item-type" data-type="Iniciativa" style="background-color: var(--az-bg-tertiary); padding: 6px 12px; border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s;">Iniciativa</div>
-                    <div class="work-item-type" data-type="Epica" style="background-color: var(--az-bg-tertiary); padding: 6px 12px; border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s;">Épica</div>
-                    <div class="work-item-type" data-type="Feature" style="background-color: var(--az-bg-tertiary); padding: 6px 12px; border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s;">Feature</div>
+                    <div class="work-item-type active" data-type="all"
+                        style="background-color: var(--az-bg-tertiary); padding: 6px 12px; border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s;">
+                        Todos</div>
+                    <div class="work-item-type" data-type="Iniciativa"
+                        style="background-color: var(--az-bg-tertiary); padding: 6px 12px; border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s;">
+                        Iniciativa</div>
+                    <div class="work-item-type" data-type="Epica"
+                        style="background-color: var(--az-bg-tertiary); padding: 6px 12px; border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s;">
+                        Épica</div>
+                    <div class="work-item-type" data-type="Feature"
+                        style="background-color: var(--az-bg-tertiary); padding: 6px 12px; border-radius: 16px; font-size: 0.8rem; cursor: pointer; transition: all 0.3s;">
+                        Feature</div>
                 </div>
-                
-                <div class="predefined-queries" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px;">
-                    <div class="query-card" data-type="all" style="background-color: var(--az-bg-secondary); border-radius: var(--az-border-radius); padding: 15px; box-shadow: var(--az-box-shadow); border-left: 4px solid var(--az-primary); transition: transform 0.3s;">
-                        <h3 style="margin-bottom: 8px; color: var(--az-primary); font-size: 1rem;"><i class="fas fa-info-circle"></i> Detalles de Work Item</h3>
-                        <p style="color: var(--az-text-tertiary); margin-bottom: 12px; font-size: 0.85rem;">Consulta todos los detalles de un elemento específico del board por su ID.</p>
+
+                <div class="predefined-queries"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                    <div class="query-card" data-type="all"
+                        style="background-color: var(--az-bg-secondary); border-radius: var(--az-border-radius); padding: 15px; box-shadow: var(--az-box-shadow); border-left: 4px solid var(--az-primary); transition: transform 0.3s;">
+                        <h3 style="margin-bottom: 8px; color: var(--az-primary); font-size: 1rem;"><i
+                                class="fas fa-info-circle"></i> Detalles de Work Item</h3>
+                        <p style="color: var(--az-text-tertiary); margin-bottom: 12px; font-size: 0.85rem;">Consulta
+                            todos los detalles de un elemento específico del board por su ID.</p>
                         <div class="form-group">
                             <label for="workItemId" class="form-label">ID del Work Item</label>
                             <input type="number" id="workItemId" class="form-control" placeholder="12345" min="1">
                         </div>
-                        <button class="btn btn-primary btn-block get-work-item" style="padding: 8px 12px; font-size: 0.85rem;">
+                        <button class="btn btn-primary btn-block get-work-item"
+                            style="padding: 8px 12px; font-size: 0.85rem;">
                             <i class="fas fa-search"></i> Consultar Work Item
                         </button>
                     </div>
-                    
-                    <div class="query-card" data-type="all Iniciativa Epica Feature" style="background-color: var(--az-bg-secondary); border-radius: var(--az-border-radius); padding: 15px; box-shadow: var(--az-box-shadow); border-left: 4px solid var(--az-primary); transition: transform 0.3s;">
-                        <h3 style="margin-bottom: 8px; color: var(--az-primary); font-size: 1rem;"><i class="fas fa-layer-group"></i> Work Items por Tipo</h3>
-                        <p style="color: var(--az-text-tertiary); margin-bottom: 12px; font-size: 0.85rem;">Obtiene todos los work items de un tipo específico en el proyecto.</p>
+
+                    <div class="query-card" data-type="all Iniciativa Epica Feature"
+                        style="background-color: var(--az-bg-secondary); border-radius: var(--az-border-radius); padding: 15px; box-shadow: var(--az-box-shadow); border-left: 4px solid var(--az-primary); transition: transform 0.3s;">
+                        <h3 style="margin-bottom: 8px; color: var(--az-primary); font-size: 1rem;"><i
+                                class="fas fa-layer-group"></i> Work Items por Tipo</h3>
+                        <p style="color: var(--az-text-tertiary); margin-bottom: 12px; font-size: 0.85rem;">Obtiene
+                            todos los work items de un tipo específico en el proyecto.</p>
                         <div class="form-group">
                             <label for="workItemType" class="form-label">Tipo de Work Item</label>
                             <select id="workItemType" class="form-control" style="font-size: 0.85rem;">
@@ -1586,17 +1648,18 @@
                                 <option value="Issue">Issue</option>
                             </select>
                         </div>
-                        <button class="btn btn-primary btn-block get-by-type" style="padding: 8px 12px; font-size: 0.85rem;">
+                        <button class="btn btn-primary btn-block get-by-type"
+                            style="padding: 8px 12px; font-size: 0.85rem;">
                             <i class="fas fa-filter"></i> Consultar por Tipo
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="loading" id="predefinedLoading">
                     <div class="spinner"></div>
                     <p>Ejecutando consulta...</p>
                 </div>
-                
+
                 <div class="form-group">
                     <h3 class="card-title"><i class="fas fa-file-code"></i> Resultados</h3>
                     <div class="json-viewer" id="predefinedResults"></div>
@@ -1608,17 +1671,18 @@
         <div class="tab-content" id="sprint-work">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-running"></i> Sprint Working</h2>
-                
+
                 <div class="row">
                     <div class="col">
                         <div class="form-group">
                             <label for="sprintId" class="form-label">ID del Sprint</label>
                             <div class="input-with-icon">
                                 <i class="fas fa-flag"></i>
-                                <input type="text" id="sprintId" class="form-control" placeholder="Sprint 1 o Iteration\\Sprint 1">
+                                <input type="text" id="sprintId" class="form-control"
+                                    placeholder="Sprint 1 o Iteration\\Sprint 1">
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="sprintFields" class="form-label">Campos a Mostrar</label>
                             <select id="sprintFields" class="form-control" multiple="multiple" style="width: 100%;">
@@ -1638,7 +1702,7 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="col">
                         <div class="form-group">
                             <label for="sprintStates" class="form-label">Estados a Incluir</label>
@@ -1653,10 +1717,11 @@
                                 <option value="Done" selected>Done</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="sprintWorkItemTypes" class="form-label">Tipos de Work Items</label>
-                            <select id="sprintWorkItemTypes" class="form-control" multiple="multiple" style="width: 100%;">
+                            <select id="sprintWorkItemTypes" class="form-control" multiple="multiple"
+                                style="width: 100%;">
                                 <option value="Task" selected>Task</option>
                                 <option value="Issue" selected>Issue</option>
                                 <option value="Bug" selected>Bug</option>
@@ -1669,18 +1734,18 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <button class="btn btn-success btn-block" id="getSprintWork">
                         <i class="fas fa-chart-pie"></i> Obtener Trabajo del Sprint
                     </button>
                 </div>
-                
+
                 <div class="loading" id="sprintLoading">
                     <div class="spinner"></div>
                     <p>Cargando trabajo del sprint...</p>
                 </div>
-                
+
                 <div class="form-group">
                     <h3 class="card-title"><i class="fas fa-file-code"></i> Resultados</h3>
                     <div class="json-viewer" id="sprintResults"></div>
@@ -1693,20 +1758,24 @@
             <div class="user-tasks-container">
                 <div class="card">
                     <h2 class="card-title"><i class="fas fa-user-friends"></i> Tareas por Usuario</h2>
-                    
+
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="userList" class="form-label">Lista de Usuarios (separar por Enter o punto y coma)</label>
-                                <textarea id="userList" class="form-control" rows="3" placeholder="usuario1@ejemplo.com&#10;usuario2@ejemplo.com"></textarea>
-                                <small style="color: var(--az-text-tertiary); font-size: 0.8rem;">Puede ingresar nombres de usuario, emails o dejar vacío para todos los usuarios</small>
+                                <label for="userList" class="form-label">Lista de Usuarios (separar por Enter o punto y
+                                    coma)</label>
+                                <textarea id="userList" class="form-control" rows="3"
+                                    placeholder="usuario1@ejemplo.com&#10;usuario2@ejemplo.com"></textarea>
+                                <small style="color: var(--az-text-tertiary); font-size: 0.8rem;">Puede ingresar nombres
+                                    de usuario, emails o dejar vacío para todos los usuarios</small>
                             </div>
                         </div>
-                        
+
                         <div class="col">
                             <div class="form-group">
                                 <label for="userWorkItemTypes" class="form-label">Tipos de Work Items</label>
-                                <select id="userWorkItemTypes" class="form-control" multiple="multiple" style="width: 100%;">
+                                <select id="userWorkItemTypes" class="form-control" multiple="multiple"
+                                    style="width: 100%;">
                                     <option value="Task" selected>Task</option>
                                     <option value="Issue" selected>Issue</option>
                                     <option value="Bug" selected>Bug</option>
@@ -1716,7 +1785,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">Rango de Tiempo</label>
                         <div class="time-range-selector">
@@ -1726,19 +1795,19 @@
                             <button class="time-range-btn" data-days="365">Último año</button>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <button class="btn btn-primary btn-block" id="getUserTasks">
                             <i class="fas fa-user-cog"></i> Obtener Tareas por Usuario
                         </button>
                     </div>
                 </div>
-                
+
                 <div class="loading" id="userLoading">
                     <div class="spinner"></div>
                     <p>Calculando horas trabajadas por usuario...</p>
                 </div>
-                
+
                 <div id="userResultsContainer" style="display: none;">
                     <div class="card">
                         <h3 class="card-title"><i class="fas fa-chart-bar"></i> Consolidado de Horas por Día</h3>
@@ -1781,15 +1850,16 @@
         <div class="tab-content" id="time-calculator">
             <div class="card">
                 <h2 class="card-title"><i class="fas fa-clock"></i> Calculadora de Tiempos</h2>
-                
+
                 <div class="form-group">
                     <label for="timeWorkItemId" class="form-label">ID del Work Item</label>
                     <div class="input-with-icon">
                         <i class="fas fa-hashtag"></i>
-                        <input type="number" id="timeWorkItemId" class="form-control" placeholder="Ingrese el ID del work item" min="1">
+                        <input type="number" id="timeWorkItemId" class="form-control"
+                            placeholder="Ingrese el ID del work item" min="1">
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <button class="btn btn-primary" id="loadWorkItemForTime">
                         <i class="fas fa-search"></i> Cargar Work Item
@@ -1798,12 +1868,12 @@
                         <i class="fas fa-redo"></i> Reiniciar
                     </button>
                 </div>
-                
+
                 <div class="loading" id="timeLoading">
                     <div class="spinner"></div>
                     <p>Cargando información del work item...</p>
                 </div>
-                
+
                 <div id="timeCalculatorContent" style="display: none;">
                     <div class="time-calculator-container">
                         <!-- Información del Work Item -->
@@ -1813,9 +1883,11 @@
                                     <div class="work-item-id" id="timeWorkItemIdDisplay"></div>
                                     <div class="work-item-title" id="timeWorkItemTitle"></div>
                                 </div>
-                                <div class="work-item-state" id="timeWorkItemState" style="padding: 4px 12px; border-radius: 16px; font-weight: 600; font-size: 0.8rem;"></div>
+                                <div class="work-item-state" id="timeWorkItemState"
+                                    style="padding: 4px 12px; border-radius: 16px; font-weight: 600; font-size: 0.8rem;">
+                                </div>
                             </div>
-                            
+
                             <div class="work-item-meta">
                                 <div class="meta-item">
                                     <span class="meta-label">Asignado a</span>
@@ -1831,13 +1903,13 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Controles de tiempo mejorados -->
                         <div class="time-controls-container">
                             <div class="time-display" id="currentTimeDisplay">
                                 Hora actual: <span id="currentTime">00:00</span>
                             </div>
-                            
+
                             <div class="time-inputs-grid">
                                 <div class="time-input-group">
                                     <label class="form-label">Hora de Inicio (System.ChangedDate)</label>
@@ -1858,7 +1930,7 @@
                                         Último cambio: <span id="lastChangedTime">--:-- --</span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="time-input-group">
                                     <label class="form-label">Hora Final Manual</label>
                                     <div class="time-input-row">
@@ -1875,19 +1947,20 @@
                                         </select>
                                     </div>
                                     <div style="font-size: 0.8rem; color: var(--az-text-tertiary); margin-top: 5px;">
-                                        <button class="btn-sm btn-secondary" id="setToCurrent" style="padding: 4px 8px; font-size: 0.8rem;">
+                                        <button class="btn-sm btn-secondary" id="setToCurrent"
+                                            style="padding: 4px 8px; font-size: 0.8rem;">
                                             <i class="fas fa-clock"></i> Usar hora actual
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="form-group">
                                 <button class="btn btn-success" id="calculateTime">
                                     <i class="fas fa-calculator"></i> Calcular Tiempo
                                 </button>
                             </div>
-                            
+
                             <!-- Resultados del cálculo -->
                             <div class="calculated-time-results" id="calculatedResults" style="display: none;">
                                 <h4 style="margin-bottom: 10px; color: var(--az-accent); font-size: 0.95rem;">
@@ -1910,12 +1983,14 @@
                                     <span class="calculated-value" id="newRemainingWork">0.00h</span>
                                 </div>
                             </div>
-                            
+
                             <div class="time-chart" id="timeChart">
-                                <div class="chart-bar in-progress" id="inProgressBar" style="width: 0%;">Completed Work</div>
-                                <div class="chart-bar other" id="otherBar" style="width: 100%; left: 0%;">Remaining Work</div>
+                                <div class="chart-bar in-progress" id="inProgressBar" style="width: 0%;">Completed Work
+                                </div>
+                                <div class="chart-bar other" id="otherBar" style="width: 100%; left: 0%;">Remaining Work
+                                </div>
                             </div>
-                            
+
                             <div class="time-summary">
                                 <div class="summary-card estimate">
                                     <div class="summary-value" id="originalEstimate">0.00</div>
@@ -1930,7 +2005,7 @@
                                     <div class="summary-label">Nuevo Remaining</div>
                                 </div>
                             </div>
-                            
+
                             <div class="time-action-buttons">
                                 <button class="btn btn-primary" id="updateWorkItemTime">
                                     <i class="fas fa-save"></i> Actualizar Work Item
@@ -1941,7 +2016,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Timeline de cambios de estado CORREGIDO -->
                     <div class="timeline-section" id="timelineSection" style="display: none;">
                         <h3 class="card-title"><i class="fas fa-history"></i> Timeline de Cambios de Estado</h3>
@@ -1988,35 +2063,35 @@
         };
 
         // Inicialización de la aplicación
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Cargar configuración almacenada
             loadSettings();
-            
+
             // Configurar eventos del menú
             setupMenu();
-            
+
             // Configurar eventos de botones
             setupButtons();
-            
+
             // Configurar eventos de la calculadora de tiempos
             setupTimeCalculator();
-            
+
             // Configurar eventos de tareas por usuario
             setupUserTasks();
-            
+
             // Inicializar Select2
             initSelect2();
-            
+
             // Mostrar configuración actual
             displayCurrentSettings();
-            
+
             // Inicializar selectores de hora
             initializeTimeSelectors();
-            
+
             // Actualizar hora actual cada minuto
             updateCurrentTime();
             setInterval(updateCurrentTime, 60000);
-            
+
             // Establecer hora actual en los controles
             setEndTimeToCurrent();
         });
@@ -2030,21 +2105,21 @@
                 language: 'es',
                 width: '100%'
             });
-            
+
             $('#sprintStates').select2({
                 placeholder: 'Seleccione los estados',
                 allowClear: true,
                 language: 'es',
                 width: '100%'
             });
-            
+
             $('#sprintWorkItemTypes').select2({
                 placeholder: 'Seleccione los tipos de work items',
                 allowClear: true,
                 language: 'es',
                 width: '100%'
             });
-            
+
             // User Tasks
             $('#userWorkItemTypes').select2({
                 placeholder: 'Seleccione los tipos de work items',
@@ -2069,7 +2144,7 @@
             const navItems = document.querySelectorAll('.nav-item');
             const tabContents = document.querySelectorAll('.tab-content');
             const pageTitle = document.getElementById('currentPageTitle');
-            
+
             // Títulos de las páginas
             const pageTitles = {
                 'settings': 'Configuración del Sistema',
@@ -2079,26 +2154,26 @@
                 'user-tasks': 'Tareas por Usuario',
                 'time-calculator': 'Calculadora de Tiempos'
             };
-            
+
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
                     e.preventDefault();
-                    
+
                     // Remover clase active de todos los items
                     navItems.forEach(nav => nav.classList.remove('active'));
-                    
+
                     // Agregar clase active al item clickeado
                     item.classList.add('active');
-                    
+
                     // Obtener la pestaña a mostrar
                     const tabId = item.getAttribute('data-tab');
-                    
+
                     // Ocultar todos los contenidos
                     tabContents.forEach(content => content.classList.remove('active'));
-                    
+
                     // Mostrar el contenido correspondiente
                     document.getElementById(tabId).classList.add('active');
-                    
+
                     // Actualizar título de la página
                     pageTitle.textContent = pageTitles[tabId];
                 });
@@ -2109,35 +2184,35 @@
         function setupButtons() {
             // Guardar configuración
             document.getElementById('saveSettings').addEventListener('click', saveSettings);
-            
+
             // Ejecutar consulta personalizada
             document.getElementById('executeQuery').addEventListener('click', executeCustomQuery);
             document.getElementById('clearQuery').addEventListener('click', clearQuery);
-            
+
             // Consultas predefinidas
             document.querySelectorAll('.get-work-item').forEach(btn => {
                 btn.addEventListener('click', getWorkItemById);
             });
-            
+
             document.querySelectorAll('.get-by-type').forEach(btn => {
                 btn.addEventListener('click', getWorkItemsByType);
             });
-            
+
             // Filtros de tipos de work items
             document.querySelectorAll('.work-item-type').forEach(filter => {
-                filter.addEventListener('click', function() {
+                filter.addEventListener('click', function () {
                     // Remover clase active de todos los filtros
                     document.querySelectorAll('.work-item-type').forEach(f => f.classList.remove('active'));
-                    
+
                     // Agregar clase active al filtro seleccionado
                     this.classList.add('active');
-                    
+
                     // Filtrar tarjetas
                     const selectedType = this.getAttribute('data-type');
                     filterQueryCards(selectedType);
                 });
             });
-            
+
             // Sprint work
             document.getElementById('getSprintWork').addEventListener('click', getSprintWork);
         }
@@ -2146,19 +2221,19 @@
         function setupTimeCalculator() {
             // Cargar work item para calculadora
             document.getElementById('loadWorkItemForTime').addEventListener('click', loadWorkItemForTimeCalculator);
-            
+
             // Reiniciar calculadora
             document.getElementById('resetTimeCalculator').addEventListener('click', resetTimeCalculator);
-            
+
             // Usar hora actual
             document.getElementById('setToCurrent').addEventListener('click', setEndTimeToCurrent);
-            
+
             // Calcular tiempo
             document.getElementById('calculateTime').addEventListener('click', calculateElapsedTime);
-            
+
             // Actualizar work item
             document.getElementById('updateWorkItemTime').addEventListener('click', updateWorkItemWithNewTime);
-            
+
             // Exportar reporte
             document.getElementById('exportTimeReport').addEventListener('click', exportTimeReport);
         }
@@ -2167,20 +2242,20 @@
         function setupUserTasks() {
             // Obtener tareas por usuario
             document.getElementById('getUserTasks').addEventListener('click', getUserTasksWithHours);
-            
+
             // Selector de rango de tiempo
             document.querySelectorAll('.time-range-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     document.querySelectorAll('.time-range-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                 });
             });
-            
+
             // Cerrar modal
             document.getElementById('closeDayModal').addEventListener('click', () => {
                 document.getElementById('dayDetailsModal').classList.remove('active');
             });
-            
+
             // Cerrar modal al hacer clic fuera
             document.getElementById('dayDetailsModal').addEventListener('click', (e) => {
                 if (e.target.id === 'dayDetailsModal') {
@@ -2195,13 +2270,13 @@
             const endHour = document.getElementById('endHour');
             const startMinute = document.getElementById('startMinute');
             const endMinute = document.getElementById('endMinute');
-            
+
             // Limpiar opciones existentes
             startHour.innerHTML = '';
             endHour.innerHTML = '';
             startMinute.innerHTML = '';
             endMinute.innerHTML = '';
-            
+
             // Agregar horas (1-12)
             for (let i = 1; i <= 12; i++) {
                 const option = document.createElement('option');
@@ -2210,7 +2285,7 @@
                 startHour.appendChild(option.cloneNode(true));
                 endHour.appendChild(option);
             }
-            
+
             // Agregar minutos (00, 05, 10, ..., 55)
             for (let i = 0; i < 60; i += 5) {
                 const minute = i.toString().padStart(2, '0');
@@ -2230,7 +2305,7 @@
             settings.project = document.getElementById('project').value.trim();
             settings.team = document.getElementById('team').value.trim();
             settings.apiVersion = document.getElementById('apiVersion').value.trim();
-            
+
             // Guardar en localStorage
             localStorage.setItem('azBaseUrl', settings.baseUrl);
             localStorage.setItem('azUsername', settings.username);
@@ -2238,10 +2313,10 @@
             localStorage.setItem('azProject', settings.project);
             localStorage.setItem('azTeam', settings.team);
             localStorage.setItem('azApiVersion', settings.apiVersion);
-            
+
             // Mostrar mensaje de éxito
             showAlert('success', 'Configuración guardada correctamente');
-            
+
             // Actualizar visualización de configuración
             displayCurrentSettings();
         }
@@ -2253,7 +2328,7 @@
             if (safeSettings.pat) {
                 safeSettings.pat = '••••••••' + safeSettings.pat.substring(safeSettings.pat.length - 4);
             }
-            
+
             document.getElementById('currentSettings').textContent = JSON.stringify(safeSettings, null, 2);
             highlightJSON('currentSettings');
         }
@@ -2261,10 +2336,10 @@
         // Filtrar tarjetas de consulta
         function filterQueryCards(selectedType) {
             const queryCards = document.querySelectorAll('.query-card');
-            
+
             queryCards.forEach(card => {
                 const cardTypes = card.getAttribute('data-type').split(' ');
-                
+
                 if (selectedType === 'all' || cardTypes.includes(selectedType)) {
                     card.style.display = 'block';
                 } else {
@@ -2280,44 +2355,44 @@
                 showAlert('error', 'Por favor, complete la configuración antes de ejecutar consultas');
                 return null;
             }
-            
+
             // Construir URL completa
             let url = `${settings.baseUrl}/${settings.project}`;
             if (settings.team && !endpoint.includes('/_apis/')) {
                 url += `/${settings.team}`;
             }
             url += `/${endpoint}`;
-            
+
             // Asegurarse de que el endpoint tenga la versión de API
             if (!endpoint.includes('api-version')) {
                 url += endpoint.includes('?') ? '&' : '?';
                 url += `api-version=${settings.apiVersion}`;
             }
-            
+
             // Configurar headers
             const headers = new Headers();
             headers.append('Authorization', 'Basic ' + btoa(settings.username + ':' + settings.pat));
             headers.append('Content-Type', 'application/json');
-            
+
             // Configurar opciones de la solicitud
             const options = {
                 method: method,
                 headers: headers,
                 mode: 'cors'
             };
-            
+
             // Agregar cuerpo si es necesario
             if (body && (method === 'POST' || method === 'PATCH')) {
                 options.body = JSON.stringify(body);
             }
-            
+
             try {
                 const response = await fetch(url, options);
-                
+
                 if (!response.ok) {
                     throw new Error(`Error ${response.status}: ${response.statusText}`);
                 }
-                
+
                 const data = await response.json();
                 return data;
             } catch (error) {
@@ -2332,12 +2407,12 @@
             const endpoint = document.getElementById('queryEndpoint').value.trim();
             const method = document.getElementById('queryMethod').value;
             const bodyText = document.getElementById('queryBody').value.trim();
-            
+
             if (!endpoint) {
                 showAlert('error', 'Por favor, ingrese un endpoint válido');
                 return;
             }
-            
+
             let body = null;
             if (bodyText) {
                 try {
@@ -2347,16 +2422,16 @@
                     return;
                 }
             }
-            
+
             // Mostrar loading
             showLoading('queryLoading');
-            
+
             // Ejecutar consulta
             const result = await callAzureDevOpsAPI(endpoint, method, body);
-            
+
             // Ocultar loading
             hideLoading('queryLoading');
-            
+
             // Mostrar resultados
             if (result) {
                 document.getElementById('queryResults').textContent = JSON.stringify(result, null, 2);
@@ -2375,22 +2450,22 @@
         // Obtener work item por ID
         async function getWorkItemById() {
             const workItemId = document.getElementById('workItemId').value.trim();
-            
+
             if (!workItemId) {
                 showAlert('error', 'Por favor, ingrese un ID de work item válido');
                 return;
             }
-            
+
             // Mostrar loading
             showLoading('predefinedLoading');
-            
+
             // Ejecutar consulta
             const endpoint = `_apis/wit/workitems/${workItemId}?$expand=all`;
             const result = await callAzureDevOpsAPI(endpoint);
-            
+
             // Ocultar loading
             hideLoading('predefinedLoading');
-            
+
             // Mostrar resultados
             if (result) {
                 document.getElementById('predefinedResults').textContent = JSON.stringify(result, null, 2);
@@ -2402,35 +2477,35 @@
         // Obtener work items por tipo
         async function getWorkItemsByType() {
             const workItemType = document.getElementById('workItemType').value;
-            
+
             // Mostrar loading
             showLoading('predefinedLoading');
-            
+
             // Crear consulta WIQL
             const wiqlQuery = {
                 query: `SELECT [System.Id], [System.Title], [System.State], [System.AssignedTo], [System.CreatedDate] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND [System.WorkItemType] = '${workItemType}' ORDER BY [System.CreatedDate] DESC`
             };
-            
+
             // Ejecutar consulta WIQL
             const endpoint = '_apis/wit/wiql';
             const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
-            
+
             if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
                 hideLoading('predefinedLoading');
                 document.getElementById('predefinedResults').textContent = 'No se encontraron work items del tipo especificado';
                 return;
             }
-            
+
             // Obtener IDs de work items
             const workItemIds = wiqlResult.workItems.map(item => item.id);
-            
+
             // Obtener detalles de los work items
             const detailsEndpoint = `_apis/wit/workitems?ids=${workItemIds.join(',')}&$expand=relations`;
             const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
-            
+
             // Ocultar loading
             hideLoading('predefinedLoading');
-            
+
             // Mostrar resultados
             if (detailsResult) {
                 document.getElementById('predefinedResults').textContent = JSON.stringify(detailsResult, null, 2);
@@ -2445,45 +2520,45 @@
             const fields = $('#sprintFields').val() ? $('#sprintFields').val().join(',') : 'System.Id,System.Title,System.State,System.AssignedTo,System.WorkItemType,System.CreatedDate,System.ChangedDate';
             const states = $('#sprintStates').val() ? $('#sprintStates').val().join(',') : 'To Do,In Progress,Done';
             const workItemTypes = $('#sprintWorkItemTypes').val() ? $('#sprintWorkItemTypes').val().join(',') : 'Task,Issue,Bug';
-            
+
             if (!sprintId) {
                 showAlert('error', 'Por favor, ingrese un ID de sprint válido');
                 return;
             }
-            
+
             // Mostrar loading
             showLoading('sprintLoading');
-            
+
             // Crear consulta WIQL
             const stateConditions = states.split(',').map(state => `[System.State] = '${state.trim()}'`).join(' OR ');
             const typeConditions = workItemTypes.split(',').map(type => `[System.WorkItemType] = '${type.trim()}'`).join(' OR ');
-            
+
             const wiqlQuery = {
                 query: `SELECT ${fields} FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND ([System.IterationPath] UNDER '${sprintId}') AND (${stateConditions}) AND (${typeConditions}) ORDER BY [System.State], [System.AssignedTo], [System.Id]`
             };
-            
+
             console.log('Consulta WIQL Sprint:', wiqlQuery.query);
-            
+
             // Ejecutar consulta WIQL
             const endpoint = '_apis/wit/wiql';
             const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
-            
+
             if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
                 hideLoading('sprintLoading');
                 document.getElementById('sprintResults').textContent = `No se encontraron work items para el sprint '${sprintId}' con los filtros especificados`;
                 return;
             }
-            
+
             // Obtener IDs de work items (limitado a 200)
             const workItemIds = wiqlResult.workItems.slice(0, 200).map(item => item.id);
-            
+
             // Obtener detalles de los work items
             const detailsEndpoint = `_apis/wit/workitems?ids=${workItemIds.join(',')}&fields=${fields}`;
             const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
-            
+
             // Ocultar loading
             hideLoading('sprintLoading');
-            
+
             // Mostrar resultados
             if (detailsResult) {
                 // Agregar metadatos de la consulta
@@ -2498,7 +2573,7 @@
                     },
                     workItems: detailsResult.value
                 };
-                
+
                 document.getElementById('sprintResults').textContent = JSON.stringify(enhancedResult, null, 2);
                 highlightJSON('sprintResults');
                 showAlert('success', `${detailsResult.value.length} work items del sprint obtenidos correctamente`);
@@ -2510,44 +2585,44 @@
         // Cargar work item para la calculadora de tiempos
         async function loadWorkItemForTimeCalculator() {
             const workItemId = document.getElementById('timeWorkItemId').value.trim();
-            
+
             if (!workItemId) {
                 showAlert('error', 'Por favor, ingrese un ID de work item válido');
                 return;
             }
-            
+
             // Mostrar loading
             showLoading('timeLoading');
-            
+
             try {
                 // Ejecutar consulta para obtener el work item
                 const endpoint = `_apis/wit/workitems/${workItemId}?$expand=all`;
                 const result = await callAzureDevOpsAPI(endpoint);
-                
+
                 // Obtener updates del work item para el timeline
                 const updatesEndpoint = `_apis/wit/workitems/${workItemId}/updates`;
                 const updatesResult = await callAzureDevOpsAPI(updatesEndpoint);
-                
+
                 // Ocultar loading
                 hideLoading('timeLoading');
-                
+
                 if (result) {
                     // Guardar work item
                     timeCalculatorData.workItem = result;
                     timeCalculatorData.timeline = updatesResult ? updatesResult.value : [];
-                    
+
                     // Extraer información relevante
                     const fields = result.fields;
-                    
+
                     // Mostrar información básica
                     document.getElementById('timeWorkItemIdDisplay').textContent = `#${result.id}`;
                     document.getElementById('timeWorkItemTitle').textContent = fields['System.Title'] || 'Sin título';
-                    
+
                     // Estado con color
                     const state = fields['System.State'] || 'Unknown';
                     const stateElement = document.getElementById('timeWorkItemState');
                     stateElement.textContent = state;
-                    
+
                     // Aplicar color según estado
                     if (state.toLowerCase().includes('progress')) {
                         stateElement.style.backgroundColor = 'rgba(0, 120, 212, 0.1)';
@@ -2562,44 +2637,44 @@
                         stateElement.style.backgroundColor = 'rgba(255, 140, 0, 0.1)';
                         stateElement.style.color = 'var(--az-state-resolved)';
                     }
-                    
+
                     // Información adicional
-                    document.getElementById('timeAssignedTo').textContent = 
-                        fields['System.AssignedTo'] ? 
-                        (fields['System.AssignedTo'].displayName || fields['System.AssignedTo'].uniqueName) : 
-                        'No asignado';
-                    
-                    document.getElementById('timeIteration').textContent = 
+                    document.getElementById('timeAssignedTo').textContent =
+                        fields['System.AssignedTo'] ?
+                            (fields['System.AssignedTo'].displayName || fields['System.AssignedTo'].uniqueName) :
+                            'No asignado';
+
+                    document.getElementById('timeIteration').textContent =
                         fields['System.IterationPath'] || 'No especificado';
-                    
-                    document.getElementById('timeActivity').textContent = 
+
+                    document.getElementById('timeActivity').textContent =
                         fields['Microsoft.VSTS.Common.Activity'] || 'Development';
-                    
+
                     // Cargar tiempos
                     timeCalculatorData.originalEstimate = parseFloat(fields['Microsoft.VSTS.Scheduling.OriginalEstimate']) || 0;
                     timeCalculatorData.completedWork = parseFloat(fields['Microsoft.VSTS.Scheduling.CompletedWork']) || 0;
                     timeCalculatorData.remainingWork = parseFloat(fields['Microsoft.VSTS.Scheduling.RemainingWork']) || 0;
-                    
+
                     // Actualizar UI con tiempos actuales
                     document.getElementById('originalEstimate').textContent = timeCalculatorData.originalEstimate.toFixed(2);
                     document.getElementById('completedWork').textContent = timeCalculatorData.completedWork.toFixed(2);
                     document.getElementById('remainingWork').textContent = timeCalculatorData.remainingWork.toFixed(2);
-                    
+
                     // Mostrar gráfico
                     updateTimeChart();
-                    
+
                     // Establecer hora de inicio basada en System.ChangedDate
                     setStartTimeFromChangedDate(fields['System.ChangedDate']);
-                    
+
                     // Establecer hora de fin como hora actual
                     setEndTimeToCurrent();
-                    
+
                     // Mostrar timeline (NUEVA VERSIÓN)
                     displayTimelineVertical();
-                    
+
                     // Mostrar contenido de la calculadora
                     document.getElementById('timeCalculatorContent').style.display = 'block';
-                    
+
                     showAlert('success', `Work item #${result.id} cargado correctamente. Timeline con ${timeCalculatorData.timeline.length} cambios.`);
                 }
             } catch (error) {
@@ -2614,31 +2689,31 @@
                 setStartTimeOneHourAgo();
                 return;
             }
-            
+
             try {
                 // Parsear la fecha de Azure DevOps (formato ISO)
                 const changedDate = new Date(changedDateString);
-                
+
                 // Extraer hora y minutos
                 let hours = changedDate.getHours();
                 const minutes = changedDate.getMinutes();
-                
+
                 // Convertir a formato 12 horas
                 const period = hours >= 12 ? 'PM' : 'AM';
                 const displayHours = hours % 12 || 12;
-                
+
                 // Redondear minutos al múltiplo de 5 más cercano
                 const roundedMinutes = Math.round(minutes / 5) * 5;
-                
+
                 // Establecer valores en los controles
                 document.getElementById('startHour').value = displayHours;
                 document.getElementById('startMinute').value = roundedMinutes;
                 document.getElementById('startPeriod').value = period;
-                
+
                 // Mostrar la hora original
                 const formattedTime = `${displayHours}:${roundedMinutes.toString().padStart(2, '0')} ${period}`;
                 document.getElementById('lastChangedTime').textContent = formattedTime;
-                
+
             } catch (error) {
                 console.error('Error al procesar fecha:', error);
                 setStartTimeOneHourAgo();
@@ -2646,24 +2721,25 @@
         }
 
         // NUEVA FUNCIÓN: Mostrar timeline vertical (corregida)
+        // Función mejorada para mostrar timeline vertical (NUEVA VERSIÓN)
         function displayTimelineVertical() {
             const timelineContainer = document.getElementById('timelineContainer');
             timelineContainer.innerHTML = '';
-            
+
             if (!timeCalculatorData.timeline || timeCalculatorData.timeline.length === 0) {
                 timelineContainer.innerHTML = '<div style="text-align: center; color: var(--az-text-tertiary); padding: 30px;"><i class="fas fa-history" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>No hay cambios de estado registrados</div>';
                 document.getElementById('timelineSection').style.display = 'block';
                 return;
             }
-            
+
             // Filtrar solo cambios de estado válidos
             const stateChanges = timeCalculatorData.timeline.filter(update => {
                 return update.fields && update.fields['System.State'];
             }).map(update => {
                 return {
                     date: new Date(update.revisedDate),
-                    oldValue: update.fields['System.State'].oldValue || 'N/A',
-                    newValue: update.fields['System.State'].newValue || 'N/A',
+                    oldValue: update.fields['System.State'].oldValue || '',
+                    newValue: update.fields['System.State'].newValue || '',
                     revisedBy: update.revisedBy ? update.revisedBy.displayName : 'Desconocido'
                 };
             }).filter(change => {
@@ -2671,71 +2747,195 @@
                 const currentYear = new Date().getFullYear();
                 return change.date.getFullYear() <= currentYear + 10; // Solo fechas hasta 10 años en el futuro
             });
-            
+
             if (stateChanges.length === 0) {
                 timelineContainer.innerHTML = '<div style="text-align: center; color: var(--az-text-tertiary); padding: 30px;"><i class="fas fa-history" style="font-size: 2rem; margin-bottom: 10px; display: block;"></i>No hay cambios de estado válidos registrados</div>';
                 document.getElementById('timelineSection').style.display = 'block';
                 return;
             }
-            
+
             // Ordenar por fecha (más antiguo primero)
             stateChanges.sort((a, b) => a.date - b.date);
-            
+
             // Crear HTML del timeline vertical
             let timelineHTML = '<div class="timeline-vertical">';
-            
-            stateChanges.forEach((change, index) => {
-                // Formatear fecha
-                const formattedDate = formatDateForTimeline(change.date);
-                
-                // Calcular duración con el siguiente cambio (si existe)
-                let durationText = '';
-                let durationClass = '';
-                if (index < stateChanges.length - 1) {
-                    const nextChange = stateChanges[index + 1];
-                    const durationMs = nextChange.date.getTime() - change.date.getTime();
-                    const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
-                    const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-                    
-                    if (durationMs < 0) {
-                        durationClass = 'negative';
-                        durationText = `Duración: -${Math.abs(durationMinutes)}m`;
-                    } else if (durationHours > 0) {
-                        durationText = `Duración: ${durationHours}h ${durationMinutes}m`;
+
+            // Procesar cada cambio de estado
+            for (let i = 0; i < stateChanges.length; i++) {
+                const change = stateChanges[i];
+                const nextChange = stateChanges[i + 1];
+
+                // Para el primer elemento (creación de la tarea)
+                if (i === 0) {
+                    // Mostrar "New Task" en lugar de fecha
+                    const stateToShow = change.oldValue === '' || change.oldValue === 'N/A' ? change.newValue : change.oldValue;
+
+                    timelineHTML += `
+                <div class="timeline-item-vertical">
+                    <div class="timeline-date-badge" style="background-color: rgba(0, 120, 212, 0.1); color: var(--az-primary);">
+                        <i class="fas fa-plus-circle"></i> New Task
+                    </div>
+                    <div class="timeline-state-change">
+                        <span class="timeline-state-badge timeline-state-to" style="background-color: rgba(0, 120, 212, 0.2); color: var(--az-state-inprogress);">
+                            ${stateToShow || 'To Do'}
+                        </span>
+                    </div>
+            `;
+
+                    // Calcular duración con el siguiente cambio
+                    let durationText = '';
+                    if (nextChange) {
+                        const durationMs = nextChange.date.getTime() - change.date.getTime();
+                        const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+                        const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                        if (durationMs < 0) {
+                            durationText = `Duración: -${Math.abs(durationMinutes)}m`;
+                            timelineHTML += `<div class="timeline-duration negative">${durationText}</div>`;
+                        } else if (durationHours > 0) {
+                            durationText = `Duración: ${durationHours}h ${durationMinutes}m`;
+                            timelineHTML += `<div class="timeline-duration">${durationText}</div>`;
+                        } else {
+                            durationText = `Duración: ${durationMinutes}m`;
+                            timelineHTML += `<div class="timeline-duration">${durationText}</div>`;
+                        }
                     } else {
-                        durationText = `Duración: ${durationMinutes}m`;
+                        // Último cambio: calcular duración hasta ahora
+                        const now = new Date();
+                        const durationMs = now.getTime() - change.date.getTime();
+                        const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+                        const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                        if (durationHours > 0) {
+                            durationText = `Duración actual: ${durationHours}h ${durationMinutes}m`;
+                        } else {
+                            durationText = `Duración actual: ${durationMinutes}m`;
+                        }
+                        timelineHTML += `<div class="timeline-duration">${durationText}</div>`;
                     }
-                } else {
-                    // Último cambio: calcular duración hasta ahora
-                    const now = new Date();
-                    const durationMs = now.getTime() - change.date.getTime();
-                    const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
-                    const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
-                    
-                    if (durationHours > 0) {
-                        durationText = `Duración actual: ${durationHours}h ${durationMinutes}m`;
-                    } else {
-                        durationText = `Duración actual: ${durationMinutes}m`;
+
+                    // Agregar usuario si está disponible
+                    if (change.revisedBy && change.revisedBy !== 'Desconocido') {
+                        timelineHTML += `<div class="timeline-user">Creado por: ${change.revisedBy}</div>`;
                     }
-                }
-                
-                timelineHTML += `
+
+                    timelineHTML += `</div>`;
+
+                    // Si hay más elementos, agregar el siguiente cambio con fecha
+                    if (nextChange) {
+                        const formattedDate = formatDateForTimeline(nextChange.date);
+
+                        timelineHTML += `
                     <div class="timeline-item-vertical">
                         <div class="timeline-date-badge">${formattedDate}</div>
                         <div class="timeline-state-change">
-                            <span class="timeline-state-badge timeline-state-from">${change.oldValue}</span>
+                            <span class="timeline-state-badge timeline-state-from">${change.newValue || stateToShow}</span>
                             <span class="timeline-arrow"><i class="fas fa-arrow-right"></i></span>
-                            <span class="timeline-state-badge timeline-state-to">${change.newValue}</span>
+                            <span class="timeline-state-badge timeline-state-to">${nextChange.newValue}</span>
                         </div>
-                        <div class="timeline-duration ${durationClass}">${durationText}</div>
-                        <div class="timeline-user">${change.revisedBy}</div>
-                    </div>
                 `;
-            });
-            
+
+                        // Calcular duración para este cambio
+                        const nextNextChange = stateChanges[i + 2];
+                        if (nextNextChange) {
+                            const durationMs = nextNextChange.date.getTime() - nextChange.date.getTime();
+                            const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+                            const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                            if (durationMs < 0) {
+                                durationText = `Duración: -${Math.abs(durationMinutes)}m`;
+                                timelineHTML += `<div class="timeline-duration negative">${durationText}</div>`;
+                            } else if (durationHours > 0) {
+                                durationText = `Duración: ${durationHours}h ${durationMinutes}m`;
+                                timelineHTML += `<div class="timeline-duration">${durationText}</div>`;
+                            } else {
+                                durationText = `Duración: ${durationMinutes}m`;
+                                timelineHTML += `<div class="timeline-duration">${durationText}</div>`;
+                            }
+                        } else {
+                            // Último cambio: calcular duración hasta ahora
+                            const now = new Date();
+                            const durationMs = now.getTime() - nextChange.date.getTime();
+                            const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+                            const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                            if (durationHours > 0) {
+                                durationText = `Duración actual: ${durationHours}h ${durationMinutes}m`;
+                            } else {
+                                durationText = `Duración actual: ${durationMinutes}m`;
+                            }
+                            timelineHTML += `<div class="timeline-duration">${durationText}</div>`;
+                        }
+
+                        // Agregar usuario
+                        if (nextChange.revisedBy && nextChange.revisedBy !== 'Desconocido') {
+                            timelineHTML += `<div class="timeline-user">${nextChange.revisedBy}</div>`;
+                        }
+
+                        timelineHTML += `</div>`;
+
+                        // Saltar al siguiente cambio ya que ya lo procesamos
+                        i++; // Incrementar i para saltar el siguiente cambio que ya procesamos
+                    }
+                } else if (i > 1) {
+                    // Para cambios posteriores al segundo (ya procesamos los primeros dos juntos)
+                    const formattedDate = formatDateForTimeline(change.date);
+                    const prevChange = stateChanges[i - 1];
+
+                    timelineHTML += `
+                <div class="timeline-item-vertical">
+                    <div class="timeline-date-badge">${formattedDate}</div>
+                    <div class="timeline-state-change">
+                        <span class="timeline-state-badge timeline-state-from">${prevChange.newValue}</span>
+                        <span class="timeline-arrow"><i class="fas fa-arrow-right"></i></span>
+                        <span class="timeline-state-badge timeline-state-to">${change.newValue}</span>
+                    </div>
+            `;
+
+                    // Calcular duración
+                    let durationText = '';
+                    if (nextChange) {
+                        const durationMs = nextChange.date.getTime() - change.date.getTime();
+                        const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+                        const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                        if (durationMs < 0) {
+                            durationText = `Duración: -${Math.abs(durationMinutes)}m`;
+                            timelineHTML += `<div class="timeline-duration negative">${durationText}</div>`;
+                        } else if (durationHours > 0) {
+                            durationText = `Duración: ${durationHours}h ${durationMinutes}m`;
+                            timelineHTML += `<div class="timeline-duration">${durationText}</div>`;
+                        } else {
+                            durationText = `Duración: ${durationMinutes}m`;
+                            timelineHTML += `<div class="timeline-duration">${durationText}</div>`;
+                        }
+                    } else {
+                        // Último cambio: calcular duración hasta ahora
+                        const now = new Date();
+                        const durationMs = now.getTime() - change.date.getTime();
+                        const durationHours = Math.floor(durationMs / (1000 * 60 * 60));
+                        const durationMinutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                        if (durationHours > 0) {
+                            durationText = `Duración actual: ${durationHours}h ${durationMinutes}m`;
+                        } else {
+                            durationText = `Duración actual: ${durationMinutes}m`;
+                        }
+                        timelineHTML += `<div class="timeline-duration">${durationText}</div>`;
+                    }
+
+                    // Agregar usuario
+                    if (change.revisedBy && change.revisedBy !== 'Desconocido') {
+                        timelineHTML += `<div class="timeline-user">${change.revisedBy}</div>`;
+                    }
+
+                    timelineHTML += `</div>`;
+                }
+            }
+
             timelineHTML += '</div>';
             timelineContainer.innerHTML = timelineHTML;
-            
+
             // Mostrar la sección de timeline
             document.getElementById('timelineSection').style.display = 'block';
         }
@@ -2747,7 +2947,17 @@
             const year = date.getFullYear();
             const hours = date.getHours().toString().padStart(2, '0');
             const minutes = date.getMinutes().toString().padStart(2, '0');
-            
+
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+        // Función auxiliar para formatear fecha para el timeline
+        function formatDateForTimeline(date) {
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+
             return `${day}/${month}/${year} ${hours}:${minutes}`;
         }
 
@@ -2756,18 +2966,18 @@
             const now = new Date();
             let hours = now.getHours();
             const minutes = now.getMinutes();
-            
+
             // Convertir a formato 12 horas
             const period = hours >= 12 ? 'PM' : 'AM';
             const displayHours = hours % 12 || 12;
-            
+
             // Redondear minutos al múltiplo de 5 más cercano
             const roundedMinutes = Math.round(minutes / 5) * 5;
-            
+
             document.getElementById('endHour').value = displayHours;
             document.getElementById('endMinute').value = roundedMinutes;
             document.getElementById('endPeriod').value = period;
-            
+
             // Actualizar display de hora actual
             updateCurrentTime();
         }
@@ -2776,17 +2986,17 @@
         function setStartTimeOneHourAgo() {
             const now = new Date();
             const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-            
+
             let hours = oneHourAgo.getHours();
             const minutes = oneHourAgo.getMinutes();
-            
+
             // Convertir a formato 12 horas
             const period = hours >= 12 ? 'PM' : 'AM';
             const displayHours = hours % 12 || 12;
-            
+
             // Redondear minutos al múltiplo de 5 más cercano
             const roundedMinutes = Math.round(minutes / 5) * 5;
-            
+
             document.getElementById('startHour').value = displayHours;
             document.getElementById('startMinute').value = roundedMinutes;
             document.getElementById('startPeriod').value = period;
@@ -2798,7 +3008,7 @@
             document.getElementById('timeCalculatorContent').style.display = 'none';
             document.getElementById('calculatedResults').style.display = 'none';
             document.getElementById('timelineSection').style.display = 'none';
-            
+
             timeCalculatorData = {
                 workItem: null,
                 timeLogs: [],
@@ -2809,10 +3019,10 @@
                 calculatedResults: null,
                 timeline: []
             };
-            
+
             // Restablecer controles de tiempo
             setEndTimeToCurrent();
-            
+
             showAlert('success', 'Calculadora reiniciada');
         }
 
@@ -2821,11 +3031,11 @@
             const now = new Date();
             let hours = now.getHours();
             const minutes = now.getMinutes().toString().padStart(2, '0');
-            
+
             // Convertir a formato 12 horas
             const period = hours >= 12 ? 'PM' : 'AM';
             const displayHours = hours % 12 || 12;
-            
+
             document.getElementById('currentTime').textContent = `${displayHours}:${minutes} ${period}`;
         }
 
@@ -2835,70 +3045,70 @@
                 showAlert('error', 'Primero cargue un work item');
                 return;
             }
-            
+
             try {
                 // Obtener valores de inicio
                 const startHour = parseInt(document.getElementById('startHour').value);
                 const startMinute = parseInt(document.getElementById('startMinute').value);
                 const startPeriod = document.getElementById('startPeriod').value;
-                
+
                 // Obtener valores de fin
                 const endHour = parseInt(document.getElementById('endHour').value);
                 const endMinute = parseInt(document.getElementById('endMinute').value);
                 const endPeriod = document.getElementById('endPeriod').value;
-                
+
                 // Convertir a formato 24 horas
                 const start24Hour = convertTo24Hour(startHour, startPeriod);
                 const end24Hour = convertTo24Hour(endHour, endPeriod);
-                
+
                 // Calcular diferencia en minutos
                 let totalMinutes = (end24Hour * 60 + endMinute) - (start24Hour * 60 + startMinute);
-                
+
                 // Si el tiempo es negativo, asumir que pasó la medianoche
                 if (totalMinutes < 0) {
                     totalMinutes += 24 * 60;
                 }
-                
+
                 // Convertir a horas en formato decimal
                 const hoursDecimal = totalMinutes / 60;
-                
+
                 // Redondear a cuartos de hora
                 const roundedHours = roundToQuarterHour(hoursDecimal);
-                
+
                 // Calcular el nuevo Completed Work y Remaining Work
                 const newCompletedWork = timeCalculatorData.completedWork + roundedHours;
                 const newRemainingWork = Math.max(0, timeCalculatorData.originalEstimate - newCompletedWork);
-                
+
                 // Guardar resultados
                 timeCalculatorData.calculatedResults = {
                     elapsedTime: roundedHours,
                     newCompletedWork: newCompletedWork,
                     newRemainingWork: newRemainingWork
                 };
-                
+
                 // Mostrar resultados
                 document.getElementById('elapsedTime').textContent = roundedHours.toFixed(2) + 'h';
                 document.getElementById('currentCompletedWork').textContent = timeCalculatorData.completedWork.toFixed(2) + 'h';
                 document.getElementById('newCompletedWork').textContent = newCompletedWork.toFixed(2) + 'h';
                 document.getElementById('newRemainingWork').textContent = newRemainingWork.toFixed(2) + 'h';
-                
+
                 // Mostrar sección de resultados
                 document.getElementById('calculatedResults').style.display = 'block';
-                
+
                 // Actualizar gráfico con valores calculados
                 updateTimeChartForCalculated(newCompletedWork, newRemainingWork);
-                
+
                 // Actualizar summary cards
                 document.getElementById('completedWork').textContent = newCompletedWork.toFixed(2);
                 document.getElementById('remainingWork').textContent = newRemainingWork.toFixed(2);
-                
+
                 // Mostrar mensaje
                 const hours = Math.floor(totalMinutes / 60);
                 const minutes = totalMinutes % 60;
                 showAlert('success', `Tiempo calculado: ${hours}h ${minutes}m = ${roundedHours.toFixed(2)}h`);
-                
+
                 return roundedHours;
-                
+
             } catch (error) {
                 console.error('Error en cálculo de tiempo:', error);
                 showAlert('error', 'Error al calcular el tiempo. Verifique los valores ingresados.');
@@ -2919,25 +3129,25 @@
         function roundToQuarterHour(hoursDecimal) {
             const totalMinutes = hoursDecimal * 60;
             const quarterHours = totalMinutes / 15;
-            
+
             // Redondear al cuarto más cercano
             const roundedQuarterHours = Math.round(quarterHours);
-            
+
             return roundedQuarterHours * 0.25;
         }
 
         // Actualizar gráfico de tiempos con valores calculados
         function updateTimeChartForCalculated(completed, remaining) {
             if (!timeCalculatorData.workItem) return;
-            
+
             const total = Math.max(timeCalculatorData.originalEstimate, completed + remaining);
             const inProgressPercentage = total > 0 ? (completed / total) * 100 : 0;
             const otherPercentage = 100 - inProgressPercentage;
-            
+
             document.getElementById('inProgressBar').style.width = `${inProgressPercentage}%`;
             document.getElementById('otherBar').style.width = `${otherPercentage}%`;
             document.getElementById('otherBar').style.left = `${inProgressPercentage}%`;
-            
+
             // Actualizar texto de las barras
             document.getElementById('inProgressBar').textContent = `Completed: ${completed.toFixed(2)}h`;
             document.getElementById('otherBar').textContent = remaining > 0 ? `Remaining: ${remaining.toFixed(2)}h` : 'Completado';
@@ -2946,15 +3156,15 @@
         // Actualizar gráfico con valores actuales
         function updateTimeChart() {
             if (!timeCalculatorData.workItem) return;
-            
+
             const total = Math.max(timeCalculatorData.originalEstimate, timeCalculatorData.completedWork + timeCalculatorData.remainingWork);
             const inProgressPercentage = total > 0 ? (timeCalculatorData.completedWork / total) * 100 : 0;
             const otherPercentage = 100 - inProgressPercentage;
-            
+
             document.getElementById('inProgressBar').style.width = `${inProgressPercentage}%`;
             document.getElementById('otherBar').style.width = `${otherPercentage}%`;
             document.getElementById('otherBar').style.left = `${inProgressPercentage}%`;
-            
+
             // Actualizar texto de las barras
             document.getElementById('inProgressBar').textContent = `Completed: ${timeCalculatorData.completedWork.toFixed(2)}h`;
             document.getElementById('otherBar').textContent = timeCalculatorData.remainingWork > 0 ? `Remaining: ${timeCalculatorData.remainingWork.toFixed(2)}h` : 'Completado';
@@ -2966,14 +3176,14 @@
                 showAlert('error', 'Primero cargue un work item');
                 return;
             }
-            
+
             if (!timeCalculatorData.calculatedResults) {
                 showAlert('error', 'Primero calcule el tiempo transcurrido');
                 return;
             }
-            
+
             const workItemId = timeCalculatorData.workItem.id;
-            
+
             // Crear operación PATCH para actualizar los campos de tiempo
             const operations = [
                 {
@@ -2987,32 +3197,32 @@
                     value: timeCalculatorData.calculatedResults.newRemainingWork.toString()
                 }
             ];
-            
+
             // Mostrar loading
             showLoading('timeLoading');
-            
+
             try {
                 const result = await callAzureDevOpsAPI(
                     `_apis/wit/workitems/${workItemId}`,
                     'PATCH',
                     operations
                 );
-                
+
                 // Ocultar loading
                 hideLoading('timeLoading');
-                
+
                 if (result) {
                     // Actualizar valores en memoria
                     timeCalculatorData.completedWork = timeCalculatorData.calculatedResults.newCompletedWork;
                     timeCalculatorData.remainingWork = timeCalculatorData.calculatedResults.newRemainingWork;
-                    
+
                     // Actualizar UI
                     document.getElementById('completedWork').textContent = timeCalculatorData.completedWork.toFixed(2);
                     document.getElementById('remainingWork').textContent = timeCalculatorData.remainingWork.toFixed(2);
-                    
+
                     // Actualizar gráfico
                     updateTimeChart();
-                    
+
                     // Agregar a log de tiempos
                     timeCalculatorData.timeLogs.push({
                         date: new Date().toISOString(),
@@ -3020,7 +3230,7 @@
                         newCompletedWork: timeCalculatorData.completedWork,
                         newRemainingWork: timeCalculatorData.remainingWork
                     });
-                    
+
                     showAlert('success', `Work item #${workItemId} actualizado correctamente. Nuevo Completed Work: ${timeCalculatorData.completedWork.toFixed(2)}h`);
                 }
             } catch (error) {
@@ -3035,7 +3245,7 @@
                 showAlert('error', 'Primero cargue un work item');
                 return;
             }
-            
+
             const report = {
                 workItemId: timeCalculatorData.workItem.id,
                 workItemTitle: timeCalculatorData.workItem.fields['System.Title'],
@@ -3046,18 +3256,18 @@
                 timeline: timeCalculatorData.timeline,
                 generatedAt: new Date().toISOString()
             };
-            
+
             // Crear y descargar archivo JSON
             const dataStr = JSON.stringify(report, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            
-            const exportFileDefaultName = `time-report-${timeCalculatorData.workItem.id}-${new Date().toISOString().slice(0,10)}.json`;
-            
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+            const exportFileDefaultName = `time-report-${timeCalculatorData.workItem.id}-${new Date().toISOString().slice(0, 10)}.json`;
+
             const linkElement = document.createElement('a');
             linkElement.setAttribute('href', dataUri);
             linkElement.setAttribute('download', exportFileDefaultName);
             linkElement.click();
-            
+
             showAlert('success', 'Reporte exportado correctamente');
         }
 
@@ -3069,24 +3279,24 @@
             const workItemTypes = $('#userWorkItemTypes').val() ? $('#userWorkItemTypes').val().join(',') : 'Task,Issue,Bug';
             const timeRangeBtn = document.querySelector('.time-range-btn.active');
             const days = timeRangeBtn ? parseInt(timeRangeBtn.getAttribute('data-days')) : 30;
-            
+
             // Mostrar loading
             showLoading('userLoading');
-            
+
             // Procesar lista de usuarios
             let users = [];
             if (userListText) {
                 // Separar por nuevas líneas, comas o punto y coma
                 users = userListText.split(/[\n,;]/).map(user => user.trim()).filter(user => user.length > 0);
             }
-            
+
             userTasksData.users = users;
-            
+
             // Calcular fecha límite
             const limitDate = new Date();
             limitDate.setDate(limitDate.getDate() - days);
             const formattedDate = limitDate.toISOString().split('T')[0];
-            
+
             // Crear condiciones para usuarios (si se especificaron)
             let userConditions = '';
             if (users.length > 0) {
@@ -3098,10 +3308,10 @@
                 userConditions = `AND (${userConditionsArray.join(' OR ')})`;
                 console.log('Condiciones de usuario:', userConditions);
             }
-            
+
             // Crear condiciones para tipos
             const typeConditions = workItemTypes.split(',').map(type => `[System.WorkItemType] = '${type.trim()}'`).join(' OR ');
-            
+
             // Crear consulta WIQL para obtener work items
             let wiqlQuery;
             if (users.length > 0) {
@@ -3114,51 +3324,51 @@
                     query: `SELECT [System.Id], [System.Title], [System.WorkItemType], [System.State], [System.AssignedTo], [System.CreatedDate], [System.ChangedDate], [System.AreaPath], [System.IterationPath], [Microsoft.VSTS.Scheduling.OriginalEstimate], [Microsoft.VSTS.Scheduling.CompletedWork], [Microsoft.VSTS.Scheduling.RemainingWork] FROM WorkItems WHERE [System.TeamProject] = '${settings.project}' AND (${typeConditions}) AND ([System.ChangedDate] >= '${formattedDate}') ORDER BY [System.ChangedDate] DESC`
                 };
             }
-            
+
             console.log('Consultando work items con WIQL:', wiqlQuery.query);
-            
+
             // Ejecutar consulta WIQL
             const endpoint = '_apis/wit/wiql';
             const wiqlResult = await callAzureDevOpsAPI(endpoint, 'POST', wiqlQuery);
-            
+
             console.log('Resultado WIQL:', wiqlResult);
-            
+
             if (!wiqlResult || !wiqlResult.workItems || wiqlResult.workItems.length === 0) {
                 hideLoading('userLoading');
                 document.getElementById('userResultsContainer').style.display = 'none';
                 showAlert('error', `No se encontraron work items ${users.length > 0 ? 'para los usuarios especificados' : ''} en los últimos ${days} días`);
                 return;
             }
-            
+
             console.log(`Se encontraron ${wiqlResult.workItems.length} work items`);
-            
+
             // Obtener IDs de work items (limitado a 200)
             const workItemIds = wiqlResult.workItems.slice(0, 200).map(item => item.id);
-            
+
             console.log(`Obteniendo detalles para ${workItemIds.length} work items`);
-            
+
             // Obtener detalles de los work items
             const fields = 'System.Id,System.Title,System.WorkItemType,System.State,System.AssignedTo,System.CreatedDate,System.ChangedDate,System.AreaPath,System.IterationPath,Microsoft.VSTS.Scheduling.OriginalEstimate,Microsoft.VSTS.Scheduling.CompletedWork,Microsoft.VSTS.Scheduling.RemainingWork';
             const detailsEndpoint = `_apis/wit/workitems?ids=${workItemIds.join(',')}&fields=${fields}`;
             const detailsResult = await callAzureDevOpsAPI(detailsEndpoint);
-            
+
             console.log('Detalles obtenidos:', detailsResult);
-            
+
             // Ocultar loading
             hideLoading('userLoading');
-            
+
             if (detailsResult && detailsResult.value && detailsResult.value.length > 0) {
                 console.log(`Procesando ${detailsResult.value.length} work items`);
-                
+
                 // Debug
                 debugUserMatching(users, detailsResult.value);
-                
+
                 // Procesar work items para consolidar horas por día
                 processUserHours(detailsResult.value, users);
-                
+
                 // Mostrar resultados
                 displayUserHoursGrid();
-                
+
                 showAlert('success', `${detailsResult.value.length} work items procesados. Consolidado de horas generado.`);
             } else {
                 showAlert('error', 'No se pudieron obtener los detalles de los work items');
@@ -3169,19 +3379,19 @@
         function debugUserMatching(users, workItems) {
             console.log('=== DEBUG USER MATCHING ===');
             console.log('Usuarios buscados (correos):', users);
-            
+
             const uniqueNames = new Set();
-            
+
             workItems.forEach((item, index) => {
                 const assignedTo = item.fields['System.AssignedTo'];
                 const uniqueName = assignedTo ? assignedTo.uniqueName : 'No asignado';
                 const displayName = assignedTo ? assignedTo.displayName : 'No asignado';
-                
+
                 if (uniqueName) uniqueNames.add(uniqueName);
-                
-                console.log(`Item ${index+1}: ID=${item.id}, UniqueName="${uniqueName}", Display="${displayName}"`);
+
+                console.log(`Item ${index + 1}: ID=${item.id}, UniqueName="${uniqueName}", Display="${displayName}"`);
             });
-            
+
             console.log('UniqueNames encontrados:', Array.from(uniqueNames));
         }
 
@@ -3189,68 +3399,68 @@
         function processUserHours(workItems, users) {
             console.log('Procesando horas para usuarios:', users);
             console.log('Total work items a procesar:', workItems.length);
-            
+
             // Reiniciar datos - Ahora estructura diferente para consolidar por día y usuario
             userTasksData.dailyHours = {}; // Clave: "YYYY-MM-DD_username"
             userTasksData.workItemsByDay = {}; // Clave: "YYYY-MM-DD_username"
-            
+
             let processedCount = 0;
-            
+
             // Procesar cada work item
             workItems.forEach((item) => {
                 const fields = item.fields;
                 const changedDate = fields['System.ChangedDate'];
                 const state = fields['System.State'] || '';
-                
+
                 // Extraer uniqueName (correo) y displayName
                 let assignedUniqueName = '';
                 let assignedDisplayName = '';
-                
+
                 if (fields['System.AssignedTo']) {
                     assignedUniqueName = fields['System.AssignedTo'].uniqueName || ''; // Correo electrónico
                     assignedDisplayName = fields['System.AssignedTo'].displayName || assignedUniqueName;
                 }
-                
+
                 // Si no hay usuario asignado, saltar
                 if (!assignedUniqueName) {
                     return;
                 }
-                
+
                 // Verificar si este work item corresponde a los usuarios filtrados
                 if (users.length > 0) {
                     let userMatched = false;
-                    
+
                     users.forEach(user => {
                         const userClean = user.trim().toLowerCase();
                         const assignedClean = assignedUniqueName.toLowerCase();
-                        
+
                         // Comparar por uniqueName (correo)
-                        if (assignedClean.includes(userClean) || 
+                        if (assignedClean.includes(userClean) ||
                             assignedClean === userClean ||
                             (userClean.includes('@') && assignedClean === userClean) ||
                             assignedClean.includes(userClean.split('@')[0])) {
                             userMatched = true;
                         }
                     });
-                    
+
                     if (!userMatched) {
                         return; // Saltar este work item si no coincide con ningún usuario
                     }
                 }
-                
+
                 // Validar fecha de cambio
                 if (!changedDate) {
                     console.log('Work item sin fecha de cambio:', item.id);
                     return;
                 }
-                
+
                 // Obtener fecha (solo día, sin hora)
                 const dateObj = new Date(changedDate);
                 const dateKey = dateObj.toISOString().split('T')[0]; // Formato YYYY-MM-DD
                 const userDateKey = `${dateKey}_${assignedUniqueName}`; // Clave única por día y usuario
-                
+
                 console.log(`Work item ${item.id} - Fecha: ${dateKey}, Usuario: ${assignedUniqueName}, Display: ${assignedDisplayName}`);
-                
+
                 // Inicializar datos para este día-usuario si no existen
                 if (!userTasksData.dailyHours[userDateKey]) {
                     userTasksData.dailyHours[userDateKey] = {
@@ -3264,54 +3474,54 @@
                         workItems: []
                     };
                 }
-                
+
                 if (!userTasksData.workItemsByDay[userDateKey]) {
                     userTasksData.workItemsByDay[userDateKey] = [];
                 }
-                
+
                 // Calcular horas automáticas
                 let autoHours = 0;
                 const stateLower = state.toLowerCase();
-                if (stateLower.includes('progress') || stateLower.includes('active') || 
+                if (stateLower.includes('progress') || stateLower.includes('active') ||
                     stateLower.includes('in progress') || stateLower === 'inprogress') {
                     autoHours = 1.0; // Estimación simple
                 }
-                
+
                 // Obtener horas manuales (Completed Work)
                 const manualHours = parseFloat(fields['Microsoft.VSTS.Scheduling.CompletedWork']) || 0;
-                
+
                 // Agregar al consolidado del día-usuario
                 userTasksData.dailyHours[userDateKey].autoHours += autoHours;
                 userTasksData.dailyHours[userDateKey].manualHours += manualHours;
-                userTasksData.dailyHours[userDateKey].diffHours = 
+                userTasksData.dailyHours[userDateKey].diffHours =
                     userTasksData.dailyHours[userDateKey].manualHours - userTasksData.dailyHours[userDateKey].autoHours;
-                
+
                 // Agregar work item a la lista del día-usuario
                 userTasksData.dailyHours[userDateKey].workItems.push(item);
                 userTasksData.workItemsByDay[userDateKey].push(item);
-                
+
                 processedCount++;
             });
-            
+
             console.log(`Total work items procesados: ${processedCount}`);
             console.log('Días-usuarios con datos:', Object.keys(userTasksData.dailyHours).length);
-            
+
             // Ordenar por fecha (más reciente primero) y luego por usuario
             const sortedEntries = Object.entries(userTasksData.dailyHours).sort((a, b) => {
                 // Primero por fecha
                 const dateCompare = new Date(b[1].date) - new Date(a[1].date);
                 if (dateCompare !== 0) return dateCompare;
-                
+
                 // Luego por nombre de usuario
                 return a[1].displayName.localeCompare(b[1].displayName);
             });
-            
+
             // Crear objeto ordenado
             const orderedDailyHours = {};
             sortedEntries.forEach(([key, value]) => {
                 orderedDailyHours[key] = value;
             });
-            
+
             userTasksData.dailyHours = orderedDailyHours;
         }
 
@@ -3320,11 +3530,11 @@
             const day = date.getDate().toString().padStart(2, '0');
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const year = date.getFullYear();
-            
+
             // También obtener nombre del día
             const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
             const dayName = days[date.getDay()];
-            
+
             return `${dayName}, ${day}/${month}/${year}`;
         }
 
@@ -3332,10 +3542,10 @@
         function displayUserHoursGrid() {
             const gridContainer = document.getElementById('userHoursGrid');
             gridContainer.innerHTML = '';
-            
+
             console.log('Datos a mostrar en tabla:', userTasksData.dailyHours);
             console.log('Número de registros (día-usuario):', Object.keys(userTasksData.dailyHours).length);
-            
+
             if (Object.keys(userTasksData.dailyHours).length === 0) {
                 gridContainer.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
@@ -3351,12 +3561,12 @@
                 document.getElementById('userResultsContainer').style.display = 'block';
                 return;
             }
-            
+
             // Crear tabla en lugar de tarjetas
             const table = document.createElement('div');
             table.className = 'user-hours-table';
             table.style.overflowX = 'auto';
-            
+
             table.innerHTML = `
                 <table>
                     <thead>
@@ -3370,10 +3580,10 @@
                     </thead>
                     <tbody>
                         ${Object.entries(userTasksData.dailyHours).map(([key, dayData]) => {
-                            const formattedDate = formatDate(dayData.dateObj);
-                            const diffClass = dayData.diffHours >= 0 ? 'positive-diff' : '';
-                            
-                            return `
+                const formattedDate = formatDate(dayData.dateObj);
+                const diffClass = dayData.diffHours >= 0 ? 'positive-diff' : '';
+
+                return `
                                 <tr data-key="${key}">
                                     <td class="date-cell">
                                         ${formattedDate}
@@ -3385,11 +3595,11 @@
                                     <td class="user-cell">${dayData.displayName}</td>
                                 </tr>
                             `;
-                        }).join('')}
+            }).join('')}
                     </tbody>
                 </table>
             `;
-            
+
             // Agregar evento click a cada fila
             setTimeout(() => {
                 table.querySelectorAll('tbody tr').forEach(row => {
@@ -3400,7 +3610,7 @@
                     });
                 });
             }, 100);
-            
+
             gridContainer.appendChild(table);
             document.getElementById('userResultsContainer').style.display = 'block';
         }
@@ -3410,11 +3620,11 @@
             const workItems = userTasksData.workItemsByDay[key] || [];
             const modalTitle = document.getElementById('dayModalTitle');
             const tableBody = document.getElementById('dayWorkItemsBody');
-            
+
             const formattedDate = formatDate(dayData.dateObj);
             modalTitle.textContent = `Tareas de ${dayData.displayName} - ${formattedDate}`;
             tableBody.innerHTML = '';
-            
+
             if (workItems.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
@@ -3428,24 +3638,24 @@
                 workItems.forEach(item => {
                     const fields = item.fields;
                     const row = document.createElement('tr');
-                    
+
                     // Formatear fecha de última actualización
                     const changedDate = fields['System.ChangedDate'];
                     let formattedChangedDate = 'No disponible';
                     if (changedDate) {
                         const dateObj = new Date(changedDate);
-                        formattedChangedDate = dateObj.toLocaleDateString('es-ES') + ' ' + 
-                                              dateObj.toLocaleTimeString('es-ES', { 
-                                                  hour: '2-digit', 
-                                                  minute: '2-digit' 
-                                              });
+                        formattedChangedDate = dateObj.toLocaleDateString('es-ES') + ' ' +
+                            dateObj.toLocaleTimeString('es-ES', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
                     }
-                    
+
                     // Tiempos
                     const originalEstimate = parseFloat(fields['Microsoft.VSTS.Scheduling.OriginalEstimate']) || 0;
                     const completedWork = parseFloat(fields['Microsoft.VSTS.Scheduling.CompletedWork']) || 0;
                     const remainingWork = parseFloat(fields['Microsoft.VSTS.Scheduling.RemainingWork']) || 0;
-                    
+
                     row.innerHTML = `
                         <td>
                             <div style="display: flex; align-items: center; gap: 5px;">
@@ -3473,28 +3683,28 @@
                             </div>
                         </td>
                     `;
-                    
+
                     tableBody.appendChild(row);
                 });
-                
+
                 // Agregar eventos a los botones de copiar después de crear las filas
                 setTimeout(() => {
                     tableBody.querySelectorAll('.copy-code-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
                             e.stopPropagation();
                             const id = btn.dataset.id;
-                            
+
                             try {
                                 await navigator.clipboard.writeText(id);
-                                
+
                                 // Mostrar mensaje de éxito
                                 showAlert('success', `ID ${id} copiado al portapapeles`);
-                                
+
                                 // Efecto visual de confirmación
                                 btn.innerHTML = '<i class="fas fa-check"></i>';
                                 btn.style.backgroundColor = 'var(--az-accent)';
                                 btn.style.color = 'white';
-                                
+
                                 setTimeout(() => {
                                     btn.innerHTML = '<i class="fas fa-copy"></i>';
                                     btn.style.backgroundColor = '';
@@ -3508,7 +3718,7 @@
                     });
                 }, 100);
             }
-            
+
             // Mostrar modal
             document.getElementById('dayDetailsModal').classList.add('active');
         }
@@ -3518,7 +3728,7 @@
         // Obtener color para estado
         function getStateColor(state) {
             if (!state) return 'var(--az-bg-tertiary)';
-            
+
             const stateLower = state.toLowerCase();
             if (stateLower.includes('progress')) {
                 return 'rgba(0, 120, 212, 0.2)';
@@ -3543,17 +3753,17 @@
 
         // Mostrar alerta
         function showAlert(type, message) {
-            const alertElement = type === 'success' ? 
-                document.getElementById('successAlert') : 
+            const alertElement = type === 'success' ?
+                document.getElementById('successAlert') :
                 document.getElementById('errorAlert');
-            
+
             // Actualizar mensaje
             const textElement = alertElement.querySelector('.alert-text');
             textElement.textContent = message;
-            
+
             // Mostrar alerta
             alertElement.style.display = 'block';
-            
+
             // Ocultar alerta después de 5 segundos
             setTimeout(() => {
                 alertElement.style.display = 'none';
@@ -3564,14 +3774,14 @@
         function highlightJSON(elementId) {
             const element = document.getElementById(elementId);
             let jsonText = element.textContent;
-            
+
             try {
                 const jsonObj = JSON.parse(jsonText);
                 jsonText = JSON.stringify(jsonObj, null, 2);
-                
+
                 // Aplicar colores básicos
                 jsonText = jsonText
-                    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)/g, function(match) {
+                    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)/g, function (match) {
                         let cls = 'json-key';
                         if (/:$/.test(match)) {
                             cls = 'json-key';
@@ -3586,7 +3796,7 @@
                     })
                     .replace(/\b(true|false|null)\b/g, '<span class="json-boolean">$1</span>')
                     .replace(/\b-?\d+(\.\d+)?([eE][+-]?\d+)?\b/g, '<span class="json-number">$&</span>');
-                
+
                 element.innerHTML = jsonText;
             } catch (e) {
                 // Si no es JSON válido, mantener el texto original
@@ -3595,4 +3805,5 @@
         }
     </script>
 </body>
+
 </html>
