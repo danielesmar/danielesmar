@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a73e8;
+            --secondary-color: #f8f9fa;
+            --text-color: #202124;
+            --text-secondary: #5f6368;
+            --border-color: #dadce0;
+            --card-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+            --card-hover-shadow: 0 2px 4px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #ffffff;
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+        }
+        
+        .help-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .help-section h1 {
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--text-color);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 8px;
+        }
+        
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 8px;
+        }
+        
+        .help-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 24px;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            height: 100%;
+        }
+        
+        .help-card:hover {
+            box-shadow: var(--card-hover-shadow);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .help-card:active {
+            transform: translateY(0);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+        
+        .card-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-left: 32px; /* Alineado con el ícono */
+        }
+        
+        /* Responsive design */
+        @media (max-width: 900px) {
+            .help-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            
+            .help-card {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 16px;
+            }
+            
+            .help-section h1 {
+                font-size: 24px;
+            }
+            
+            .card-title {
+                font-size: 16px;
+            }
+            
+            .card-description {
+                font-size: 13px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .help-card {
+                padding: 16px;
+            }
+            
+            .card-title i {
+                margin-right: 8px;
+                font-size: 18px;
+            }
+            
+            .card-description {
+                margin-left: 26px;
+            }
+        }
+        
+        /* Footer minimalista */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* Animación sutil para las tarjetas */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .help-card {
+            animation: fadeInUp 0.3s ease-out;
+        }
+        
+        .help-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .help-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        .help-card:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="help-section">
+            <h1>Help Center</h1>
+            <div class="help-grid">
+                <!-- Tarjeta 1: Booking & Tickets -->
+                <div class="help-card">
+                    <div class="card-title">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Booking & Tickets</span>
+                    </div>
+                    <p class="card-description">
+                        Help with booking, cancellation, and tickets
+                    </p>
+                </div>
+                
+                <!-- Tarjeta 2: Payments & Refunds -->
+                <div class="help-card">
+                    <div class="card-title">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Payments & Refunds</span>
+                    </div>
+                    <p class="card-description">
+                        Help with payments, refunds, and billing
+                    </p>
+                </div>
+                
+                <!-- Tarjeta 3: Account & Profile -->
+                <div class="help-card">
+                    <div class="card-title">
+                        <i class="fas fa-user-circle"></i>
+                        <span>Account & Profile</span>
+                    </div>
+                    <p class="card-description">
+                        Help with account settings and profile
+                    </p>
+                </div>
+                
+                <!-- Tarjeta 4: Offers & Rewards -->
+                <div class="help-card">
+                    <div class="card-title">
+                        <i class="fas fa-gift"></i>
+                        <span>Offers & Rewards</span>
+                    </div>
+                    <p class="card-description">
+                        Help with offers, discounts, and rewards
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <div class="footer">
+            <p>© 2023 Help Center. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // Interactividad básica para las tarjetas
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.help-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Aquí normalmente se navegaría a la sección de ayuda correspondiente
+                    const title = this.querySelector('.card-title span').textContent;
+                    console.log('Sección seleccionada:', title);
+                    
+                    // Efecto visual de clic
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+                
+                // Efecto de hover con teclado
+                card.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        this.click();
+                    }
+                });
+                
+                // Hacer las tarjetas accesibles por teclado
+                card.setAttribute('tabindex', '0');
+            });
+            
+            // Detectar tamaño de pantalla para ajustes específicos
+            function adjustLayout() {
+                const screenWidth = window.innerWidth;
+                const container = document.querySelector('.container');
+                
+                if (screenWidth < 600) {
+                    container.style.padding = '0 8px';
+                } else {
+                    container.style.padding = '0';
+                }
+            }
+            
+            // Ajustar layout al cargar y al redimensionar
+            window.addEventListener('load', adjustLayout);
+            window.addEventListener('resize', adjustLayout);
+        });
+    </script>
+</body>
+</html>
