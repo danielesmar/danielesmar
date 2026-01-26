@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transport App UI</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-blue: #3f4294;
+      --bg-light: #f5f6fa;
+      --text-dark: #333;
+      --text-gray: #888;
+      --green-status: #27ae60;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #ddd;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* Contenedor principal - Simula pantalla de móvil */
+    .app-container {
+      width: 100%;
+      /* Tamaño móvil */
+      background-color: var(--bg-light);
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      min-height: 90vh;
+    }
+
+    /* Header */
+    .header {
+      background-color: var(--primary-blue);
+      color: white;
+      padding: 50px 20px 25px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header h1 {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    /* Contenido */
+    .content {
+      padding: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .section-header h2 {
+      font-size: 1.2rem;
+      color: var(--text-dark);
+    }
+
+    .section-header i {
+      color: var(--text-gray);
+      font-size: 1.2rem;
+    }
+
+    /* Tarjeta de Plan */
+    .section-card {
+      background: white;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+
+    .plan-details p {
+      margin-bottom: 5px;
+      color: var(--text-dark);
+    }
+
+    .subtext {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+    }
+
+    /* Tickets */
+    .ticket-card {
+      background: white;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      position: relative;
+      /* Efecto de recortes laterales */
+      mask-image: radial-gradient(circle at 0 65%, transparent 10px, black 11px),
+        radial-gradient(circle at 100% 65%, transparent 10px, black 11px);
+      mask-composite: intersect;
+      -webkit-mask-image: radial-gradient(circle at 0 65%, transparent 10px, black 11px),
+        radial-gradient(circle at 100% 65%, transparent 10px, black 11px);
+    }
+
+    .ticket-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .line-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-circle {
+      width: 24px;
+      height: 24px;
+      border: 3px solid #e02020;
+      border-radius: 50%;
+      display: inline-block;
+      position: relative;
+    }
+
+    .logo-circle::after {
+      content: "";
+      position: absolute;
+      width: 28px;
+      height: 3px;
+      background: #e02020;
+      top: 50%;
+      left: -5px;
+      transform: translateY(-50%);
+    }
+
+    .line-id {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .depart-time {
+      color: var(--green-status);
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .ticket-locations {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-gray);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+
+    .ticket-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px dashed #eee;
+      padding-top: 15px;
+    }
+
+    .main-time {
+      font-weight: bold;
+      color: var(--text-dark);
+    }
+
+    .date {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+    }
+
+    .duration {
+      text-align: center;
+    }
+
+    .duration p {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+    }
+
+    .align-right {
+      text-align: right;
+    }
+
+    /* Responsividad para pantallas grandes */
+    @media (min-width: 768px) {
+      .app-container {
+        max-width: 800px;
+      }
+
+      .available-tubes {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app-container">
+    <header class="header">
+      <div class="header-top">
+        <i class="fa-solid fa-arrow-left"></i>
+        <h1>Aldgate East to Bow Road</h1>
+        <i class="fa-solid fa-filter"></i>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="section-card">
+        <div class="section-header">
+          <h2>Trip Plan</h2>
+          <i class="fa-regular fa-calendar-days"></i>
+        </div>
+        <div class="plan-details">
+          <p><strong>Aldgate East</strong> <span class="train-icon">🚆</span> <strong>Bow Road</strong> <span
+              class="number">55</span></p>
+          <p class="subtext">1 Adult | Thu, 28 Oct</p>
+        </div>
+      </section>
+
+      <section class="available-tubes">
+        <div class="section-header">
+          <h2>Available Tubes</h2>
+          <i class="fa-regular fa-calendar-days"></i>
+        </div>
+
+        <div class="ticket-card">
+          <div class="ticket-top">
+            <div class="line-info">
+              <span class="logo-circle"></span>
+              <span class="line-id">91081</span>
+            </div>
+            <div class="price">
+              <i class="fa-solid fa-money-bill-transfer"></i> £5.50
+            </div>
+            <div class="depart-time">Depart 1:16 PM</div>
+          </div>
+
+          <div class="ticket-locations">
+            <span>Aldgate East</span>
+            <span>Bow Road</span>
+          </div>
+
+          <div class="ticket-bottom">
+            <div class="time-block">
+              <p class="main-time">1:16 PM</p>
+              <p class="date">Thu, 28 Oct</p>
+            </div>
+            <div class="duration">
+              <span class="train-icon-small">🚆</span>
+              <p>7min</p>
+            </div>
+            <div class="time-block align-right">
+              <p class="main-time">1:23 PM</p>
+              <p class="date">Thu, 28 Oct</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-card">
+          <div class="ticket-top">
+            <div class="line-info">
+              <span class="logo-circle"></span>
+              <span class="line-id">91563</span>
+            </div>
+            <div class="price">£5.50</div>
+            <div class="depart-time">Depart 1:19 PM</div>
+          </div>
+          <div class="ticket-locations">
+            <span>Aldgate East</span>
+            <span>Bow Road</span>
+          </div>
+          <div class="ticket-bottom">
+            <div class="time-block">
+              <p class="main-time">1:19 PM</p>
+              <p class="date">Thu, 28 Oct</p>
+            </div>
+            <div class="duration">
+              <span class="train-icon-small">🚆</span>
+              <p>7min</p>
+            </div>
+            <div class="time-block align-right">
+              <p class="main-time">1:20 PM</p>
+              <p class="date">Thu, 28 Oct</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-card">
+          <div class="ticket-top">
+            <div class="line-info">
+              <span class="logo-circle"></span>
+              <span class="line-id">91081</span>
+            </div>
+            <div class="price">
+              <i class="fa-solid fa-money-bill-transfer"></i> £5.50
+            </div>
+            <div class="depart-time">Depart 1:16 PM</div>
+          </div>
+
+          <div class="ticket-locations">
+            <span>Aldgate East</span>
+            <span>Bow Road</span>
+          </div>
+
+          <div class="ticket-bottom">
+            <div class="time-block">
+              <p class="main-time">1:16 PM</p>
+              <p class="date">Thu, 28 Oct</p>
+            </div>
+            <div class="duration">
+              <span class="train-icon-small">🚆</span>
+              <p>7min</p>
+            </div>
+            <div class="time-block align-right">
+              <p class="main-time">1:23 PM</p>
+              <p class="date">Thu, 28 Oct</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket-card">
+          <div class="ticket-top">
+            <div class="line-info">
+              <span class="logo-circle"></span>
+              <span class="line-id">91563</span>
+            </div>
+            <div class="price">£5.50</div>
+            <div class="depart-time">Depart 1:19 PM</div>
+          </div>
+          <div class="ticket-locations">
+            <span>Aldgate East</span>
+            <span>Bow Road</span>
+          </div>
+          <div class="ticket-bottom">
+            <div class="time-block">
+              <p class="main-time">1:19 PM</p>
+              <p class="date">Thu, 28 Oct</p>
+            </div>
+            <div class="duration">
+              <span class="train-icon-small">🚆</span>
+              <p>7min</p>
+            </div>
+            <div class="time-block align-right">
+              <p class="main-time">1:20 PM</p>
+              <p class="date">Thu, 28 Oct</p>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+</body>
+
+</html>

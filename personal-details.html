@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Personal Details</title>
 
+    <link rel="stylesheet" href="https://icons.getbootstrap.com/assets/font/bootstrap-icons.min.css" media="all">
     <style>
         :root {
             --bg: #f9fafb;
@@ -13,9 +14,10 @@
             --text-main: #111827;
             --text-muted: #6b7280;
             --accent: #ffffff;
-            --accent-soft: #00693c;
+            --accent-soft: #338763;
             --radius: 20px;
-            --bs-border-radius-xl: 1rem;
+            --bs-border-radius-xl: 8px;
+            /*1rem;*/
             --border-color: #dadce0;
         }
 
@@ -41,7 +43,7 @@
             border-radius: var(--radius);
             padding: 28px 32px;
             border-radius: var(--bs-border-radius-xl);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
             width: 100%;
 
             border: 1px solid var(--border-color);
@@ -57,8 +59,8 @@
 
         .header h2 {
             margin: 0;
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
 
         .edit-btn {
@@ -81,7 +83,7 @@
         .details {
             display: flex;
             flex-direction: column;
-            gap: 22px;
+            gap: 16px;
         }
 
         .row {
@@ -109,6 +111,15 @@
             text-align: right;
         }
 
+        .text-bg {
+            background: #87cb53;
+            padding: 1px 12px;
+            border-radius: 16px;
+            display: inline-block;
+            color: #ffffff;
+        }
+
+
         /* Mobile fine tuning */
         @media (max-width: 480px) {
             .card {
@@ -132,39 +143,41 @@
     <div class="container">
         <div class="card">
             <div class="header">
-                <h2>Detalles</h2>
-                <button class="edit-btn">Crear Visita</button>
+                <h2>Información</h2>
+                <button class="edit-btn"><i class="bi bi-plus-lg"></i> Crear Visita</button>
             </div>
 
             <div class="details">
                 <div class="row">
-                    <div class="label">Nombre</div>
+                    <div class="label">Nombre:</div>
                     <div class="value">Daniel José Estrada Marenco</div>
                 </div>
-
-
                 <div class="row">
-                    <div class="label">ID</div>
-                    <div class="value">001-210886-0010J</div>
+                    <div class="label">Código:</div>
+                    <div class="value">
+                        <div class="text-bg">100200</div>
+                    </div>
                 </div>
 
                 <div class="row">
-                    <div class="label">Código</div>
-                    <div class="value">100200</div>
+                    <div class="label">Cédula:</div>
+                    <div class="value">001-211190-3310J</div>
                 </div>
 
+
+
                 <div class="row">
-                    <div class="label">Correo</div>
+                    <div class="label">Correo:</div>
                     <div class="value">danielesmar@email.com</div>
                 </div>
 
                 <div class="row">
-                    <div class="label">Teléfono</div>
+                    <div class="label">Teléfono:</div>
                     <div class="value">845774441</div>
                 </div>
 
                 <div class="row">
-                    <div class="label">Dirección</div>
+                    <div class="label">Dirección:</div>
                     <div class="value">
                         Calle de la Paz #15, Int. 38, Col. Centro Histórico, Delegación Cuauhtémoc,
                         Ciudad de México, C.P. 06000, México

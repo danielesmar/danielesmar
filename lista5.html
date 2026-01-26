@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet UI Cards</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f2dcd0 0%, #e8c8b8 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.card-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Estilo de la miniatura de la tarjeta */
+.card-thumb {
+    width: 70px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.visa-bg { background-color: #eeddbb; }
+.mastercard-bg { background-color: #d8b4b4; }
+
+.brand-logo {
+    width: 25px;
+    height: auto;
+    filter: brightness(1.1);
+}
+
+/* Textos */
+.card-number {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: 0.5px;
+}
+
+.card-expiry {
+    font-size: 0.9rem;
+    color: #8e8e8e;
+    margin-top: 4px;
+}
+
+.card-right {
+    text-align: right;
+}
+
+.balance-main {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.balance-sub {
+    font-size: 0.9rem;
+    color: #8e8e8e;
+    margin-top: 4px;
+}
+
+/* Responsividad para pantallas móviles pequeñas */
+@media (max-width: 380px) {
+    .card {
+        padding: 15px;
+    }
+    .card-thumb {
+        width: 40px;
+        height: 40px;
+    }
+    .card-number, .balance-main {
+        font-size: 0.95rem;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-left">
+                <div class="card-thumb visa-bg">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="brand-logo">
+                </div>
+                <div class="card-info">
+                    <p class="card-number">**** 4008</p>
+                    <p class="card-expiry">06/22</p>
+                </div>
+            </div>
+            <div class="card-right">
+                <p class="balance-main">$88,200.00</p>
+                <p class="balance-sub">$1,200.00</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-left">
+                <div class="card-thumb mastercard-bg">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="brand-logo">
+                </div>
+                <div class="card-info">
+                    <p class="card-number">**** 4340</p>
+                    <p class="card-expiry">06/23</p>
+                </div>
+            </div>
+            <div class="card-right">
+                <p class="balance-main">$64,120.50</p>
+                <p class="balance-sub">$1,960.00</p>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-left">
+                <div class="card-thumb visa-bg">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" class="brand-logo">
+                </div>
+                <div class="card-info">
+                    <p class="card-number">**** 4008</p>
+                    <p class="card-expiry">06/22</p>
+                </div>
+            </div>
+            <div class="card-right">
+                <p class="balance-main">$88,200.00</p>
+                <p class="balance-sub">$1,200.00</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-left">
+                <div class="card-thumb mastercard-bg">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" class="brand-logo">
+                </div>
+                <div class="card-info">
+                    <p class="card-number">**** 4340</p>
+                    <p class="card-expiry">06/23</p>
+                </div>
+            </div>
+            <div class="card-right">
+                <p class="balance-main">$64,120.50</p>
+                <p class="balance-sub">$1,960.00</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

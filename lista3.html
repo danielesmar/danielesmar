@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cards Payment</title>
+
+    <style>
+        :root {
+            --bg: #f9fafb;
+            --card-bg: #f9fafb;
+            --text-dark: #1f2937;
+            --text-gray: #6b7280;
+            --border-radius: 14px;
+            --bs-border-radius-xl: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        /* ===== Card ===== */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--bs-border-radius-xl);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 7px;
+        }
+
+        /* ===== Left ===== */
+        .card-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon.visa {
+            background-color: #00693c;
+            color: #fff;
+        }
+
+        .card-icon.mc {
+            background-color: #27ae60;
+            color: #fff;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .card-number {
+            font-weight: 500;
+            color: var(--text-dark);
+            width: 190px;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            /* Evita que el texto salte a la siguiente línea */
+            overflow: hidden;
+            /* Esconde el texto que sobra */
+            text-overflow: ellipsis;
+            /* Agrega los tres puntos (...) */
+            font-size: 13px;
+        }
+
+        .card-date {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        /* ===== Right ===== */
+        .card-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .amount-main {
+            font-weight: 400;
+            font-size: 11px;
+            color: var(--text-dark);
+        }
+
+        .amount-secondary {
+            font-size: 12px;
+            color: var(--text-gray);
+        }
+
+        /* ===== Desktop ===== */
+        @media (min-width: 768px) {
+            body {
+                background: #f9fafb;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <!-- VISA -->
+        <div class="card">
+            <div class="card-left">
+                <div class="card-icon visa">
+                    DE
+                </div>
+
+                <div class="card-info">
+                    <div class="card-number">Daniel José Estrada Marenco</div>
+                    <div class="card-date">Cliente</div>
+                    <div class="card-date">Casa</div>
+                </div>
+            </div>
+
+            <div class="card-right">
+                <div class="amount-main">2026/01/26 11:05AM</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+            </div>
+        </div>
+
+        <!-- MASTERCARD -->
+        <div class="card">
+            <div class="card-left">
+                <div class="card-icon mc">
+                    LK
+                </div>
+
+                <div class="card-info">
+                    <div class="card-number">Leonidas Kenneth Estrada Beteta</div>
+                    <div class="card-date">Fianza</div>
+                    <div class="card-date">Trabajo</div>
+                </div>
+            </div>
+
+            <div class="card-right">
+                <div class="amount-main">2026/01/27 03:43PM</div>
+                <div class="amount-secondary">Ilocalizado</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+            </div>
+        </div>
+
+        <!-- VISA -->
+        <div class="card">
+            <div class="card-left">
+                <div class="card-icon visa">
+                    WM
+                </div>
+
+                <div class="card-info">
+                    <div class="card-number">Daniel José Estrada Marenco</div>
+                    <div class="card-date">Cliente</div>
+                    <div class="card-date">Casa</div>
+                </div>
+            </div>
+
+            <div class="card-right">
+                <div class="amount-main">2026/01/26 11:05AM</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+            </div>
+        </div>
+
+        <!-- MASTERCARD -->
+        <div class="card">
+            <div class="card-left">
+                <div class="card-icon mc">
+                    LK
+                </div>
+
+                <div class="card-info">
+                    <div class="card-number">Leonidas Kenneth Estrada Beteta</div>
+                    <div class="card-date">Fianza</div>
+                    <div class="card-date">Trabajo</div>
+                </div>
+            </div>
+
+            <div class="card-right">
+                <div class="amount-main">2026/01/27 03:43PM</div>
+                <div class="amount-secondary">Ilocalizado</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+            </div>
+        </div>
+
+        <!-- VISA -->
+        <div class="card">
+            <div class="card-left">
+                <div class="card-icon visa">
+                    DE
+                </div>
+
+                <div class="card-info">
+                    <div class="card-number">Daniel José Estrada Marenco</div>
+                    <div class="card-date">Cliente</div>
+                    <div class="card-date">Casa</div>
+                </div>
+            </div>
+
+            <div class="card-right">
+                <div class="amount-main">2026/01/26 11:05AM</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+            </div>
+        </div>
+
+        <!-- MASTERCARD -->
+        <div class="card">
+            <div class="card-left">
+                <div class="card-icon mc">
+                    LK
+                </div>
+
+                <div class="card-info">
+                    <div class="card-number">Leonidas Kenneth Estrada Beteta</div>
+                    <div class="card-date">Fianza</div>
+                    <div class="card-date">Trabajo</div>
+                </div>
+            </div>
+
+            <div class="card-right">
+                <div class="amount-main">2026/01/27 03:43PM</div>
+                <div class="amount-secondary">Ilocalizado</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+            </div>
+        </div>
+
+        <!-- VISA -->
+        <div class="card">
+            <div class="card-left">
+                <div class="card-icon visa">
+                    DE
+                </div>
+
+                <div class="card-info">
+                    <div class="card-number">Daniel José Estrada Marenco</div>
+                    <div class="card-date">Cliente</div>
+                    <div class="card-date">Casa</div>
+                </div>
+            </div>
+
+            <div class="card-right">
+                <div class="amount-main">2026/01/26 11:05AM</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+            </div>
+        </div>
+
+        <!-- MASTERCARD -->
+        <div class="card">
+            <div class="card-left">
+                <div class="card-icon mc">
+                    LK
+                </div>
+
+                <div class="card-info">
+                    <div class="card-number">Leonidas Kenneth Estrada Beteta</div>
+                    <div class="card-date">Fianza</div>
+                    <div class="card-date">Trabajo</div>
+                </div>
+            </div>
+
+            <div class="card-right">
+                <div class="amount-main">2026/01/27 03:43PM</div>
+                <div class="amount-secondary">Ilocalizado</div>
+                <div class="amount-secondary">Arreglo de Pago</div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
