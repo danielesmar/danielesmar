@@ -1,0 +1,17 @@
+/* ============================================
+   CORPORATE BRAND VARIABLES
+============================================ */
+:root {
+  --brand-primary: #0055A4;
+  --brand-secondary: #00AEEF;
+  --brand-success: #198754;
+  --brand-warning: #FFC107;
+  --brand-danger: #DC3545;
+
+  --brand-primary-h: 210;
+  --brand-primary-s: 100%;
+  --brand-primary-l: 32%;
+
+  --radius-base: 10px;
+  --spacing-base: 8px;
+}

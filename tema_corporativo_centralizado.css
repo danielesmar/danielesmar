@@ -1,0 +1,892 @@
+/* ==========================================================================
+   TEMA CORPORATIVO CENTRALIZADO PARA ORACLE APEX (UNIVERSAL THEME)
+   Versión: 1.0
+   Descripción: Sobrescribe las variables del tema y añade reglas específicas
+                para garantizar consistencia visual en todos los componentes.
+   Modos: Claro (por defecto) y Oscuro (mediante preferencia del sistema o clase .dark)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DEFINICIÓN DE LA PALETA DE COLORES BASE (MODIFICA ESTOS VALORES)
+   -------------------------------------------------------------------------- */
+:root {
+    /* Colores primarios corporativos */
+    --mi-color-brand-primary: #0056b3;       /* Azul principal */
+    --mi-color-brand-secondary: #6c757d;      /* Gris secundario */
+    --mi-color-brand-accent: #17a2b8;         /* Acento (turquesa) */
+    --mi-color-brand-success: #28a745;        /* Verde éxito */
+    --mi-color-brand-info: #17a2b8;           /* Azul información */
+    --mi-color-brand-warning: #ffc107;         /* Amarillo advertencia */
+    --mi-color-brand-danger: #dc3545;          /* Rojo peligro */
+    --mi-color-brand-light: #f8f9fa;           /* Gris muy claro */
+    --mi-color-brand-dark: #343a40;            /* Gris oscuro */
+
+    /* Fondos modo claro */
+    --mi-color-bg-body: #ffffff;               /* Fondo página */
+    --mi-color-bg-region: #f8f9fa;             /* Fondo regiones */
+    --mi-color-bg-component: #ffffff;           /* Fondo campos formulario */
+    --mi-color-bg-alt: #e9ecef;                 /* Fondo alternativo (hover, filas pares) */
+    --mi-color-bg-disabled: #e9ecef;            /* Fondo para elementos deshabilitados */
+
+    /* Textos modo claro */
+    --mi-color-text-default: #212529;           /* Texto principal */
+    --mi-color-text-muted: #6c757d;             /* Texto secundario */
+    --mi-color-text-heading: #0056b3;           /* Títulos */
+    --mi-color-text-on-primary: #ffffff;         /* Texto sobre fondo primario */
+    --mi-color-text-on-success: #ffffff;         /* Texto sobre fondo éxito */
+    --mi-color-text-on-info: #ffffff;            /* Texto sobre fondo info */
+    --mi-color-text-on-warning: #212529;         /* Texto sobre fondo warning (contraste oscuro) */
+    --mi-color-text-on-danger: #ffffff;          /* Texto sobre fondo danger */
+    --mi-color-link: var(--mi-color-brand-primary);
+    --mi-color-link-hover: #004099;
+    --mi-color-link-visited: #6f42c1;            /* Opcional */
+
+    /* Bordes y sombras modo claro */
+    --mi-color-border: #dee2e6;                  /* Borde estándar */
+    --mi-color-border-focus: var(--mi-color-brand-primary);
+    --mi-color-border-error: var(--mi-color-brand-danger);
+    --mi-shadow-default: 0 2px 4px rgba(0,0,0,0.1);
+    --mi-shadow-focus: 0 0 0 3px rgba(0,86,179,0.25);
+}
+
+/* --------------------------------------------------------------------------
+   2. MODO OSCURO (basado en preferencia del sistema)
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Fondos modo oscuro */
+        --mi-color-bg-body: #1a1d21;
+        --mi-color-bg-region: #2c2f33;
+        --mi-color-bg-component: #3a3f44;
+        --mi-color-bg-alt: #4e555b;
+        --mi-color-bg-disabled: #3a3f44;
+
+        /* Textos modo oscuro */
+        --mi-color-text-default: #f8f9fa;
+        --mi-color-text-muted: #a0a4a8;
+        --mi-color-text-heading: #6ea8fe;
+        --mi-color-text-on-primary: #ffffff;
+        --mi-color-text-on-success: #ffffff;
+        --mi-color-text-on-info: #ffffff;
+        --mi-color-text-on-warning: #212529;
+        --mi-color-text-on-danger: #ffffff;
+        --mi-color-link: #6ea8fe;
+        --mi-color-link-hover: #8bb9fe;
+        --mi-color-link-visited: #b18aff;
+
+        /* Bordes y sombras modo oscuro */
+        --mi-color-border: #4b4e52;
+        --mi-color-border-focus: #6ea8fe;
+        --mi-color-border-error: #f28b82;
+        --mi-shadow-default: 0 2px 4px rgba(0,0,0,0.4);
+        --mi-shadow-focus: 0 0 0 3px rgba(110,168,254,0.4);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   3. CLASE .dark PARA CAMBIO MANUAL (si se desea un botón de cambio)
+   -------------------------------------------------------------------------- */
+:root.dark {
+    --mi-color-bg-body: #1a1d21;
+    --mi-color-bg-region: #2c2f33;
+    --mi-color-bg-component: #3a3f44;
+    --mi-color-bg-alt: #4e555b;
+    --mi-color-bg-disabled: #3a3f44;
+    --mi-color-text-default: #f8f9fa;
+    --mi-color-text-muted: #a0a4a8;
+    --mi-color-text-heading: #6ea8fe;
+    --mi-color-text-on-primary: #ffffff;
+    --mi-color-text-on-success: #ffffff;
+    --mi-color-text-on-info: #ffffff;
+    --mi-color-text-on-warning: #212529;
+    --mi-color-text-on-danger: #ffffff;
+    --mi-color-link: #6ea8fe;
+    --mi-color-link-hover: #8bb9fe;
+    --mi-color-link-visited: #b18aff;
+    --mi-color-border: #4b4e52;
+    --mi-color-border-focus: #6ea8fe;
+    --mi-color-border-error: #f28b82;
+    --mi-shadow-default: 0 2px 4px rgba(0,0,0,0.4);
+    --mi-shadow-focus: 0 0 0 3px rgba(110,168,254,0.4);
+}
+
+/* --------------------------------------------------------------------------
+   4. MAPEO DE VARIABLES DE UNIVERSAL THEME A NUESTRA PALETA
+      (Estas variables controlan la mayoría de los componentes estándar)
+   -------------------------------------------------------------------------- */
+:root {
+    /* ----- ENLACES ----- */
+    --ut-link-text-color: var(--mi-color-link);
+    --ut-link-text-color-hover: var(--mi-color-link-hover);
+    --ut-link-text-color-visited: var(--mi-color-link-visited);
+    --ut-link-text-color-active: var(--mi-color-link-hover);
+
+    /* ----- NAVEGACIÓN (Menú lateral, pestañas, lista de navegación) ----- */
+    --ut-navigation-bg: var(--mi-color-bg-region);
+    --ut-navigation-text-color: var(--mi-color-text-default);
+    --ut-navigation-item-hover-bg: var(--mi-color-bg-alt);
+    --ut-navigation-item-hover-text-color: var(--mi-color-link-hover);
+    --ut-navigation-item-active-bg: var(--mi-color-brand-primary);
+    --ut-navigation-item-active-text-color: var(--mi-color-text-on-primary);
+    --ut-navigation-item-focus-bg: var(--mi-color-bg-alt);
+    --ut-navigation-item-focus-text-color: var(--mi-color-link-hover);
+    --ut-navigation-item-disabled-text-color: var(--mi-color-text-muted);
+
+    /* ----- REGIONES ----- */
+    --ut-region-header-bg: var(--mi-color-bg-region);
+    --ut-region-header-text-color: var(--mi-color-text-heading);
+    --ut-region-body-bg: var(--mi-color-bg-body);
+    --ut-region-border-color: var(--mi-color-border);
+    --ut-region-header-border-color: var(--mi-color-border);
+    --ut-region-accent-color: var(--mi-color-brand-primary); /* Para bordes superiores */
+
+    /* ----- FORMULARIOS: ETIQUETAS (LABELS) ----- */
+    --a-label-text-color: var(--mi-color-text-muted);
+    --a-label-optional-text-color: var(--mi-color-text-muted);
+    --a-label-required-text-color: var(--mi-color-brand-danger);
+    --a-label-disabled-text-color: var(--mi-color-text-muted);
+
+    /* ----- FORMULARIOS: CAMPOS DE ENTRADA (INPUT, SELECT, TEXTAREA) ----- */
+    --a-form-field-background-color: var(--mi-color-bg-component);
+    --a-form-field-border-color: var(--mi-color-border);
+    --a-form-field-text-color: var(--mi-color-text-default);
+    --a-form-field-placeholder-color: var(--mi-color-text-muted);
+    --a-form-field-focus-border-color: var(--mi-color-border-focus);
+    --a-form-field-focus-shadow-color: var(--mi-color-border-focus);
+    --a-form-field-error-border-color: var(--mi-color-border-error);
+    --a-form-field-error-focus-shadow-color: var(--mi-color-border-error);
+    --a-form-field-disabled-background-color: var(--mi-color-bg-disabled);
+    --a-form-field-disabled-text-color: var(--mi-color-text-muted);
+    --a-form-field-disabled-border-color: var(--mi-color-border);
+    --a-form-field-readonly-background-color: var(--mi-color-bg-alt);
+    --a-form-field-readonly-text-color: var(--mi-color-text-default);
+
+    /* ----- BOTONES (Estilo por defecto / primario) ----- */
+    --a-button-background-color: var(--mi-color-brand-primary);
+    --a-button-text-color: var(--mi-color-text-on-primary);
+    --a-button-border-color: var(--mi-color-brand-primary);
+    --a-button-hover-background-color: var(--mi-color-link-hover);
+    --a-button-hover-text-color: var(--mi-color-text-on-primary);
+    --a-button-hover-border-color: var(--mi-color-link-hover);
+    --a-button-focus-background-color: var(--mi-color-link-hover);
+    --a-button-focus-text-color: var(--mi-color-text-on-primary);
+    --a-button-focus-border-color: var(--mi-color-link-hover);
+    --a-button-focus-shadow-color: var(--mi-color-border-focus);
+    --a-button-active-background-color: var(--mi-color-brand-primary);
+    --a-button-active-text-color: var(--mi-color-text-on-primary);
+    --a-button-active-border-color: var(--mi-color-brand-primary);
+    --a-button-disabled-background-color: var(--mi-color-bg-disabled);
+    --a-button-disabled-text-color: var(--mi-color-text-muted);
+    --a-button-disabled-border-color: var(--mi-color-border);
+    --a-button-disabled-opacity: 0.65;
+
+    /* ----- BOTONES SECUNDARIOS (Estilo "Alternate" o "Secondary") ----- */
+    --a-button-secondary-background-color: var(--mi-color-bg-component);
+    --a-button-secondary-text-color: var(--mi-color-text-default);
+    --a-button-secondary-border-color: var(--mi-color-border);
+    --a-button-secondary-hover-background-color: var(--mi-color-bg-alt);
+    --a-button-secondary-hover-text-color: var(--mi-color-text-default);
+    --a-button-secondary-hover-border-color: var(--mi-color-border);
+    --a-button-secondary-focus-background-color: var(--mi-color-bg-alt);
+    --a-button-secondary-focus-text-color: var(--mi-color-text-default);
+    --a-button-secondary-focus-border-color: var(--mi-color-border-focus);
+    --a-button-secondary-focus-shadow-color: var(--mi-color-border-focus);
+    --a-button-secondary-active-background-color: var(--mi-color-bg-component);
+    --a-button-secondary-active-text-color: var(--mi-color-text-default);
+    --a-button-secondary-active-border-color: var(--mi-color-border);
+    --a-button-secondary-disabled-background-color: var(--mi-color-bg-disabled);
+    --a-button-secondary-disabled-text-color: var(--mi-color-text-muted);
+    --a-button-secondary-disabled-border-color: var(--mi-color-border);
+
+    /* ----- BOTONES DE ÉXITO (Success) ----- */
+    --a-button-success-background-color: var(--mi-color-brand-success);
+    --a-button-success-text-color: var(--mi-color-text-on-success);
+    --a-button-success-border-color: var(--mi-color-brand-success);
+    --a-button-success-hover-background-color: #218838; /* Oscurecido manual si no se define otra variable */
+    --a-button-success-hover-text-color: var(--mi-color-text-on-success);
+    --a-button-success-hover-border-color: #1e7e34;
+    --a-button-success-focus-background-color: #218838;
+    --a-button-success-focus-text-color: var(--mi-color-text-on-success);
+    --a-button-success-focus-border-color: #1e7e34;
+    --a-button-success-focus-shadow-color: rgba(40,167,69,0.5);
+    --a-button-success-disabled-background-color: var(--mi-color-bg-disabled);
+    --a-button-success-disabled-text-color: var(--mi-color-text-muted);
+    --a-button-success-disabled-border-color: var(--mi-color-border);
+
+    /* ----- BOTONES DE PELIGRO (Danger) ----- */
+    --a-button-danger-background-color: var(--mi-color-brand-danger);
+    --a-button-danger-text-color: var(--mi-color-text-on-danger);
+    --a-button-danger-border-color: var(--mi-color-brand-danger);
+    --a-button-danger-hover-background-color: #c82333;
+    --a-button-danger-hover-text-color: var(--mi-color-text-on-danger);
+    --a-button-danger-hover-border-color: #bd2130;
+    --a-button-danger-focus-background-color: #c82333;
+    --a-button-danger-focus-text-color: var(--mi-color-text-on-danger);
+    --a-button-danger-focus-border-color: #bd2130;
+    --a-button-danger-focus-shadow-color: rgba(220,53,69,0.5);
+    --a-button-danger-disabled-background-color: var(--mi-color-bg-disabled);
+    --a-button-danger-disabled-text-color: var(--mi-color-text-muted);
+    --a-button-danger-disabled-border-color: var(--mi-color-border);
+
+    /* ----- BOTONES DE ADVERTENCIA (Warning) ----- */
+    --a-button-warning-background-color: var(--mi-color-brand-warning);
+    --a-button-warning-text-color: var(--mi-color-text-on-warning);
+    --a-button-warning-border-color: var(--mi-color-brand-warning);
+    --a-button-warning-hover-background-color: #e0a800;
+    --a-button-warning-hover-text-color: var(--mi-color-text-on-warning);
+    --a-button-warning-hover-border-color: #d39e00;
+    --a-button-warning-focus-background-color: #e0a800;
+    --a-button-warning-focus-text-color: var(--mi-color-text-on-warning);
+    --a-button-warning-focus-border-color: #d39e00;
+    --a-button-warning-focus-shadow-color: rgba(255,193,7,0.5);
+    --a-button-warning-disabled-background-color: var(--mi-color-bg-disabled);
+    --a-button-warning-disabled-text-color: var(--mi-color-text-muted);
+    --a-button-warning-disabled-border-color: var(--mi-color-border);
+
+    /* ----- BOTONES DE INFORMACIÓN (Info) ----- */
+    --a-button-info-background-color: var(--mi-color-brand-info);
+    --a-button-info-text-color: var(--mi-color-text-on-info);
+    --a-button-info-border-color: var(--mi-color-brand-info);
+    --a-button-info-hover-background-color: #138496;
+    --a-button-info-hover-text-color: var(--mi-color-text-on-info);
+    --a-button-info-hover-border-color: #117a8b;
+    --a-button-info-focus-background-color: #138496;
+    --a-button-info-focus-text-color: var(--mi-color-text-on-info);
+    --a-button-info-focus-border-color: #117a8b;
+    --a-button-info-focus-shadow-color: rgba(23,162,184,0.5);
+    --a-button-info-disabled-background-color: var(--mi-color-bg-disabled);
+    --a-button-info-disabled-text-color: var(--mi-color-text-muted);
+    --a-button-info-disabled-border-color: var(--mi-color-border);
+
+    /* ----- BOTONES SIMPLES (Sin fondo, estilo "Simple") ----- */
+    --a-button-simple-text-color: var(--mi-color-link);
+    --a-button-simple-hover-text-color: var(--mi-color-link-hover);
+    --a-button-simple-focus-text-color: var(--mi-color-link-hover);
+    --a-button-simple-focus-shadow-color: var(--mi-color-border-focus);
+    --a-button-simple-disabled-text-color: var(--mi-color-text-muted);
+
+    /* ----- REPORTES (Tablas) ----- */
+    --ut-report-cell-bg: var(--mi-color-bg-component);
+    --ut-report-cell-alt-background-color: var(--mi-color-bg-alt);
+    --ut-report-cell-text-color: var(--mi-color-text-default);
+    --ut-report-header-bg: var(--mi-color-bg-region);
+    --ut-report-header-text-color: var(--mi-color-text-heading);
+    --ut-report-header-border-color: var(--mi-color-border);
+    --ut-report-cell-border-color: var(--mi-color-border);
+    --ut-report-row-hover-background-color: var(--mi-color-bg-alt);
+
+    /* ----- PAGINACIÓN ----- */
+    --ut-pagination-bg: var(--mi-color-bg-component);
+    --ut-pagination-text-color: var(--mi-color-text-default);
+    --ut-pagination-border-color: var(--mi-color-border);
+    --ut-pagination-hover-bg: var(--mi-color-bg-alt);
+    --ut-pagination-hover-text-color: var(--mi-color-link-hover);
+    --ut-pagination-active-bg: var(--mi-color-brand-primary);
+    --ut-pagination-active-text-color: var(--mi-color-text-on-primary);
+    --ut-pagination-active-border-color: var(--mi-color-brand-primary);
+    --ut-pagination-disabled-text-color: var(--mi-color-text-muted);
+    --ut-pagination-disabled-bg: var(--mi-color-bg-disabled);
+    --ut-pagination-disabled-border-color: var(--mi-color-border);
+
+    /* ----- MENSAJES (Alertas) ----- */
+    --ut-message-success-bg: #d4edda;
+    --ut-message-success-text: #155724;
+    --ut-message-success-border: #c3e6cb;
+    --ut-message-info-bg: #d1ecf1;
+    --ut-message-info-text: #0c5460;
+    --ut-message-info-border: #bee5eb;
+    --ut-message-warning-bg: #fff3cd;
+    --ut-message-warning-text: #856404;
+    --ut-message-warning-border: #ffeeba;
+    --ut-message-danger-bg: #f8d7da;
+    --ut-message-danger-text: #721c24;
+    --ut-message-danger-border: #f5c6cb;
+
+    /* ----- HERRAMIENTAS Y COMPONENTES ESPECÍFICOS DE APEX ----- */
+    --a-tooltip-background-color: var(--mi-color-bg-region);
+    --a-tooltip-text-color: var(--mi-color-text-default);
+    --a-tooltip-border-color: var(--mi-color-border);
+    --a-popup-background-color: var(--mi-color-bg-component);
+    --a-popup-text-color: var(--mi-color-text-default);
+    --a-popup-border-color: var(--mi-color-border);
+    --a-modal-background-color: var(--mi-color-bg-component);
+    --a-modal-text-color: var(--mi-color-text-default);
+    --a-modal-border-color: var(--mi-color-border);
+    --a-dialog-backdrop-color: rgba(0,0,0,0.5);
+}
+
+/* --------------------------------------------------------------------------
+   5. REGLAS ESPECÍFICAS ADICIONALES (para mayor control y pseudo-clases)
+      - Se usan selectores de clase de APEX para garantizar la aplicación.
+      - Se incluyen pseudo-clases :hover, :focus, :active, :disabled.
+   -------------------------------------------------------------------------- */
+
+/* ----- MEJORA DE ENFOQUE (focus) para accesibilidad ----- */
+*:focus-visible {
+    outline: 2px solid var(--mi-color-border-focus);
+    outline-offset: 2px;
+}
+
+/* ----- BOTONES: todos los estados cubiertos (por si las variables no se aplican completamente) ----- */
+.t-Button,
+.a-Button,
+button:not(.a-Alert-close):not(.a-Modal-close):not(.t-Header-logo-link) {
+    transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Botón primario */
+.t-Button--primary,
+.a-Button--primary {
+    background-color: var(--a-button-background-color);
+    border-color: var(--a-button-border-color);
+    color: var(--a-button-text-color);
+}
+.t-Button--primary:hover:not(:disabled):not(.is-disabled),
+.a-Button--primary:hover:not(:disabled):not(.is-disabled) {
+    background-color: var(--a-button-hover-background-color);
+    border-color: var(--a-button-hover-border-color);
+    color: var(--a-button-hover-text-color);
+}
+.t-Button--primary:focus-visible,
+.a-Button--primary:focus-visible {
+    background-color: var(--a-button-focus-background-color);
+    border-color: var(--a-button-focus-border-color);
+    color: var(--a-button-focus-text-color);
+    box-shadow: 0 0 0 3px var(--a-button-focus-shadow-color);
+}
+.t-Button--primary:active:not(:disabled):not(.is-disabled),
+.a-Button--primary:active:not(:disabled):not(.is-disabled) {
+    background-color: var(--a-button-active-background-color);
+    border-color: var(--a-button-active-border-color);
+    color: var(--a-button-active-text-color);
+    transform: translateY(1px);
+}
+.t-Button--primary:disabled,
+.t-Button--primary.is-disabled,
+.a-Button--primary:disabled,
+.a-Button--primary.is-disabled {
+    background-color: var(--a-button-disabled-background-color);
+    border-color: var(--a-button-disabled-border-color);
+    color: var(--a-button-disabled-text-color);
+    opacity: var(--a-button-disabled-opacity);
+    pointer-events: none;
+}
+
+/* Botón secundario */
+.t-Button--secondary,
+.a-Button--secondary {
+    background-color: var(--a-button-secondary-background-color);
+    border-color: var(--a-button-secondary-border-color);
+    color: var(--a-button-secondary-text-color);
+}
+.t-Button--secondary:hover:not(:disabled):not(.is-disabled),
+.a-Button--secondary:hover:not(:disabled):not(.is-disabled) {
+    background-color: var(--a-button-secondary-hover-background-color);
+    border-color: var(--a-button-secondary-hover-border-color);
+    color: var(--a-button-secondary-hover-text-color);
+}
+.t-Button--secondary:focus-visible,
+.a-Button--secondary:focus-visible {
+    background-color: var(--a-button-secondary-focus-background-color);
+    border-color: var(--a-button-secondary-focus-border-color);
+    color: var(--a-button-secondary-focus-text-color);
+    box-shadow: 0 0 0 3px var(--a-button-secondary-focus-shadow-color);
+}
+.t-Button--secondary:active:not(:disabled):not(.is-disabled),
+.a-Button--secondary:active:not(:disabled):not(.is-disabled) {
+    background-color: var(--a-button-secondary-active-background-color);
+    border-color: var(--a-button-secondary-active-border-color);
+    color: var(--a-button-secondary-active-text-color);
+    transform: translateY(1px);
+}
+.t-Button--secondary:disabled,
+.t-Button--secondary.is-disabled,
+.a-Button--secondary:disabled,
+.a-Button--secondary.is-disabled {
+    background-color: var(--a-button-secondary-disabled-background-color);
+    border-color: var(--a-button-secondary-disabled-border-color);
+    color: var(--a-button-secondary-disabled-text-color);
+    opacity: var(--a-button-disabled-opacity);
+    pointer-events: none;
+}
+
+/* Botón éxito (success) */
+.t-Button--success,
+.a-Button--success {
+    background-color: var(--a-button-success-background-color);
+    border-color: var(--a-button-success-border-color);
+    color: var(--a-button-success-text-color);
+}
+.t-Button--success:hover:not(:disabled):not(.is-disabled),
+.a-Button--success:hover:not(:disabled):not(.is-disabled) {
+    background-color: var(--a-button-success-hover-background-color);
+    border-color: var(--a-button-success-hover-border-color);
+    color: var(--a-button-success-hover-text-color);
+}
+.t-Button--success:focus-visible,
+.a-Button--success:focus-visible {
+    background-color: var(--a-button-success-focus-background-color);
+    border-color: var(--a-button-success-focus-border-color);
+    color: var(--a-button-success-focus-text-color);
+    box-shadow: 0 0 0 3px var(--a-button-success-focus-shadow-color);
+}
+.t-Button--success:disabled,
+.t-Button--success.is-disabled,
+.a-Button--success:disabled,
+.a-Button--success.is-disabled {
+    background-color: var(--a-button-success-disabled-background-color);
+    border-color: var(--a-button-success-disabled-border-color);
+    color: var(--a-button-success-disabled-text-color);
+    opacity: var(--a-button-disabled-opacity);
+    pointer-events: none;
+}
+
+/* Botón peligro (danger) */
+.t-Button--danger,
+.a-Button--danger {
+    background-color: var(--a-button-danger-background-color);
+    border-color: var(--a-button-danger-border-color);
+    color: var(--a-button-danger-text-color);
+}
+.t-Button--danger:hover:not(:disabled):not(.is-disabled),
+.a-Button--danger:hover:not(:disabled):not(.is-disabled) {
+    background-color: var(--a-button-danger-hover-background-color);
+    border-color: var(--a-button-danger-hover-border-color);
+    color: var(--a-button-danger-hover-text-color);
+}
+.t-Button--danger:focus-visible,
+.a-Button--danger:focus-visible {
+    background-color: var(--a-button-danger-focus-background-color);
+    border-color: var(--a-button-danger-focus-border-color);
+    color: var(--a-button-danger-focus-text-color);
+    box-shadow: 0 0 0 3px var(--a-button-danger-focus-shadow-color);
+}
+.t-Button--danger:disabled,
+.t-Button--danger.is-disabled,
+.a-Button--danger:disabled,
+.a-Button--danger.is-disabled {
+    background-color: var(--a-button-danger-disabled-background-color);
+    border-color: var(--a-button-danger-disabled-border-color);
+    color: var(--a-button-danger-disabled-text-color);
+    opacity: var(--a-button-disabled-opacity);
+    pointer-events: none;
+}
+
+/* Botón advertencia (warning) */
+.t-Button--warning,
+.a-Button--warning {
+    background-color: var(--a-button-warning-background-color);
+    border-color: var(--a-button-warning-border-color);
+    color: var(--a-button-warning-text-color);
+}
+.t-Button--warning:hover:not(:disabled):not(.is-disabled),
+.a-Button--warning:hover:not(:disabled):not(.is-disabled) {
+    background-color: var(--a-button-warning-hover-background-color);
+    border-color: var(--a-button-warning-hover-border-color);
+    color: var(--a-button-warning-hover-text-color);
+}
+.t-Button--warning:focus-visible,
+.a-Button--warning:focus-visible {
+    background-color: var(--a-button-warning-focus-background-color);
+    border-color: var(--a-button-warning-focus-border-color);
+    color: var(--a-button-warning-focus-text-color);
+    box-shadow: 0 0 0 3px var(--a-button-warning-focus-shadow-color);
+}
+.t-Button--warning:disabled,
+.t-Button--warning.is-disabled,
+.a-Button--warning:disabled,
+.a-Button--warning.is-disabled {
+    background-color: var(--a-button-warning-disabled-background-color);
+    border-color: var(--a-button-warning-disabled-border-color);
+    color: var(--a-button-warning-disabled-text-color);
+    opacity: var(--a-button-disabled-opacity);
+    pointer-events: none;
+}
+
+/* Botón información (info) */
+.t-Button--info,
+.a-Button--info {
+    background-color: var(--a-button-info-background-color);
+    border-color: var(--a-button-info-border-color);
+    color: var(--a-button-info-text-color);
+}
+.t-Button--info:hover:not(:disabled):not(.is-disabled),
+.a-Button--info:hover:not(:disabled):not(.is-disabled) {
+    background-color: var(--a-button-info-hover-background-color);
+    border-color: var(--a-button-info-hover-border-color);
+    color: var(--a-button-info-hover-text-color);
+}
+.t-Button--info:focus-visible,
+.a-Button--info:focus-visible {
+    background-color: var(--a-button-info-focus-background-color);
+    border-color: var(--a-button-info-focus-border-color);
+    color: var(--a-button-info-focus-text-color);
+    box-shadow: 0 0 0 3px var(--a-button-info-focus-shadow-color);
+}
+.t-Button--info:disabled,
+.t-Button--info.is-disabled,
+.a-Button--info:disabled,
+.a-Button--info.is-disabled {
+    background-color: var(--a-button-info-disabled-background-color);
+    border-color: var(--a-button-info-disabled-border-color);
+    color: var(--a-button-info-disabled-text-color);
+    opacity: var(--a-button-disabled-opacity);
+    pointer-events: none;
+}
+
+/* Botón simple (sin fondo) */
+.t-Button--simple,
+.a-Button--simple {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--a-button-simple-text-color);
+}
+.t-Button--simple:hover:not(:disabled):not(.is-disabled),
+.a-Button--simple:hover:not(:disabled):not(.is-disabled) {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--a-button-simple-hover-text-color);
+    text-decoration: underline;
+}
+.t-Button--simple:focus-visible,
+.a-Button--simple:focus-visible {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--a-button-simple-focus-text-color);
+    box-shadow: 0 0 0 3px var(--a-button-simple-focus-shadow-color);
+    outline: none;
+}
+.t-Button--simple:active:not(:disabled):not(.is-disabled),
+.a-Button--simple:active:not(:disabled):not(.is-disabled) {
+    transform: translateY(1px);
+}
+.t-Button--simple:disabled,
+.t-Button--simple.is-disabled,
+.a-Button--simple:disabled,
+.a-Button--simple.is-disabled {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--a-button-simple-disabled-text-color);
+    opacity: var(--a-button-disabled-opacity);
+    pointer-events: none;
+}
+
+/* ----- INPUTS (campos de formulario) ----- */
+.a-TextField,
+.a-Select,
+.a-Textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+select,
+textarea {
+    background-color: var(--a-form-field-background-color);
+    border: 1px solid var(--a-form-field-border-color);
+    color: var(--a-form-field-text-color);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.a-TextField::placeholder,
+.a-Textarea::placeholder,
+input::placeholder,
+textarea::placeholder {
+    color: var(--a-form-field-placeholder-color);
+    opacity: 1;
+}
+
+.a-TextField:hover:not(:disabled):not(.is-disabled):not([readonly]),
+.a-Select:hover:not(:disabled):not(.is-disabled):not([readonly]),
+.a-Textarea:hover:not(:disabled):not(.is-disabled):not([readonly]),
+input:hover:not(:disabled):not(.is-disabled):not([readonly]),
+select:hover:not(:disabled):not(.is-disabled):not([readonly]),
+textarea:hover:not(:disabled):not(.is-disabled):not([readonly]) {
+    border-color: var(--a-form-field-focus-border-color);
+}
+
+.a-TextField:focus-visible,
+.a-Select:focus-visible,
+.a-Textarea:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    border-color: var(--a-form-field-focus-border-color);
+    box-shadow: 0 0 0 3px var(--a-form-field-focus-shadow-color);
+    outline: none;
+}
+
+.a-TextField.is-error,
+.a-Select.is-error,
+.a-Textarea.is-error,
+input.is-error,
+select.is-error,
+textarea.is-error,
+.a-TextField[aria-invalid="true"],
+.a-Select[aria-invalid="true"],
+.a-Textarea[aria-invalid="true"],
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+    border-color: var(--a-form-field-error-border-color);
+}
+.a-TextField.is-error:focus-visible,
+.a-Select.is-error:focus-visible,
+.a-Textarea.is-error:focus-visible,
+input.is-error:focus-visible,
+select.is-error:focus-visible,
+textarea.is-error:focus-visible {
+    border-color: var(--a-form-field-error-border-color);
+    box-shadow: 0 0 0 3px var(--a-form-field-error-focus-shadow-color);
+}
+
+.a-TextField:disabled,
+.a-Select:disabled,
+.a-Textarea:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+    background-color: var(--a-form-field-disabled-background-color);
+    color: var(--a-form-field-disabled-text-color);
+    border-color: var(--a-form-field-disabled-border-color);
+    cursor: not-allowed;
+}
+
+.a-TextField[readonly],
+.a-Select[readonly],
+.a-Textarea[readonly],
+input[readonly],
+select[readonly],
+textarea[readonly] {
+    background-color: var(--a-form-field-readonly-background-color);
+    color: var(--a-form-field-readonly-text-color);
+    border-color: var(--a-form-field-border-color);
+}
+
+/* ----- CHECKBOXES Y RADIOS (personalización básica) ----- */
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--mi-color-brand-primary); /* Funciona en navegadores modernos */
+}
+/* Si se requiere más control, se pueden usar estilos personalizados con pseudo-elementos, pero accent-color es suficiente para la mayoría */
+
+/* ----- ETIQUETAS (LABELS) ----- */
+.a-Label,
+label.a-Label,
+.t-Region-header .a-Label,
+.apex-item-label {
+    color: var(--a-label-text-color);
+    font-weight: 600;
+}
+.a-Label.is-required .a-Label-required,
+label.is-required .a-Label-required,
+.apex-item-required {
+    color: var(--a-label-required-text-color);
+}
+.a-Label.is-optional .a-Label-optional,
+label.is-optional .a-Label-optional {
+    color: var(--a-label-optional-text-color);
+}
+label:has( input:disabled, select:disabled, textarea:disabled ) .a-Label,
+label:has( input:disabled, select:disabled, textarea:disabled ) {
+    color: var(--a-label-disabled-text-color);
+}
+
+/* ----- ENLACES ----- */
+a:not(.t-Button):not(.a-Button):not(.t-NavigationBar-link):not(.t-Tree-link) {
+    color: var(--ut-link-text-color);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+a:not(.t-Button):not(.a-Button):not(.t-NavigationBar-link):not(.t-Tree-link):hover {
+    color: var(--ut-link-text-color-hover);
+    text-decoration: underline;
+}
+a:not(.t-Button):not(.a-Button):not(.t-NavigationBar-link):not(.t-Tree-link):focus-visible {
+    outline: 2px solid var(--mi-color-border-focus);
+    outline-offset: 2px;
+}
+a:not(.t-Button):not(.a-Button):not(.t-NavigationBar-link):not(.t-Tree-link):visited {
+    color: var(--ut-link-text-color-visited);
+}
+a:not(.t-Button):not(.a-Button):not(.t-NavigationBar-link):not(.t-Tree-link):active {
+    color: var(--ut-link-text-color-active);
+}
+
+/* ----- MENÚ DE NAVEGACIÓN (barra lateral y pestañas) ----- */
+.t-NavigationBar-item .t-NavigationBar-link,
+.t-Tree-nav .a-TreeNode-link,
+.t-Tabs-link,
+.t-Nav-item a {
+    color: var(--ut-navigation-text-color);
+}
+.t-NavigationBar-item:hover .t-NavigationBar-link,
+.t-Tree-nav .a-TreeNode-link:hover,
+.t-Tabs-link:hover,
+.t-Nav-item a:hover {
+    background-color: var(--ut-navigation-item-hover-bg);
+    color: var(--ut-navigation-item-hover-text-color);
+    text-decoration: none;
+}
+.t-NavigationBar-item.is-active .t-NavigationBar-link,
+.t-Tree-nav .a-TreeNode.is-selected > .a-TreeNode-link,
+.t-Tabs.is-active .t-Tabs-link,
+.t-Nav-item.is-active a {
+    background-color: var(--ut-navigation-item-active-bg);
+    color: var(--ut-navigation-item-active-text-color);
+}
+.t-NavigationBar-item:focus-visible .t-NavigationBar-link,
+.t-Tree-nav .a-TreeNode-link:focus-visible,
+.t-Tabs-link:focus-visible,
+.t-Nav-item a:focus-visible {
+    background-color: var(--ut-navigation-item-focus-bg);
+    color: var(--ut-navigation-item-focus-text-color);
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--mi-color-border-focus);
+}
+.t-NavigationBar-item.is-disabled .t-NavigationBar-link,
+.t-Tree-nav .a-TreeNode.is-disabled > .a-TreeNode-link,
+.t-Tabs-link.is-disabled,
+.t-Nav-item.is-disabled a {
+    color: var(--ut-navigation-item-disabled-text-color);
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* ----- REGIONES (encabezados y bordes) ----- */
+.t-Region {
+    border: 1px solid var(--ut-region-border-color);
+    border-radius: 4px;
+    background-color: var(--ut-region-body-bg);
+}
+.t-Region-header {
+    background-color: var(--ut-region-header-bg);
+    color: var(--ut-region-header-text-color);
+    border-bottom: 1px solid var(--ut-region-header-border-color);
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+}
+.t-Region--accent .t-Region-header {
+    border-top: 4px solid var(--ut-region-accent-color);
+}
+
+/* ----- REPORTES (tablas) ----- */
+.t-Report {
+    border-collapse: collapse;
+    width: 100%;
+}
+.t-Report th,
+.t-Report-headerCell {
+    background-color: var(--ut-report-header-bg);
+    color: var(--ut-report-header-text-color);
+    border-bottom: 2px solid var(--ut-report-header-border-color);
+    padding: 0.75rem;
+    text-align: left;
+}
+.t-Report td,
+.t-Report-dataCell {
+    background-color: var(--ut-report-cell-bg);
+    color: var(--ut-report-cell-text-color);
+    border-bottom: 1px solid var(--ut-report-cell-border-color);
+    padding: 0.75rem;
+}
+.t-Report tr:nth-child(even) td {
+    background-color: var(--ut-report-cell-alt-background-color);
+}
+.t-Report tbody tr:hover td {
+    background-color: var(--ut-report-row-hover-background-color);
+}
+
+/* ----- PAGINACIÓN ----- */
+.t-Pagination {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+}
+.t-Pagination-item a,
+.t-Pagination-item span {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    background-color: var(--ut-pagination-bg);
+    color: var(--ut-pagination-text-color);
+    border: 1px solid var(--ut-pagination-border-color);
+    margin-right: -1px;
+    transition: background-color 0.2s, color 0.2s;
+}
+.t-Pagination-item a:hover {
+    background-color: var(--ut-pagination-hover-bg);
+    color: var(--ut-pagination-hover-text-color);
+    text-decoration: none;
+}
+.t-Pagination-item.is-active a,
+.t-Pagination-item.is-active span {
+    background-color: var(--ut-pagination-active-bg);
+    color: var(--ut-pagination-active-text-color);
+    border-color: var(--ut-pagination-active-border-color);
+    z-index: 1;
+}
+.t-Pagination-item:focus-visible a {
+    outline: 2px solid var(--mi-color-border-focus);
+    outline-offset: 2px;
+}
+.t-Pagination-item.is-disabled a,
+.t-Pagination-item.is-disabled span {
+    background-color: var(--ut-pagination-disabled-bg);
+    color: var(--ut-pagination-disabled-text-color);
+    border-color: var(--ut-pagination-disabled-border-color);
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* ----- MENSAJES (ALERTAS) ----- */
+.a-Message {
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+}
+.a-Message--success {
+    background-color: var(--ut-message-success-bg);
+    color: var(--ut-message-success-text);
+    border-color: var(--ut-message-success-border);
+}
+.a-Message--info {
+    background-color: var(--ut-message-info-bg);
+    color: var(--ut-message-info-text);
+    border-color: var(--ut-message-info-border);
+}
+.a-Message--warning {
+    background-color: var(--ut-message-warning-bg);
+    color: var(--ut-message-warning-text);
+    border-color: var(--ut-message-warning-border);
+}
+.a-Message--danger {
+    background-color: var(--ut-message-danger-bg);
+    color: var(--ut-message-danger-text);
+    border-color: var(--ut-message-danger-border);
+}
+
+/* ----- HERRAMIENTAS MODALES Y POPUPS ----- */
+.a-Popup,
+.a-Modal {
+    background-color: var(--a-popup-background-color);
+    color: var(--a-popup-text-color);
+    border: 1px solid var(--a-popup-border-color);
+    border-radius: 4px;
+    box-shadow: var(--mi-shadow-default);
+}
+.a-Modal-backdrop {
+    background-color: var(--a-dialog-backdrop-color);
+}
+.t-Tooltip {
+    background-color: var(--a-tooltip-background-color);
+    color: var(--a-tooltip-text-color);
+    border: 1px solid var(--a-tooltip-border-color);
+    border-radius: 4px;
+    padding: 0.5rem;
+    box-shadow: var(--mi-shadow-default);
+}

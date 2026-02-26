@@ -1,0 +1,140 @@
+/* ============================================= */
+/* TEMA CORPORATIVO CENTRALIZADO - ORACLE APEX  */
+/* Basado en Variables CSS del Universal Theme   */
+/* ============================================= */
+
+/* --------------------------------------------- */
+/* 1. DEFINICIÓN DE COLORES BASE (PALETA)       */
+/*    (Modifica estos valores con tus colores)   */
+/* --------------------------------------------- */
+:root {
+  /* COLORES PRIMARIOS CORPORATIVOS */
+  --mi-color-brand-primary: #0056b3;       /* Azul primario */
+  --mi-color-brand-secondary: #6c757d;      /* Gris secundario */
+  --mi-color-brand-accent: #17a2b8;         /* Acento (Turquesa) */
+  --mi-color-brand-danger: #dc3545;         /* Rojo para errores/peligro */
+  --mi-color-brand-success: #28a745;        /* Verde para éxito */
+  --mi-color-brand-warning: #ffc107;         /* Amarillo para advertencias */
+  --mi-color-brand-info: #17a2b8;           /* Información */
+
+  /* COLORES DE FONDO (MODO CLARO) */
+  --mi-color-bg-body: #ffffff;               /* Fondo general de la página */
+  --mi-color-bg-region: #f8f9fa;             /* Fondo de regiones */
+  --mi-color-bg-component: #ffffff;           /* Fondo de inputs, campos */
+  --mi-color-bg-alt: #e9ecef;                 /* Fondo alternativo (hovers, filas pares) */
+
+  /* COLORES DE TEXTO (MODO CLARO) */
+  --mi-color-text-default: #212529;           /* Color de texto principal */
+  --mi-color-text-muted: #6c757d;             /* Texto secundario o deshabilitado */
+  --mi-color-text-heading: #0056b3;           /* Color para títulos */
+  --mi-color-text-on-primary: #ffffff;         /* Texto sobre fondo primario (botones) */
+  --mi-color-link: var(--mi-color-brand-primary);
+  --mi-color-link-hover: #004099;
+
+  /* BORDES Y SOMBRAS (MODO CLARO) */
+  --mi-color-border: #dee2e6;                  /* Color de bordes estándar */
+  --mi-shadow-default: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --------------------------------------------- */
+/* 2. DEFINICIÓN DE COLORES BASE - MODO OSCURO  */
+/*    (Se activa con la clase 'dark' o preferencia del sistema) */
+/* --------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* COLORES DE FONDO (MODO OSCURO) */
+    --mi-color-bg-body: #1a1d21;
+    --mi-color-bg-region: #2c2f33;
+    --mi-color-bg-component: #3a3f44;
+    --mi-color-bg-alt: #4e555b;
+
+    /* COLORES DE TEXTO (MODO OSCURO) */
+    --mi-color-text-default: #f8f9fa;
+    --mi-color-text-muted: #a0a4a8;
+    --mi-color-text-heading: #6ea8fe;
+    --mi-color-text-on-primary: #ffffff;
+    --mi-color-link: #6ea8fe;
+    --mi-color-link-hover: #8bb9fe;
+
+    /* BORDES Y SOMBRAS (MODO OSCURO) */
+    --mi-color-border: #4b4e52;
+    --mi-shadow-default: 0 2px 4px rgba(0,0,0,0.4);
+  }
+}
+
+/* Si quieres un botón manual que añada la clase 'dark' al HTML */
+:root.dark {
+    --mi-color-bg-body: #1a1d21;
+    --mi-color-bg-region: #2c2f33;
+    --mi-color-bg-component: #3a3f44;
+    --mi-color-bg-alt: #4e555b;
+    --mi-color-text-default: #f8f9fa;
+    --mi-color-text-muted: #a0a4a8;
+    --mi-color-text-heading: #6ea8fe;
+    --mi-color-text-on-primary: #ffffff;
+    --mi-color-link: #6ea8fe;
+    --mi-color-link-hover: #8bb9fe;
+    --mi-color-border: #4b4e52;
+    --mi-shadow-default: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* --------------------------------------------- */
+/* 3. MAPEO DE VARIABLES CSS DE UNIVERSAL THEME */
+/*    AQUÍ ES DONDE OCURRE LA MAGIA              */
+/* --------------------------------------------- */
+:root {
+  /* ----- NAVEGACIÓN (MENÚS) ----- */
+  --ut-navigation-bg: var(--mi-color-bg-region);
+  --ut-navigation-text-color: var(--mi-color-text-default);
+  --ut-navigation-item-hover-bg: var(--mi-color-bg-alt);
+  --ut-navigation-item-hover-text-color: var(--mi-color-link-hover);
+  --ut-navigation-item-active-bg: var(--mi-color-brand-primary);
+  --ut-navigation-item-active-text-color: var(--mi-color-text-on-primary);
+
+  /* ----- REGIONES ----- */
+  --ut-region-header-bg: var(--mi-color-bg-region);
+  --ut-region-header-text-color: var(--mi-color-text-heading);
+  --ut-region-body-bg: var(--mi-color-bg-body);
+  --ut-region-border-color: var(--mi-color-border);
+
+  /* ----- FORMULARIOS (ETIQUETAS Y CAMPOS) ----- */
+  --a-label-text-color: var(--mi-color-text-muted);
+  --a-form-field-background-color: var(--mi-color-bg-component);
+  --a-form-field-border-color: var(--mi-color-border);
+  --a-form-field-text-color: var(--mi-color-text-default);
+  --a-form-field-focus-border-color: var(--mi-color-brand-primary);
+  --a-form-field-focus-shadow-color: var(--mi-color-brand-primary);
+
+  /* ----- BOTONES (Estilo Principal - Primary) ----- */
+  --a-button-background-color: var(--mi-color-brand-primary);
+  --a-button-text-color: var(--mi-color-text-on-primary);
+  --a-button-border-color: var(--mi-color-brand-primary);
+  --a-button-hover-background-color: var(--mi-color-link-hover);
+  --a-button-hover-text-color: var(--mi-color-text-on-primary);
+  --a-button-focus-background-color: var(--a-button-hover-background-color); /* Reutiliza */
+
+  /* ----- BOTONES (Estilo Secundario - Secondary) ----- */
+  --a-button-secondary-background-color: var(--mi-color-bg-component);
+  --a-button-secondary-text-color: var(--mi-color-text-default);
+  --a-button-secondary-border-color: var(--mi-color-border);
+  --a-button-secondary-hover-background-color: var(--mi-color-bg-alt);
+  --a-button-secondary-hover-text-color: var(--mi-color-text-default);
+
+  /* ----- REPORTES (Tablas) ----- */
+  --ut-report-cell-bg: var(--mi-color-bg-component);
+  --ut-report-cell-alt-background-color: var(--mi-color-bg-alt); /* Filas pares */
+  --ut-report-cell-text-color: var(--mi-color-text-default);
+  --ut-report-header-bg: var(--mi-color-bg-region);
+  --ut-report-header-text-color: var(--mi-color-text-heading);
+
+  /* ----- ENLACES ----- */
+  --ut-link-text-color: var(--mi-color-link);
+  --ut-link-text-color-hover: var(--mi-color-link-hover);
+
+  /* ----- SOMBRAS ----- */
+  --ut-shadow-sm: var(--mi-shadow-default);
+  --ut-shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --ut-shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+/* Heredar los cambios para el modo oscuro (las variables ya se actualizan arriba) */

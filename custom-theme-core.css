@@ -1,0 +1,133 @@
+/**************************************************************
+ * APEX GLOBAL DESIGN SYSTEM - ARCHIVO MAESTRO
+ * Versión: 24.2.8
+ * Propósito: Centralizar colores y estados de componentes
+ **************************************************************/
+
+:root {
+    /* 1. CONFIGURACIÓN DE COLOR DE MARCA (Cambia solo esto) */
+    --gap-h: 220;           /* Tonalidad: 220 es azul, 140 verde, 0 rojo */
+    --gap-s: 75%;           /* Saturación de la marca */
+    --gap-l: 50%;           /* Luminosidad base */
+
+    /* 2. CÁLCULO DINÁMICO DE PALETA */
+    --gap-primary:         hsl(var(--gap-h), var(--gap-s), var(--gap-l));
+    --gap-primary-dark:    hsl(var(--gap-h), var(--gap-s), calc(var(--gap-l) - 15%));
+    --gap-primary-light:   hsl(var(--gap-h), var(--gap-s), calc(var(--gap-l) + 35%));
+    --gap-primary-alpha:   hsla(var(--gap-h), var(--gap-s), var(--gap-l), 0.1);
+    
+    /* Colores Semánticos Estándar */
+    --gap-success: #2e7d32;
+    --gap-warning: #f97316;
+    --gap-danger:  #d32f2f;
+    --gap-info:    #0288d1;
+
+    /* Bordes y Sombras Genéricos */
+    --gap-radius: 8px;
+    --gap-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================================
+   3. SOBRESCRITURA DE VARIABLES UNIVERSAL THEME (LIGHT)
+   ============================================================ */
+:root, .u-theme-light {
+    /* Fondos y Superficies */
+    --ut-body-bg: #fdfdfd;
+    --ut-header-bg: var(--gap-primary);
+    --ut-header-text: #ffffff;
+    
+    /* Menú de Navegación */
+    --ut-side-menu-bg: #ffffff;
+    --ut-side-menu-text: #334155;
+    --ut-side-menu-selected-bg: var(--gap-primary-alpha);
+    --ut-side-menu-selected-text: var(--gap-primary);
+
+    /* Componentes (Cards, Reports) */
+    --ut-component-bg: #ffffff;
+    --ut-component-border: #e2e8f0;
+}
+
+/* ============================================================
+   4. SOBRESCRITURA DE VARIABLES UNIVERSAL THEME (DARK)
+   ============================================================ */
+@media (prefers-color-scheme: dark) { 
+    :root, .u-theme-dark {
+        --ut-body-bg: #0f172a;
+        --ut-header-bg: #1e293b;
+        --ut-header-text: #f8fafc;
+        
+        --ut-side-menu-bg: #1e293b;
+        --ut-side-menu-text: #94a3b8;
+        --ut-side-menu-selected-bg: rgba(255, 255, 255, 0.05);
+        --ut-side-menu-selected-text: var(--gap-primary-light);
+
+        --ut-component-bg: #1e293b;
+        --ut-component-border: #334155;
+        
+        --gap-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* ============================================================
+   5. BOTONES Y ESTADOS (REUTILIZABLES)
+   ============================================================ */
+
+/* Botón "Hot" (Primario) */
+.t-Button--hot {
+    background-color: var(--gap-primary) !important;
+    border-color: var(--gap-primary-dark) !important;
+    color: #ffffff !important;
+    border-radius: var(--gap-radius);
+    transition: all 0.2s ease;
+}
+
+.t-Button--hot:hover {
+    background-color: var(--gap-primary-dark) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--gap-shadow);
+}
+
+/* Botones de Alerta / Peligro */
+.t-Button--danger {
+    background-color: var(--gap-danger) !important;
+    color: #ffffff !important;
+}
+
+/* Botones Simples / Outline */
+.t-Button {
+    border-radius: var(--gap-radius);
+}
+
+/* ============================================================
+   6. FORMULARIOS Y CAMPOS (MANTENIBLES)
+   ============================================================ */
+.t-Form-label {
+    color: var(--ut-side-menu-text) !important;
+    font-weight: 500 !important;
+}
+
+.t-Form-inputField, .apex-item-text, .apex-item-select, .apex-item-textarea {
+    border: 1px solid var(--ut-component-border) !important;
+    border-radius: var(--gap-radius) !important;
+    padding: 8px 12px !important;
+    transition: border-color 0.3s ease;
+}
+
+.t-Form-inputField:focus {
+    border-color: var(--gap-primary) !important;
+    box-shadow: 0 0 0 3px var(--gap-primary-alpha) !important;
+}
+
+/* ============================================================
+   7. REGIONES Y CONTENEDORES
+   ============================================================ */
+.t-Region {
+    border-radius: var(--gap-radius) !important;
+    box-shadow: var(--gap-shadow);
+    border: 1px solid var(--ut-component-border) !important;
+}
+
+.t-Region-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--ut-component-border) !important;
+}

@@ -1,0 +1,17 @@
+/* ============================================
+   LIGHT MODE THEME
+============================================ */
+:root {
+  --color-primary: hsl(var(--brand-primary-h), var(--brand-primary-s), var(--brand-primary-l));
+  --color-primary-light: hsl(var(--brand-primary-h), var(--brand-primary-s), 45%);
+  --color-primary-dark: hsl(var(--brand-primary-h), var(--brand-primary-s), 22%);
+
+  --color-bg: #ffffff;
+  --color-surface: #f8f9fa;
+  --color-card: #ffffff;
+
+  --color-text: #212529;
+  --color-text-muted: #6c757d;
+
+  --color-border: #dee2e6;
+}
