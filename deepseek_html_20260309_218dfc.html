@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tracker de tiempo · diseño profesional</title>
+  <!-- Fuente Inter (clean, moderna) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 (iconos) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f1f5f9;  /* fondo suave */
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1.5rem;
+      line-height: 1.5;
+      color: #1e293b;
+    }
+
+    /* tarjeta principal */
+    .card {
+      max-width: 680px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 2rem;
+      box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.1), 0 5px 15px -5px rgba(0, 0, 0, 0.05);
+      padding: 2.5rem 2rem;
+      transition: all 0.2s ease;
+    }
+
+    /* cabecera de tiempo total */
+    .total-wrap {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 2.5rem;
+    }
+    .total-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 0.25rem;
+    }
+    .total-label i {
+      font-size: 1rem;
+      color: #3b82f6;
+    }
+    .total-value {
+      font-size: 3.5rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+    .total-value small {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #64748b;
+      margin-left: 0.5rem;
+    }
+
+    /* separador sutil */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 2rem 0 1.5rem 0;
+    }
+    .section-divider span {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: #94a3b8;
+    }
+    .section-divider-line {
+      flex: 1;
+      height: 1px;
+      background: #e2e8f0;
+    }
+
+    /* línea de tiempo (eventos) */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+    }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.9rem 0.8rem;
+      border-radius: 1rem;
+      transition: background 0.15s;
+    }
+    .timeline-item:hover {
+      background: #f8fafc;
+    }
+
+    /* columna de la hora */
+    .timeline-time {
+      font-family: 'Inter', monospace;
+      font-size: 0.95rem;
+      font-weight: 450;
+      color: #475569;
+      text-align: right;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    /* cuando no hay hora (celda vacía) mantenemos la altura con line-height */
+    .timeline-time:empty {
+      display: inline-block;
+      min-width: 1px;
+    }
+
+    /* columna de la etiqueta + icono */
+    .timeline-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #1e293b;
+    }
+    .timeline-label i {
+      font-size: 1.25rem;
+      width: 1.6rem;
+      text-align: center;
+    }
+
+    /* colores de iconos específicos */
+    .fa-play-circle {
+      color: #10b981; /* verde inicio */
+    }
+    .fa-stop-circle {
+      color: #94a3b8; /* gris final (pendiente) */
+    }
+    .fa-sync-alt {
+      color: #3b82f6; /* azul progreso */
+    }
+    /* giro suave para el "en progreso" */
+    .fa-spin {
+      animation: fa-spin 3s infinite linear;
+    }
+
+    /* pequeño detalle: el texto "En progreso..." en azul con peso */
+    .timeline-item:nth-child(3) .timeline-label {
+      color: #2563eb;
+      font-weight: 500;
+    }
+
+    /* responsividad */
+    @media (max-width: 550px) {
+      body { padding: 1rem; }
+      .card { padding: 1.8rem 1.2rem; }
+      .total-value { font-size: 2.8rem; }
+      .timeline-item {
+        grid-template-columns: 130px 1fr;
+        gap: 0.75rem;
+        padding: 0.8rem 0.4rem;
+      }
+      .timeline-time {
+        font-size: 0.85rem;
+        white-space: normal;
+        word-break: break-word;
+        text-align: left;
+      }
+      .timeline-label {
+        font-size: 1rem;
+        gap: 0.5rem;
+      }
+      .timeline-label i {
+        font-size: 1.1rem;
+        width: 1.4rem;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .timeline-item {
+        grid-template-columns: 1fr; /* apilar en móvil muy pequeño */
+        gap: 0.25rem;
+      }
+      .timeline-time {
+        text-align: left;
+        margin-bottom: 0.1rem;
+        color: #64748b;
+        font-size: 0.8rem;
+      }
+      .timeline-time:empty {
+        display: none; /* ocultar celda vacía si no hay hora, pero igual hay label */
+      }
+    }
+
+    /* opcional: efecto sutíl al final */
+    .footer-note {
+      margin-top: 2rem;
+      text-align: right;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      border-top: 1px dashed #e2e8f0;
+      padding-top: 1rem;
+    }
+    .footer-note i {
+      margin-right: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- TIEMPO TOTAL (exacto del bosquejo) -->
+    <div class="total-wrap">
+      <div class="total-label">
+        <i class="far fa-clock"></i>
+        <span>TIEMPO TOTAL</span>
+      </div>
+      <div class="total-value">
+        24 <small>minutos</small>
+      </div>
+    </div>
+
+    <!-- Línea divisoria con texto "actividad" (toque profesional) -->
+    <div class="section-divider">
+      <span>LÍNEA DE TIEMPO</span>
+      <div class="section-divider-line"></div>
+    </div>
+
+    <!-- LISTA DE EVENTOS: respeta exactamente las líneas del boceto -->
+    <div class="timeline">
+      <!-- 1er evento: 9/3/2026 13:41:08 · Inicio -->
+      <div class="timeline-item">
+        <span class="timeline-time">9/3/2026 13:41:08</span>
+        <span class="timeline-label">
+          <i class="fas fa-play-circle"></i> Inicio
+        </span>
+      </div>
+
+      <!-- 2do evento: Final (sin hora) -->
+      <div class="timeline-item">
+        <span class="timeline-time"></span>  <!-- vacío, sin timestamp -->
+        <span class="timeline-label">
+          <i class="fas fa-stop-circle"></i> Final
+        </span>
+      </div>
+
+      <!-- 3er evento: En progreso... (sin hora) -->
+      <div class="timeline-item">
+        <span class="timeline-time"></span>  <!-- vacío -->
+        <span class="timeline-label">
+          <i class="fas fa-sync-alt fa-spin"></i> En progreso...
+        </span>
+      </div>
+
+      <!-- 4to evento: 9/3/2026 13:41:08 · Inicio (segundo igual) -->
+      <div class="timeline-item">
+        <span class="timeline-time">9/3/2026 13:41:08</span>
+        <span class="timeline-label">
+          <i class="fas fa-play-circle"></i> Inicio
+        </span>
+      </div>
+    </div>
+
+    <!-- Pequeño detalle de data real (opcional, solo para dar contexto) -->
+    <div class="footer-note">
+      <i class="far fa-calendar-alt"></i> 9 mar 2026 · actualizado recientemente
+    </div>
+  </div>
+
+  <!-- El código incluye todos los textos del bosquejo:
+       "Tiempo total: 24 minutos", 
+       "9/3/2026 13:41:08 · Inicio", 
+       "Final", 
+       "En progreso...", 
+       "9/3/2026 13:41:08 · Inicio"
+       Diseño limpio, profesional y responsive. -->
+</body>
+</html>

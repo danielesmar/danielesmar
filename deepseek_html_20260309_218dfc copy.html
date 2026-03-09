@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline de Seguimiento Profesional</title>
+    <style>
+        :root {
+            --primary-color: #1b3022;
+            --accent-color: #2e7d32;
+            --line-color: #a5d6a7;
+            --text-main: #333;
+            --text-muted: #666;
+            --bg-body: #f4f7f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-body);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        /* Contenedor principal de la línea */
+        .timeline-wrapper {
+            position: relative;
+            margin-bottom: 80px;
+            padding: 20px 0;
+        }
+
+        /* La línea de fondo */
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--line-color);
+            transform: translateY(-50%);
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        /* Puntos (Nodos) */
+        .nodes-container {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+        }
+
+        .timestamp {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .dot {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 0 2px var(--primary-color);
+            transition: transform 0.3s ease;
+        }
+
+        .dot.pending {
+            background: #ccc;
+            box-shadow: 0 0 0 2px #ccc;
+        }
+
+        .label {
+            margin-top: 10px;
+            padding: 6px 20px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: white;
+        }
+
+        /* Tooltip (Globo de información) */
+        .status-tooltip {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .status-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid var(--primary-color);
+        }
+
+        .status-tooltip span {
+            display: block;
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .node { width: 80px; }
+            .timestamp { font-size: 0.7rem; }
+            .status-tooltip { font-size: 0.8rem; top: -55px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Seguimiento de Actividad</h2>
+
+    <div class="timeline-wrapper">
+        <div class="status-tooltip">
+            Tiempo total:
+            <strong>24 minutos</strong>
+        </div>
+        <div class="timeline-line"></div>
+        <div class="nodes-container">
+            <div class="node">
+                <div class="timestamp">09/03/2026 13:41</div>
+                <div class="dot"></div>
+                <div class="label">Inicio</div>
+            </div>
+            <div class="node">
+                <div class="timestamp">09/03/2026 14:05</div>
+                <div class="dot"></div>
+                <div class="label">Final</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="timeline-wrapper">
+        <div class="status-tooltip" style="background: #2e7d32;">
+            En progreso...
+        </div>
+        <div class="timeline-line"></div>
+        <div class="nodes-container">
+            <div class="node">
+                <div class="timestamp">09/03/2026 13:41</div>
+                <div class="dot"></div>
+                <div class="label">Inicio</div>
+            </div>
+            <div class="node">
+                <div class="timestamp">--:--</div>
+                <div class="dot pending"></div>
+                <div class="label">Esperando</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
