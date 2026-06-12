@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>APEX | Modern Classic Report - Clientes & Tarjetas</title>
+    <style>
+        /* ---------------------------------------------------------------
+        ESTILOS PRINCIPALES PARA LA PLANTILLA DE REPORTE (APEX)
+        Diseño moderno, responsivo, tarjetas elegantes con agrupación lógica.
+        Compatible con Oracle APEX Universal Theme (sin conflictos).
+        Uso recomendado: Copiar el bloque CSS en el Inline CSS de la página
+        o en el archivo de hojas de estilo de la aplicación.
+        --------------------------------------------------------------- */
+        
+        /* Variables de diseño (coherentes con APEX) */
+        :root {
+            --card-bg: #ffffff;
+            --card-radius: 1.25rem;
+            --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.05);
+            --card-hover-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+            --border-light: #eef2f6;
+            --text-primary: #1a2c3e;
+            --text-secondary: #4a5b6e;
+            --label-color: #5f6c80;
+            --badge-bg: #f0f4f9;
+            --badge-text: #2c3e50;
+            --accent-pending: #eab308;
+            --accent-approved: #10b981;
+            --accent-rejected: #ef4444;
+            --accent-info: #3b82f6;
+            --separator: #eef2f8;
+            --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', 'Inter', sans-serif;
+        }
+
+        /* Contenedor general del reporte (puede ser el área del reporte en APEX) */
+        .apex-report-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Estilo de cada fila / tarjeta del Classic Report */
+        .apex-modern-card {
+            background: var(--card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.25rem;
+            padding: 1.25rem 1.5rem;
+            transition: all 0.25s ease;
+            border: 1px solid var(--border-light);
+            font-family: var(--font-family);
+            color: var(--text-primary);
+        }
+
+        .apex-modern-card:hover {
+            box-shadow: var(--card-hover-shadow);
+            border-color: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        /* Cabecera de la tarjeta: ID Solicitud + Gestor / Estado */
+        .card-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .id-gestor-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .solicitud-id {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -0.2px;
+            background: #f8fafc;
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            background: #f1f5f9;
+            color: #0f3b5e;
+        }
+
+        .gestor-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .gestor-text strong {
+            font-weight: 600;
+            color: #334155;
+        }
+
+        /* Badges de estado dinámicos */
+        .estado-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background: var(--badge-bg);
+            color: var(--badge-text);
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.02);
+        }
+
+        /* Colores para diferentes estados (usar en APEX con clase dinámica) */
+        .estado-pendiente, .estado-Pendiente, .estado-EnProceso, .estado-En proceso {
+            background: #fffbeb;
+            color: #b45309;
+            border-left: 3px solid #f59e0b;
+        }
+        .estado-aprobado, .estado-Aprobado, .estado-Activo, .estado-Autorizado {
+            background: #ecfdf5;
+            color: #065f46;
+            border-left: 3px solid #10b981;
+        }
+        .estado-rechazado, .estado-Rechazado, .estado-Cancelado, .estado-Declinado {
+            background: #fef2f2;
+            color: #991b1b;
+            border-left: 3px solid #ef4444;
+        }
+        .estado-entregado, .estado-Entregado, .estado-Completado {
+            background: #e0f2fe;
+            color: #0369a1;
+            border-left: 3px solid #0ea5e9;
+        }
+
+        /* Grid de 2 columnas para la info principal (Cliente | Tarjeta) */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        /* Bloques internos (cliente, tarjeta) */
+        .info-block {
+            background: #fafcff;
+            border-radius: 1rem;
+            padding: 0.6rem 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .block-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--label-color);
+            margin-bottom: 0.7rem;
+            border-left: 3px solid #94a3b8;
+            padding-left: 0.6rem;
+        }
+
+        .data-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            align-items: baseline;
+        }
+
+        .data-label {
+            width: 95px;
+            flex-shrink: 0;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+        }
+
+        .data-value {
+            color: var(--text-primary);
+            font-weight: 500;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        /* Grupo de fechas (3 items flex) */
+        .fechas-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            background: #f8fafd;
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #eef2f8;
+        }
+
+        .fecha-item {
+            flex: 1;
+            min-width: 110px;
+            font-size: 0.8rem;
+        }
+
+        .fecha-label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #6c7a91;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 0.2rem;
+        }
+
+        .fecha-val {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* Motivo rechazo entrega a tercero */
+        .motivo-rechazo {
+            background: #fff9f0;
+            border-radius: 0.9rem;
+            padding: 0.7rem 1rem;
+            font-size: 0.8rem;
+            border-left: 4px solid #f97316;
+            margin-top: 0.25rem;
+        }
+
+        .motivo-label {
+            font-weight: 700;
+            margin-right: 0.5rem;
+            color: #c2410c;
+        }
+
+        .texto-motivo {
+            color: #3b2e1e;
+            word-break: break-word;
+        }
+
+        /* Responsive: móvil apila todo */
+        @media (max-width: 720px) {
+            .apex-modern-card {
+                padding: 1rem;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+            .fechas-group {
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+            .data-label {
+                width: 85px;
+            }
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .estado-badge {
+                align-self: flex-start;
+            }
+        }
+
+        /* Ajustes para pantallas muy pequeñas */
+        @media (max-width: 480px) {
+            .data-row {
+                flex-direction: column;
+                margin-bottom: 0.7rem;
+            }
+            .data-label {
+                width: auto;
+                margin-bottom: 0.2rem;
+            }
+        }
+
+        /* Estilos para texto vacío o guiones */
+        .empty-value {
+            color: #94a3b8;
+            font-style: normal;
+        }
+
+        /* espacio ligero para transiciones */
+        .apex-modern-card * {
+            box-sizing: border-box;
+        }
+
+        /* Tooltip visual ayuda */
+        .small-note {
+            font-size: 0.7rem;
+            color: #8b9ab0;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body style="background: #f1f5f9; padding: 2rem 1rem; margin: 0; font-family: system-ui, sans-serif;">
+    <div style="max-width: 1300px; margin: 0 auto;">
+        <!-- sección explicativa para el desarrollador APEX -->
+        <div style="background: white; border-radius: 1.5rem; padding: 1.2rem 1.8rem; margin-bottom: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+            <h2 style="margin: 0 0 0.5rem 0; font-size: 1.5rem; font-weight: 600; color: #0f2b3d;">📋 Plantilla Moderna para Classic Report (Oracle APEX)</h2>
+            <p style="margin: 0; color: #334155;">Reporte de clientes y tarjetas con agrupación visual. <strong>Responsive, elegante, altura óptima por fila.</strong> Los datos se organizan en tarjetas: Información del cliente, datos de la tarjeta, fechas clave y motivo de rechazo. Compatible con Universal Theme. 
+            <br>⬇️ <strong>Uso en APEX:</strong> Copia el contenido del bloque "📦 PLANTILLA DE FILA (ROW TEMPLATE)" dentro de las propiedades del Classic Report, y añade los estilos CSS en la página o en el archivo de la aplicación.</p>
+        </div>
+
+        <!-- DEMOSTRACIÓN VISUAL con datos ficticios (muestra el diseño real) -->
+        <div style="margin-bottom: 2.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 1rem;">
+                <h3 style="font-weight: 500; color: #1e293b; margin: 0;">🔍 Vista previa del diseño (datos de ejemplo)</h3>
+                <span style="font-size: 0.75rem; background: #e6edf5; padding: 0.2rem 0.7rem; border-radius: 30px;">APEX Row Template Ready</span>
+            </div>
+            <!-- PRIMER REGISTRO DEMO (Cliente y Tarjeta) -->
+            <div class="apex-modern-card">
+                <!-- Cabecera -->
+                <div class="card-header">
+                    <div class="id-gestor-group">
+                        <div class="solicitud-id">📄 ID Solicitud: <span style="font-weight:700;">SOL-4589-2025</span> <span style="font-size:0.7rem; background:transparent;">&nbsp; <span style="color:#94a3b8;">( #ID_SOLICITUD# )</span></span></div>
+                        <div class="gestor-text"><strong>👤 Usuario gestor:</strong> Maria Gutiérrez <span style="color:#a0aec0; font-size:0.7rem;">( #USUARIO_GESTOR# )</span></div>
+                    </div>
+                    <div class="estado-badge estado-aprobado">✅ Aprobado <span style="font-size:0.65rem; margin-left:6px;">( #ESTADO# )</span></div>
+                </div>
+                <!-- Grid Cliente + Tarjeta -->
+                <div class="info-grid">
+                    <!-- Bloque CLIENTE -->
+                    <div class="info-block">
+                        <div class="block-title">👥 DATOS DEL CLIENTE</div>
+                        <div class="data-row"><span class="data-label">Código cliente:</span><span class="data-value">CL-10234 <span style="color:#8ba0bc;">( #CODIGO_CLIENTE# )</span></span></div>
+                        <div class="data-row"><span class="data-label">Cédula / RUC:</span><span class="data-value">1712345678 <span style="color:#8ba0bc;">( #CEDULA_CLIENTE# )</span></span></div>
+                        <div class="data-row"><span class="data-label">Nombre completo:</span><span class="data-value">Laura Fernández M. <span style="color:#8ba0bc;">( #NOMBRE_CLIENTE# )</span></span></div>
+                    </div>
+                    <!-- Bloque TARJETA -->
+                    <div class="info-block">
+                        <div class="block-title">💳 INFORMACIÓN DE TARJETA</div>
+                        <div class="data-row"><span class="data-label">Tipo tarjeta:</span><span class="data-value">Visa Platinum <span style="color:#8ba0bc;">( #TIPO_TARJETA# )</span></span></div>
+                        <div class="data-row"><span class="data-label">Número tarjeta:</span><span class="data-value">**** **** **** 4823 <span style="color:#8ba0bc;">( #NUMERO_TARJETA# )</span></span></div>
+                        <div class="data-row"><span class="data-label">Descripción producto:</span><span class="data-value">Tarjeta Black Rewards - Millas Plus <span style="color:#8ba0bc;">( #DESCRIPCION_PRODUCTO# )</span></span></div>
+                    </div>
+                </div>
+                <!-- Bloque de FECHAS -->
+                <div class="fechas-group">
+                    <div class="fecha-item"><span class="fecha-label">📅 Fecha emboso</span><div class="fecha-val">15/02/2025 <span style="color:#8ba0bc;">( #FECHA_EMBOSO# )</span></div></div>
+                    <div class="fecha-item"><span class="fecha-label">⏱️ Fecha asignación</span><div class="fecha-val">20/02/2025 <span style="color:#8ba0bc;">( #FECHA_ASIGNACION# )</span></div></div>
+                    <div class="fecha-item"><span class="fecha-label">📤 Fecha descargue</span><div class="fecha-val">28/02/2025 <span style="color:#8ba0bc;">( #FECHA_DESCARGUE# )</span></div></div>
+                </div>
+                <!-- Motivo rechazo entrega a tercero (ejemplo sin motivo) -->
+                <div class="motivo-rechazo">
+                    <span class="motivo-label">🚫 Motivo rechazo entrega a tercero:</span>
+                    <span class="texto-motivo">— Ninguno (Aprobado) <span style="color:#8ba0bc;">( #MOTIVO_RECHAZO_ENTREGA# )</span></span>
+                </div>
+                <div class="small-note">⬅️ Los placeholders (#NOMBRE#) deben coincidir con los alias de la consulta SQL del Classic Report.</div>
+            </div>
+
+            <!-- SEGUNDO REGISTRO DEMO (estado Pendiente, motivo rechazo presente) -->
+            <div class="apex-modern-card">
+                <div class="card-header">
+                    <div class="id-gestor-group">
+                        <div class="solicitud-id">📄 ID Solicitud: SOL-6721-2025 <span style="color:#8ba0bc;">(#ID_SOLICITUD#)</span></div>
+                        <div class="gestor-text"><strong>👤 Usuario gestor:</strong> Carlos Ramírez <span style="color:#8ba0bc;">(#USUARIO_GESTOR#)</span></div>
+                    </div>
+                    <div class="estado-badge estado-pendiente">⏳ Pendiente verificación <span style="color:#8ba0bc;">(#ESTADO#)</span></div>
+                </div>
+                <div class="info-grid">
+                    <div class="info-block">
+                        <div class="block-title">👥 DATOS DEL CLIENTE</div>
+                        <div class="data-row"><span class="data-label">Código cliente:</span><span class="data-value">CL-98765 <span style="color:#8ba0bc;">(#CODIGO_CLIENTE#)</span></span></div>
+                        <div class="data-row"><span class="data-label">Cédula cliente:</span><span class="data-value">0987654321 <span style="color:#8ba0bc;">(#CEDULA_CLIENTE#)</span></span></div>
+                        <div class="data-row"><span class="data-label">Nombre cliente:</span><span class="data-value">Andrés López J. <span style="color:#8ba0bc;">(#NOMBRE_CLIENTE#)</span></span></div>
+                    </div>
+                    <div class="info-block">
+                        <div class="block-title">💳 INFORMACIÓN DE TARJETA</div>
+                        <div class="data-row"><span class="data-label">Tipo tarjeta:</span><span class="data-value">Mastercard Gold <span style="color:#8ba0bc;">(#TIPO_TARJETA#)</span></span></div>
+                        <div class="data-row"><span class="data-label">Número tarjeta:</span><span class="data-value">**** **** **** 1290 <span style="color:#8ba0bc;">(#NUMERO_TARJETA#)</span></span></div>
+                        <div class="data-row"><span class="data-label">Descripción producto:</span><span class="data-value">Cashback y beneficios en supermercados <span style="color:#8ba0bc;">(#DESCRIPCION_PRODUCTO#)</span></span></div>
+                    </div>
+                </div>
+                <div class="fechas-group">
+                    <div class="fecha-item"><span class="fecha-label">📅 Fecha emboso</span><div class="fecha-val">10/03/2025 <span style="color:#8ba0bc;">(#FECHA_EMBOSO#)</span></div></div>
+                    <div class="fecha-item"><span class="fecha-label">⏱️ Fecha asignación</span><div class="fecha-val">12/03/2025 <span style="color:#8ba0bc;">(#FECHA_ASIGNACION#)</span></div></div>
+                    <div class="fecha-item"><span class="fecha-label">📤 Fecha descargue</span><div class="fecha-val">— <span style="color:#8ba0bc;">(#FECHA_DESCARGUE#)</span></div></div>
+                </div>
+                <div class="motivo-rechazo">
+                    <span class="motivo-label">🚫 Motivo rechazo entrega a tercero:</span>
+                    <span class="texto-motivo">Documentación de domicilio incompleta, no se pudo entregar en domicilio alterno. <span style="color:#8ba0bc;">(#MOTIVO_RECHAZO_ENTREGA#)</span></span>
+                </div>
+            </div>
+
+            <!-- TERCER REGISTRO: estado rechazado y motivo adicional -->
+            <div class="apex-modern-card">
+                <div class="card-header">
+                    <div class="id-gestor-group">
+                        <div class="solicitud-id">📄 ID Solicitud: SOL-3356-2025 <span style="color:#8ba0bc;">(#ID_SOLICITUD#)</span></div>
+                        <div class="gestor-text"><strong>👤 Usuario gestor:</strong> Ana Beltrán <span style="color:#8ba0bc;">(#USUARIO_GESTOR#)</span></div>
+                    </div>
+                    <div class="estado-badge estado-rechazado">❌ Rechazado <span style="color:#8ba0bc;">(#ESTADO#)</span></div>
+                </div>
+                <div class="info-grid">
+                    <div class="info-block">
+                        <div class="block-title">👥 DATOS DEL CLIENTE</div>
+                        <div class="data-row"><span class="data-label">Código cliente:</span><span class="data-value">CL-45231 <span style="color:#8ba0bc;">(#CODIGO_CLIENTE#)</span></span></div>
+                        <div class="data-row"><span class="data-label">Cédula cliente:</span><span class="data-value">1122334455 <span style="color:#8ba0bc;">(#CEDULA_CLIENTE#)</span></span></div>
+                        <div class="data-row"><span class="data-label">Nombre cliente:</span><span class="data-value">Marta Ríos P. <span style="color:#8ba0bc;">(#NOMBRE_CLIENTE#)</span></span></div>
+                    </div>
+                    <div class="info-block">
+                        <div class="block-title">💳 INFORMACIÓN DE TARJETA</div>
+                        <div class="data-row"><span class="data-label">Tipo tarjeta:</span><span class="data-value">American Express <span style="color:#8ba0bc;">(#TIPO_TARJETA#)</span></span></div>
+                        <div class="data-row"><span class="data-label">Número tarjeta:</span><span class="data-value">**** **** **** 6712 <span style="color:#8ba0bc;">(#NUMERO_TARJETA#)</span></span></div>
+                        <div class="data-row"><span class="data-label">Descripción producto:</span><span class="data-value">Plan Viajero Plus con acceso a salas VIP <span style="color:#8ba0bc;">(#DESCRIPCION_PRODUCTO#)</span></span></div>
+                    </div>
+                </div>
+                <div class="fechas-group">
+                    <div class="fecha-item"><span class="fecha-label">📅 Fecha emboso</span><div class="fecha-val">05/01/2025 <span style="color:#8ba0bc;">(#FECHA_EMBOSO#)</span></div></div>
+                    <div class="fecha-item"><span class="fecha-label">⏱️ Fecha asignación</span><div class="fecha-val">07/01/2025 <span style="color:#8ba0bc;">(#FECHA_ASIGNACION#)</span></div></div>
+                    <div class="fecha-item"><span class="fecha-label">📤 Fecha descargue</span><div class="fecha-val">15/01/2025 <span style="color:#8ba0bc;">(#FECHA_DESCARGUE#)</span></div></div>
+                </div>
+                <div class="motivo-rechazo">
+                    <span class="motivo-label">🚫 Motivo rechazo entrega a tercero:</span>
+                    <span class="texto-motivo">Rechazo por parte del destinatario: la dirección de entrega no coincide con datos del cliente. <span style="color:#8ba0bc;">(#MOTIVO_RECHAZO_ENTREGA#)</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ********************************************* -->
+        <!-- PLANTILLA LISTA PARA COPIAR EN APEX            -->
+        <!-- ********************************************* -->
+        <div style="background: #1e293b; border-radius: 1.5rem; padding: 1.2rem; margin-top: 2rem;">
+            <div style="background: #0f172a; border-radius: 1rem; padding: 1.5rem; overflow-x: auto;">
+                <h3 style="color: #e2e8f0; margin-top: 0; margin-bottom: 1rem; font-weight: 500;">📦 PLANTILLA DE FILA (ROW TEMPLATE) para Classic Report</h3>
+                <p style="color: #94a3b8; margin-bottom: 1rem; font-size: 0.85rem;">Copia este código HTML en el atributo "Plantilla de fila" del Classic Report. Asegúrate de que los nombres de las columnas en # tus columnas reales # coincidan exactamente con los alias de tu consulta SQL. Los estilos CSS deben estar en la página (Inline o archivo CSS).</p>
+                <pre style="background: #0f172a; color: #cbd5e1; padding: 1rem; border-radius: 1rem; overflow-x: auto; font-size: 0.75rem; font-family: monospace; margin: 0; white-space: pre-wrap; word-break: break-word;"><code>&lt;div class="apex-modern-card"&gt;
+    &lt;div class="card-header"&gt;
+        &lt;div class="id-gestor-group"&gt;
+            &lt;div class="solicitud-id"&gt;📄 ID Solicitud: #ID_SOLICITUD#&lt;/div&gt;
+            &lt;div class="gestor-text"&gt;&lt;strong&gt;👤 Usuario gestor:&lt;/strong&gt; #USUARIO_GESTOR#&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="estado-badge estado-#ESTADO#"&gt;#ESTADO#&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="info-grid"&gt;
+        &lt;div class="info-block"&gt;
+            &lt;div class="block-title"&gt;👥 DATOS DEL CLIENTE&lt;/div&gt;
+            &lt;div class="data-row"&gt;&lt;span class="data-label"&gt;Código cliente:&lt;/span&gt;&lt;span class="data-value"&gt;#CODIGO_CLIENTE#&lt;/span&gt;&lt;/div&gt;
+            &lt;div class="data-row"&gt;&lt;span class="data-label"&gt;Cédula cliente:&lt;/span&gt;&lt;span class="data-value"&gt;#CEDULA_CLIENTE#&lt;/span&gt;&lt;/div&gt;
+            &lt;div class="data-row"&gt;&lt;span class="data-label"&gt;Nombre cliente:&lt;/span&gt;&lt;span class="data-value"&gt;#NOMBRE_CLIENTE#&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="info-block"&gt;
+            &lt;div class="block-title"&gt;💳 INFORMACIÓN DE TARJETA&lt;/div&gt;
+            &lt;div class="data-row"&gt;&lt;span class="data-label"&gt;Tipo tarjeta:&lt;/span&gt;&lt;span class="data-value"&gt;#TIPO_TARJETA#&lt;/span&gt;&lt;/div&gt;
+            &lt;div class="data-row"&gt;&lt;span class="data-label"&gt;Número tarjeta:&lt;/span&gt;&lt;span class="data-value"&gt;#NUMERO_TARJETA#&lt;/span&gt;&lt;/div&gt;
+            &lt;div class="data-row"&gt;&lt;span class="data-label"&gt;Descripción producto:&lt;/span&gt;&lt;span class="data-value"&gt;#DESCRIPCION_PRODUCTO#&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="fechas-group"&gt;
+        &lt;div class="fecha-item"&gt;&lt;span class="fecha-label"&gt;📅 Fecha emboso&lt;/span&gt;&lt;div class="fecha-val"&gt;#FECHA_EMBOSO#&lt;/div&gt;&lt;/div&gt;
+        &lt;div class="fecha-item"&gt;&lt;span class="fecha-label"&gt;⏱️ Fecha asignación&lt;/span&gt;&lt;div class="fecha-val"&gt;#FECHA_ASIGNACION#&lt;/div&gt;&lt;/div&gt;
+        &lt;div class="fecha-item"&gt;&lt;span class="fecha-label"&gt;📤 Fecha descargue&lt;/span&gt;&lt;div class="fecha-val"&gt;#FECHA_DESCARGUE#&lt;/div&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class="motivo-rechazo"&gt;
+        &lt;span class="motivo-label"&gt;🚫 Motivo rechazo entrega a tercero:&lt;/span&gt;
+        &lt;span class="texto-motivo"&gt;#MOTIVO_RECHAZO_ENTREGA#&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                <p style="color: #a0afc0; margin-top: 1rem; font-size: 0.8rem;">✔️ <strong>Nota:</strong> Para que los badges de estado tomen color, asegúrate de que en la consulta SQL el campo ESTADO contenga valores como 'aprobado', 'pendiente', 'rechazado', etc. La clase CSS se construye dinámicamente (ej: estado-aprobado). También puedes personalizar más estados en el CSS. Los nombres de columnas deben coincidir exactamente (Case sensitive se recomienda en mayúsculas o igual a tu consulta).</p>
+            </div>
+        </div>
+        <div style="margin-top: 2rem; text-align: center; font-size: 0.75rem; color: #5f6c80; border-top: 1px solid #e2e8f0; padding-top: 1.5rem;">
+            ⚡ Plantilla diseñada para Oracle APEX – Responsive, moderna y eficiente. Altura por fila equilibrada.
+        </div>
+    </div>
+</body>
+</html>
