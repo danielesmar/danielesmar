@@ -1,0 +1,525 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner de Documentos - Límites de Arrastre</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #2980b9;
+            --success-color: #27ae60;
+            --bg-color: #eef2f3;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .gallery-container {
+            width: 100%;
+            max-width: 650px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 1.4rem;
+        }
+
+        /* Área del Slider */
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            background-color: #1e272e;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slides-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .image-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            user-select: none;
+            will-change: transform;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            width: 100%;
+            height: 100%;
+        }
+
+        .image-box.dragging {
+            cursor: grabbing;
+            transition: none !important; 
+        }
+
+        .image-box img {
+            max-width: 85%;
+            max-height: 380px;
+            object-fit: contain;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            pointer-events: none; 
+        }
+
+        /* Indicador de Procesamiento */
+        .ocr-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .ocr-loader.loading {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: var(--success-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Botones del Slider */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 10;
+            transition: background 0.2s;
+        }
+        .nav-btn:hover { background: rgba(255, 255, 255, 0.5); }
+        .prev-btn { left: 15px; }
+        .next-btn { right: 15px; }
+
+        /* Controles Inferiores */
+        .controls-panel {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .zoom-slider {
+            flex-grow: 1;
+            margin: 0 15px;
+            accent-color: var(--success-color);
+            cursor: pointer;
+        }
+
+        .action-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-rotate { background: var(--primary-color); color: white; }
+        .btn-rotate:hover { background: #1a252f; }
+        .btn-scan { background: var(--success-color); color: white; }
+        .btn-scan:hover { background: #219653; }
+    </style>
+</head>
+<body>
+
+    <div class="gallery-container">
+        <h2>Validación de Documentos (Visualizador Completo)</h2>
+        
+        <div class="slider-wrapper">
+            <div id="ocrLoader" class="ocr-loader">
+                <div class="spinner"></div>
+                <div id="loaderText">Esperando acción...</div>
+                <div id="loaderSubtext" style="font-size: 0.8rem; color: #bbb; margin-top: 8px;"></div>
+            </div>
+
+            <button class="nav-btn prev-btn" id="prevBtn">&#10094;</button>
+            <div class="slides-container" id="slidesContainer"></div>
+            <button class="nav-btn next-btn" id="nextBtn">&#10095;</button>
+        </div>
+
+        <div class="controls-panel">
+            <div class="control-group">
+                <label style="font-weight:600; font-size:0.9rem;">Zoom</label>
+                <input type="range" id="zoomRange" class="zoom-slider" min="1" max="3" step="0.1" value="1">
+                <span id="zoomValue" style="font-size:0.9rem; min-width:40px; text-align:right;">100%</span>
+            </div>
+
+            <div class="action-btns">
+                <button id="rotateBtn" class="btn btn-rotate">🔄 Rotar Manual 90°</button>
+                <button id="autoFixBtn" class="btn btn-scan">🤖 Auto-Enderezar (OCR)</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="hiddenCanvas" style="display: none;"></canvas>
+
+    <script>
+        const documentImages = [
+            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'><rect width='100%' height='100%' fill='%23ffffff'/><text x='30' y='60' font-family='Arial' font-size='24' fill='%23333333' font-weight='bold'>DOCUMENTO DE IDENTIDAD OFICIAL</text><text x='30' y='110' font-family='Arial' font-size='18' fill='%23555555'>Nombre: JUAN PEREZ GOMEZ</text><text x='30' y='150' font-family='Arial' font-size='18' fill='%23555555'>Nacionalidad: ESPAÑOLA</text><text x='30' y='190' font-family='Arial' font-size='18' fill='%23555555'>ID: 12345678-X</text><text x='30' y='240' font-family='Arial' font-size='14' fill='%23999999'>VALIDO HASTA: 2030</text></svg>",
+            "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'><rect width='100%' height='100%' fill='%23f9f9f9'/><rect x='20' y='20' width='560' height='360' fill='none' stroke='%23cccccc' stroke-width='2'/><text x='50' y='80' font-family='Courier New' font-size='26' fill='%23000000' font-weight='bold'>CONTRATO DE SERVICIOS</text><text x='50' y='140' font-family='Courier New' font-size='16' fill='%23222222'>Por medio de la presente, las partes aceptan</text><text x='50' y='170' font-family='Courier New' font-size='16' fill='%23222222'>los terminos y condiciones del acuerdo corporativo.</text><text x='50' y='220' font-family='Courier New' font-size='16' fill='%23222222'>Clausula 1: El software se entregara listo.</text></svg>"
+        ];
+
+        const slidesContainer = document.getElementById('slidesContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const zoomRange = document.getElementById('zoomRange');
+        const zoomValue = document.getElementById('zoomValue');
+        const rotateBtn = document.getElementById('rotateBtn');
+        const autoFixBtn = document.getElementById('autoFixBtn');
+        const ocrLoader = document.getElementById('ocrLoader');
+        const loaderText = document.getElementById('loaderText');
+        const loaderSubtext = document.getElementById('loaderSubtext');
+        const hiddenCanvas = document.getElementById('hiddenCanvas');
+
+        let currentIndex = 0;
+        let transformStates = [];
+        let isDragging = false;
+        let startX, startY;
+
+        function init() {
+            documentImages.forEach((url, index) => {
+                const slide = document.createElement('div');
+                slide.className = `slide ${index === 0 ? 'active' : ''}`;
+                
+                const imageBox = document.createElement('div');
+                imageBox.className = 'image-box';
+                
+                const img = document.createElement('img');
+                img.src = url;
+                
+                const rotacionInicial = (index === 0) ? 270 : 90; 
+                
+                transformStates.push({ 
+                    scale: 1, 
+                    currentRotation: rotacionInicial,
+                    x: 0,
+                    y: 0
+                });
+
+                imageBox.appendChild(img);
+                slide.appendChild(imageBox);
+                slidesContainer.appendChild(slide);
+
+                setupDragEvents(imageBox, index);
+                
+                setTimeout(() => applyTransform(index), 50);
+            });
+            updateUI();
+        }
+
+        function applyTransform(index) {
+            const slides = slidesContainer.querySelectorAll('.slide');
+            if(!slides[index]) return;
+            const imageBox = slides[index].querySelector('.image-box');
+            const state = transformStates[index];
+            
+            imageBox.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale}) rotate(${state.currentRotation}deg)`;
+        }
+
+        // --- NUEVA FUNCIÓN PARA CALCULAR Y LIMITAR EL ARRASTRE EN LOS BORDES ---
+        function limitarDesplazamiento(index, contenedor, imagenBox) {
+            const state = transformStates[index];
+            const img = imagenBox.querySelector('img');
+            
+            // Obtenemos el tamaño real del espacio visible (Viewport)
+            const contenedorAncho = contenedor.clientWidth;
+            const contenedorAlto = contenedor.clientHeight;
+
+            // Obtenemos las dimensiones físicas de la imagen sin transformaciones
+            const imgAnchoBase = img.offsetWidth;
+            const imgAltoBase = img.offsetHeight;
+
+            // Dependiendo de si la rotación actual es vertical (90 o 270) u horizontal (0 o 180),
+            // intercambiamos el ancho y el alto para calcular los límites de forma matemática exacta.
+            const esVertical = (state.currentRotation % 180 !== 0);
+            const anchoVisual = (esVertical ? imgAltoBase : imgAnchoBase) * state.scale;
+            const altoVisual = (esVertical ? imgAnchoBase : imgAltoBase) * state.scale;
+
+            // Calculamos el margen máximo que puede desplazarse en X e Y
+            // Si el tamaño de la imagen con zoom es menor al contenedor, el límite es 0 (queda centrada)
+            const maxDeltaX = Math.max(0, (anchoVisual - contenedorAncho) / 2);
+            const maxDeltaY = Math.max(0, (altoVisual - contenedorAlto) / 2);
+
+            // Forzamos el valor de X e Y para que no supere los límites permitidos de las esquinas
+            state.x = Math.min(Math.max(state.x, -maxDeltaX), maxDeltaX);
+            state.y = Math.min(Math.max(state.y, -maxDeltaY), maxDeltaY);
+        }
+
+        function setupDragEvents(element, index) {
+            const contenedor = document.querySelector('.slider-wrapper');
+
+            function startDrag(e) {
+                if (transformStates[index].scale <= 1) return;
+                
+                isDragging = true;
+                element.classList.add('dragging');
+                
+                const pageX = e.pageX || e.touches[0].pageX;
+                const pageY = e.pageY || e.touches[0].pageY;
+
+                startX = pageX - transformStates[index].x;
+                startY = pageY - transformStates[index].y;
+            }
+
+            function moveDrag(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+
+                const pageX = e.pageX || e.touches[0].pageX;
+                const pageY = e.pageY || e.touches[0].pageY;
+
+                transformStates[index].x = pageX - startX;
+                transformStates[index].y = pageY - startY;
+
+                // Aplicamos la restricción antes de pintar la imagen en pantalla
+                limitarDesplazamiento(index, contenedor, element);
+
+                applyTransform(index);
+            }
+
+            function stopDrag() {
+                if (!isDragging) return;
+                isDragging = false;
+                element.classList.remove('dragging');
+            }
+
+            element.addEventListener('mousedown', startDrag);
+            window.addEventListener('mousemove', moveDrag);
+            window.addEventListener('mouseup', stopDrag);
+            element.addEventListener('mouseleave', stopDrag);
+
+            element.addEventListener('touchstart', startDrag, { passive: true });
+            element.addEventListener('touchmove', moveDrag, { passive: false });
+            element.addEventListener('touchend', stopDrag);
+        }
+
+        function updateUI() {
+            if(!transformStates[currentIndex]) return;
+            zoomRange.value = transformStates[currentIndex].scale;
+            zoomValue.textContent = `${Math.round(transformStates[currentIndex].scale * 100)}%`;
+        }
+
+        function showSlide(index) {
+            const slides = slidesContainer.querySelectorAll('.slide');
+            if (slides.length === 0) return;
+            
+            slides[currentIndex].classList.remove('active');
+            
+            if (index >= slides.length) currentIndex = 0;
+            else if (index < 0) currentIndex = slides.length - 1;
+            else currentIndex = index;
+
+            slides[currentIndex].classList.add('active');
+            updateUI();
+        }
+
+        async function autoCorrectOrientation() {
+            const slides = slidesContainer.querySelectorAll('.slide');
+            const currentImg = slides[currentIndex].querySelector('img');
+            const currentImageBox = slides[currentIndex].querySelector('.image-box');
+            const contenedor = document.querySelector('.slider-wrapper');
+            
+            ocrLoader.classList.add('loading');
+            loaderText.innerText = "Iniciando motor Tesseract IA...";
+            loaderSubtext.innerText = "Analizando patrones de texto...";
+
+            const angulosATestear = [0, 90, 180, 270];
+            let mejorAnguloAlineacion = 0;
+            let maximaConfianzaOCR = 0;
+
+            try {
+                const worker = await Tesseract.createWorker(['spa', 'eng']);
+                
+                for (let i = 0; i < angulosATestear.length; i++) {
+                    const anguloPrueba = angulosATestear[i];
+                    loaderText.innerText = `Analizando legibilidad...`;
+                    loaderSubtext.innerText = `Evaluando ángulo de lectura a: ${anguloPrueba}°`;
+
+                    const muestraDataUrl = await obtenerDataUrlRotado(currentImg, anguloPrueba);
+                    const { data } = await worker.recognize(muestraDataUrl);
+
+                    if (data.confidence > maximaConfianzaOCR) {
+                        maximaConfianzaOCR = data.confidence;
+                        mejorAnguloAlineacion = anguloPrueba;
+                    }
+                    if (data.confidence > 85) break;
+                }
+
+                await worker.terminate();
+
+                transformStates[currentIndex].currentRotation = (360 - mejorAnguloAlineacion) % 360;
+                
+                // Al auto-enderezar, recalculamos límites por si la imagen tenía zoom activo
+                limitarDesplazamiento(currentIndex, contenedor, currentImageBox);
+                applyTransform(currentIndex);
+
+            } catch (error) {
+                console.error(error);
+                alert("Error procesando los datos de la imagen.");
+            } finally {
+                ocrLoader.classList.remove('loading');
+            }
+        }
+
+        function obtenerDataUrlRotado(imgElement, grados) {
+            return new Promise((resolve) => {
+                const ctx = hiddenCanvas.getContext('2d');
+                
+                if (grados % 180 !== 0) {
+                    hiddenCanvas.width = 400; 
+                    hiddenCanvas.height = 600; 
+                } else {
+                    hiddenCanvas.width = 600;
+                    hiddenCanvas.height = 400;
+                }
+
+                ctx.clearRect(0, 0, hiddenCanvas.width, hiddenCanvas.height);
+                ctx.save();
+                ctx.translate(hiddenCanvas.width / 2, hiddenCanvas.height / 2);
+                ctx.rotate((grados * Math.PI) / 180);
+                
+                const tempImg = new Image();
+                tempImg.src = imgElement.src;
+                ctx.drawImage(tempImg, -300, -200, 600, 400);
+                
+                ctx.restore();
+                resolve(hiddenCanvas.toDataURL('image/png'));
+            });
+        }
+
+        // --- Listeners de la interfaz ---
+        nextBtn.addEventListener('click', () => showSlide(currentIndex + 1));
+        prevBtn.addEventListener('click', () => showSlide(currentIndex - 1));
+
+        zoomRange.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            transformStates[currentIndex].scale = val;
+            
+            const slides = slidesContainer.querySelectorAll('.slide');
+            const currentImageBox = slides[currentIndex].querySelector('.image-box');
+            const contenedor = document.querySelector('.slider-wrapper');
+
+            // Ajustamos los límites de la imagen dinámicamente mientras el usuario desliza el rango de zoom
+            limitarDesplazamiento(currentIndex, contenedor, currentImageBox);
+            
+            zoomValue.textContent = `${Math.round(val * 100)}%`;
+            applyTransform(currentIndex);
+        });
+
+        rotateBtn.addEventListener('click', () => {
+            transformStates[currentIndex].currentRotation = (transformStates[currentIndex].currentRotation + 90) % 360;
+            
+            const slides = slidesContainer.querySelectorAll('.slide');
+            const currentImageBox = slides[currentIndex].querySelector('.image-box');
+            const contenedor = document.querySelector('.slider-wrapper');
+
+            // Al rotar manualmente cambiamos las dimensiones lógicas, reajustamos esquinas
+            limitarDesplazamiento(currentIndex, contenedor, currentImageBox);
+            applyTransform(currentIndex);
+        });
+
+        autoFixBtn.addEventListener('click', autoCorrectOrientation);
+
+        window.onload = init;
+    </script>
+</body>
+</html>
