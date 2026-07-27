@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Entrega de Tarjetas</title>
+  <!-- Font Awesome (iconos) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* ===== RESET Y BASE ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: #f2f5f9;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 16px 12px 30px;
+    }
+
+    /* Contenedor principal estilo "app" */
+    .app-container {
+      max-width: 420px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 32px 32px 24px 24px;
+      box-shadow: 0 20px 40px rgba(0, 10, 30, 0.08), 0 8px 16px rgba(0, 0, 0, 0.02);
+      padding: 24px 20px 30px;
+      transition: all 0.2s;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-left .icon-back {
+      font-size: 22px;
+      color: #1a2639;
+      cursor: default;
+    }
+
+    .header-left h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: #0b1a33;
+    }
+
+    .header-right {
+      display: flex;
+      gap: 16px;
+      color: #3a4a6b;
+      font-size: 18px;
+    }
+
+    .header-right i {
+      cursor: default;
+    }
+
+    /* ===== TARJETA DE CLIENTE ===== */
+    .client-card {
+      background: linear-gradient(145deg, #0b1a33, #132b4a);
+      border-radius: 20px;
+      padding: 20px 18px;
+      color: white;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(11, 26, 51, 0.25);
+    }
+
+    .client-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .client-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .client-label {
+      font-size: 12px;
+      font-weight: 500;
+      opacity: 0.7;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .client-value {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .client-value small {
+      font-weight: 400;
+      opacity: 0.8;
+      font-size: 14px;
+      margin-left: 4px;
+    }
+
+    .client-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.15);
+      margin: 12px 0;
+    }
+
+    /* ===== SECCIONES ===== */
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a2c4a;
+      margin-bottom: 14px;
+      letter-spacing: -0.2px;
+    }
+
+    .section-title i {
+      color: #2a6df4;
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+    }
+
+    .section-title .badge {
+      margin-left: auto;
+      background: #eef3fc;
+      color: #1a4b8c;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 30px;
+    }
+
+    /* ===== TARJETA DE PRODUCTO ===== */
+    .product-card {
+      background: #f8faff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 1px solid #e9eef4;
+      transition: 0.2s;
+    }
+
+    .product-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .product-type {
+      font-weight: 600;
+      font-size: 15px;
+      color: #0b1a33;
+    }
+
+    .product-type i {
+      margin-right: 6px;
+      color: #2a6df4;
+    }
+
+    .product-event {
+      background: #e9f0fa;
+      color: #1a4b8c;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 12px;
+      border-radius: 30px;
+      white-space: nowrap;
+    }
+
+    .product-image-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 12px 0 10px;
+    }
+
+    .product-image {
+      width: 60px;
+      height: 40px;
+      background: #dce4f0;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1a2c4a;
+      font-size: 22px;
+      font-weight: 600;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .product-detail {
+      flex: 1;
+    }
+
+    .product-detail .label {
+      font-size: 11px;
+      color: #5e6f8d;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .product-detail .value {
+      font-size: 15px;
+      font-weight: 500;
+      color: #0b1a33;
+      margin-top: 2px;
+    }
+
+    .product-detail .value small {
+      font-weight: 400;
+      color: #5e6f8d;
+      font-size: 13px;
+      margin-left: 4px;
+    }
+
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e9eef4;
+      font-size: 13px;
+      color: #1a2c4a;
+    }
+
+    .product-footer i {
+      color: #2a6df4;
+      width: 18px;
+    }
+
+    /* ===== DETALLE CITA ===== */
+    .appointment-grid {
+      background: #f8faff;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid #e9eef4;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+    }
+
+    .appointment-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .appointment-item .label {
+      font-size: 11px;
+      color: #5e6f8d;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .appointment-item .value {
+      font-size: 14px;
+      font-weight: 500;
+      color: #0b1a33;
+      margin-top: 2px;
+      word-break: break-word;
+    }
+
+    .appointment-item.full {
+      grid-column: 1 / -1;
+    }
+
+    .appointment-item .value i {
+      color: #2a6df4;
+      margin-right: 4px;
+      font-size: 13px;
+    }
+
+    .third-party {
+      background: #f0f5fe;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 8px;
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      font-size: 13px;
+    }
+
+    .third-party span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .third-party i {
+      color: #2a6df4;
+      width: 16px;
+    }
+
+    /* ===== ESTADO Y GESTOR ===== */
+    .status-gestor {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f2f6fc;
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin: 6px 0 4px;
+    }
+
+    .status-gestor .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      color: #0b1a33;
+    }
+
+    .status-gestor .status .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 10px;
+      background: #34a853;
+      display: inline-block;
+    }
+
+    .status-gestor .gestor {
+      font-size: 13px;
+      color: #3a4a6b;
+    }
+
+    .status-gestor .gestor i {
+      margin-right: 6px;
+      color: #2a6df4;
+    }
+
+    /* ===== HISTORIAL COLAPSABLE ===== */
+    .collapse-section {
+      margin-top: 16px;
+      border-radius: 16px;
+      border: 1px solid #e9eef4;
+      overflow: hidden;
+    }
+
+    .collapse-header {
+      background: #f8faff;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: 0.15s;
+    }
+
+    .collapse-header:hover {
+      background: #f0f5fe;
+    }
+
+    .collapse-header .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      color: #0b1a33;
+      font-size: 14px;
+    }
+
+    .collapse-header .left i {
+      color: #2a6df4;
+      font-size: 16px;
+    }
+
+    .collapse-header .arrow {
+      color: #5e6f8d;
+      transition: transform 0.25s ease;
+    }
+
+    .collapse-header .arrow.open {
+      transform: rotate(180deg);
+    }
+
+    .collapse-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      padding: 0 16px;
+      background: #ffffff;
+    }
+
+    .collapse-body.open {
+      max-height: 300px;
+      padding: 16px 16px 20px;
+    }
+
+    .collapse-body .history-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f4fa;
+      font-size: 13px;
+      color: #1a2c4a;
+    }
+
+    .collapse-body .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .collapse-body .history-item i {
+      color: #b0c4de;
+      width: 18px;
+      margin-top: 2px;
+    }
+
+    .collapse-body .history-item .text {
+      flex: 1;
+    }
+
+    .collapse-body .history-item .date {
+      font-size: 11px;
+      color: #7a8aa8;
+      white-space: nowrap;
+    }
+
+    /* ===== BOTÓN DE ACCIÓN ===== */
+    .action-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 40px;
+      background: #0b1a33;
+      color: white;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 16px;
+      cursor: default;
+      box-shadow: 0 6px 14px rgba(11, 26, 51, 0.15);
+      transition: 0.2s;
+    }
+
+    .action-btn i {
+      font-size: 18px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 420px) {
+      .app-container {
+        padding: 18px 14px 24px;
+        border-radius: 24px;
+      }
+      .appointment-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .appointment-item.full {
+        grid-column: 1;
+      }
+      .third-party {
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+
+    /* ===== SCROLL SUAVE ===== */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #eef2f7;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c0cfe0;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-left">
+        <span class="icon-back"><i class="fas fa-chevron-left"></i></span>
+        <h1>Entrega de Tarjetas</h1>
+      </div>
+      <div class="header-right">
+        <i class="fas fa-search"></i>
+        <i class="fas fa-ellipsis-v"></i>
+      </div>
+    </div>
+
+    <!-- CLIENTE -->
+    <div class="client-card">
+      <div class="client-row">
+        <span class="client-label">Cliente</span>
+        <span class="client-value">María Elena Rodríguez</span>
+      </div>
+      <div class="client-row">
+        <span class="client-label">ID / Cédula</span>
+        <span class="client-value">12.345.678-9</span>
+      </div>
+      <div class="client-divider"></div>
+      <div class="client-row">
+        <span class="client-label">Teléfono</span>
+        <span class="client-value">+56 9 8765 4321</span>
+      </div>
+      <div class="client-row">
+        <span class="client-label">N° Cliente</span>
+        <span class="client-value">#CL-2025-0047 <small>· VIP</small></span>
+      </div>
+    </div>
+
+    <!-- PRODUCTOS A ENTREGAR -->
+    <div class="section">
+      <div class="section-title">
+        <i class="fas fa-credit-card"></i> Productos a entregar
+        <span class="badge">2 tarjetas</span>
+      </div>
+
+      <!-- Tarjeta 1 -->
+      <div class="product-card">
+        <div class="product-header">
+          <span class="product-type"><i class="fas fa-credit-card"></i> Visa Gold</span>
+          <span class="product-event">Evento: Renovación</span>
+        </div>
+        <div class="product-image-row">
+          <div class="product-image"><i class="fas fa-credit-card"></i></div>
+          <div class="product-detail">
+            <div class="label">Últimos 4 dígitos</div>
+            <div class="value">•••• 4832</div>
+          </div>
+          <div class="product-detail" style="text-align: right;">
+            <div class="label">Cuenta asociada</div>
+            <div class="value">CTA-8872</div>
+          </div>
+        </div>
+        <div class="product-footer">
+          <span><i class="fas fa-calendar-alt"></i> Vence 12/28</span>
+          <span><i class="fas fa-check-circle" style="color: #34a853;"></i> Activa</span>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2 -->
+      <div class="product-card">
+        <div class="product-header">
+          <span class="product-type"><i class="fas fa-credit-card"></i> Mastercard Black</span>
+          <span class="product-event">Evento: Nuevo</span>
+        </div>
+        <div class="product-image-row">
+          <div class="product-image"><i class="fas fa-credit-card"></i></div>
+          <div class="product-detail">
+            <div class="label">Últimos 4 dígitos</div>
+            <div class="value">•••• 9105</div>
+          </div>
+          <div class="product-detail" style="text-align: right;">
+            <div class="label">Cuenta asociada</div>
+            <div class="value">CTA-9912</div>
+          </div>
+        </div>
+        <div class="product-footer">
+          <span><i class="fas fa-calendar-alt"></i> Vence 09/29</span>
+          <span><i class="fas fa-hourglass-half" style="color: #f9ab00;"></i> Pendiente</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETALLE DE CITA -->
+    <div class="section">
+      <div class="section-title">
+        <i class="fas fa-calendar-check"></i> Detalle de cita
+      </div>
+      <div class="appointment-grid">
+        <div class="appointment-item">
+          <span class="label">Fecha</span>
+          <span class="value"><i class="far fa-calendar-alt"></i> 25/07/2026</span>
+        </div>
+        <div class="appointment-item">
+          <span class="label">Hora</span>
+          <span class="value"><i class="far fa-clock"></i> 11:30 hrs</span>
+        </div>
+        <div class="appointment-item full">
+          <span class="label">Dirección</span>
+          <span class="value"><i class="fas fa-map-pin"></i> Av. Las Condes 1234, Depto 56, Santiago</span>
+        </div>
+        <div class="appointment-item full">
+          <span class="label">Entrega a tercero</span>
+          <div class="third-party">
+            <span><i class="fas fa-user-check"></i> Sí</span>
+            <span><i class="fas fa-user"></i> Nombre: Juan Pérez</span>
+            <span><i class="fas fa-users"></i> Parentesco: Hermano</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTADO + GESTOR -->
+    <div class="section">
+      <div class="status-gestor">
+        <span class="status">
+          <span class="dot"></span> Estado: Listo para entrega
+        </span>
+        <span class="gestor">
+          <i class="fas fa-user-circle"></i> Gestor: Ana Torres
+        </span>
+      </div>
+    </div>
+
+    <!-- HISTORIAL COLAPSABLE -->
+    <div class="section" style="margin-bottom: 8px;">
+      <div class="collapse-section">
+        <div class="collapse-header" id="collapseToggle">
+          <span class="left">
+            <i class="fas fa-history"></i> Historial de la solicitud
+          </span>
+          <span class="arrow" id="arrowIcon"><i class="fas fa-chevron-down"></i></span>
+        </div>
+        <div class="collapse-body" id="collapseBody">
+          <div class="history-item">
+            <i class="fas fa-user-times"></i>
+            <span class="text"><strong>Visita fallida</strong> — Gestor anterior (Carlos Méndez) no encontró al cliente.</span>
+            <span class="date">22/07/2026</span>
+          </div>
+          <div class="history-item">
+            <i class="fas fa-phone-alt"></i>
+            <span class="text">Contacto telefónico exitoso, se acordó nueva cita.</span>
+            <span class="date">23/07/2026</span>
+          </div>
+          <div class="history-item">
+            <i class="fas fa-check-circle"></i>
+            <span class="text">Solicitud de entrega generada por el banco.</span>
+            <span class="date">20/07/2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTÓN DE ACCIÓN (simulado) -->
+    <button class="action-btn" onclick="void(0)">
+      <i class="fas fa-check-circle"></i> Confirmar entrega
+    </button>
+
+  </div>
+
+  <script>
+    // Colapsable: toggle del historial
+    const toggle = document.getElementById('collapseToggle');
+    const body = document.getElementById('collapseBody');
+    const arrow = document.getElementById('arrowIcon');
+
+    if (toggle && body && arrow) {
+      toggle.addEventListener('click', function (e) {
+        body.classList.toggle('open');
+        arrow.classList.toggle('open');
+      });
+    }
+  </script>
+</body>
+</html>

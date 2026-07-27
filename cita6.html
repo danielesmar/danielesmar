@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Entrega de Tarjetas - 10 Versiones Completas</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #f0f2f5; color: #1c1c1e; padding: 12px; max-width: 500px; margin: 0 auto; }
+
+    /* Navegador de Pestañas */
+    .tabs-header { display: flex; overflow-x: auto; gap: 6px; padding-bottom: 8px; margin-bottom: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .tabs-header::-webkit-scrollbar { display: none; }
+    .tab-btn { flex: 0 0 auto; padding: 8px 12px; font-size: 11px; font-weight: 700; border-radius: 20px; border: 1px solid #d1d5db; background: #ffffff; color: #4b5563; cursor: pointer; }
+    .tab-btn.active { background: #006837; color: #ffffff; border-color: #006837; box-shadow: 0 2px 6px rgba(0,104,55,0.25); }
+
+    /* Paneles de Contenido */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* UI Compartida y Reutilizable */
+    .sec-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 12px 0 6px 0; color: #4b5563; }
+    .btn { display: block; width: 100%; padding: 11px; border-radius: 8px; font-weight: 600; font-size: 13px; text-align: center; border: none; cursor: pointer; margin-top: 8px; }
+    .btn-main { background: #006837; color: white; }
+    .btn-sec { background: #e8f5e9; color: #006837; }
+    .btn-danger { background: #fee2e2; color: #dc2626; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
+    .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+    .photo-box { background: #e5e7eb; border-radius: 6px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #6b7280; border: 1px dashed #9ca3af; text-align: center; }
+
+    /* ESTILOS DE CADA TAB */
+    /* V1: Banpro App Oficial */
+    .v1-card { background: white; border-radius: 14px; padding: 16px; border-top: 5px solid #006837; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 12px; }
+    
+    /* V2: iOS Cupertino Grouped */
+    .v2-group { background: white; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+    .v2-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 0.5px solid #f0f0f0; font-size: 13px; }
+    .v2-row:last-child { border-bottom: none; }
+
+    /* V3: Material Design 3 */
+    .v3-card { background: #f3edf7; border-radius: 18px; padding: 16px; margin-bottom: 10px; border: 1px solid #e7e0ec; }
+    .v3-input { width: 100%; background: white; border: 1px solid #79747e; border-radius: 6px; padding: 8px; font-size: 13px; margin-top: 3px; }
+
+    /* V4: Dark Mode Executive */
+    .v4-container { background: #121212; color: #e0e0e0; padding: 14px; border-radius: 16px; }
+    .v4-card { background: #1e1e1e; border-radius: 10px; padding: 12px; margin-bottom: 10px; border: 1px solid #2c2c2c; }
+
+    /* V5: Minimalista Monocromo */
+    .v5-card { background: white; border: 1px solid #111; border-radius: 4px; padding: 14px; margin-bottom: 10px; }
+
+    /* V6: Timeline / Step-by-Step */
+    .v6-step { position: relative; padding-left: 28px; margin-bottom: 14px; }
+    .v6-step::before { content: ""; position: absolute; left: 8px; top: 20px; bottom: -14px; width: 2px; background: #d1d5db; }
+    .v6-step:last-child::before { display: none; }
+    .v6-dot { position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #006837; color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+    /* V7: Focus Pre-Verificación (Formulario Primero) */
+    .v7-edit-card { background: #fffbe3; border: 1px solid #f59e0b; border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+
+    /* V8: Grid Compacto / Tabla Densidad Alta */
+    .v8-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .v8-box { background: white; padding: 10px; border-radius: 8px; border: 1px solid #e5e7eb; font-size: 12px; }
+
+    /* V9: Glassmorphism */
+    .v9-glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(10px); border-radius: 16px; padding: 14px; border: 1px solid rgba(255,255,255,0.8); margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+
+    /* V10: Acordeón Interactivo */
+    details { background: white; border-radius: 8px; padding: 10px; margin-bottom: 8px; border: 1px solid #e5e7eb; }
+    summary { font-weight: bold; font-size: 13px; cursor: pointer; color: #006837; }
+  </style>
+</head>
+<body>
+
+  <!-- NAVEGACIÓN EN TABS -->
+  <div class="tabs-header">
+    <button class="tab-btn active" onclick="openTab(event, 'v1')">V1. Banpro App</button>
+    <button class="tab-btn" onclick="openTab(event, 'v2')">V2. iOS Grouped</button>
+    <button class="tab-btn" onclick="openTab(event, 'v3')">V3. Material 3</button>
+    <button class="tab-btn" onclick="openTab(event, 'v4')">V4. Dark Mode</button>
+    <button class="tab-btn" onclick="openTab(event, 'v5')">V5. Minimalista</button>
+    <button class="tab-btn" onclick="openTab(event, 'v6')">V6. Workflow</button>
+    <button class="tab-btn" onclick="openTab(event, 'v7')">V7. Pre-Verificación</button>
+    <button class="tab-btn" onclick="openTab(event, 'v8')">V8. Grid Compacto</button>
+    <button class="tab-btn" onclick="openTab(event, 'v9')">V9. Glassmorphism</button>
+    <button class="tab-btn" onclick="openTab(event, 'v10')">V10. Acordeón</button>
+  </div>
+
+  <!-- TAB 1: BANPRO APP OFICIAL -->
+  <div id="v1" class="tab-content active">
+    <div class="v1-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="badge" style="background:#e8f5e9; color:#006837;">Cita Confirmada</span>
+        <span style="font-size:11px; color:#6b7280;">25/07/2026 - 10:30 AM</span>
+      </div>
+      <div class="sec-title">Cliente</div>
+      <div style="font-weight:bold; font-size:15px;">Carlos Eduardo Mendoza</div>
+      <div style="font-size:13px; color:#4b5563;">Cédula: 001-120590-0004U | +505 8888-1234</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:2px;">📍 Reparto San Juan, De la iglesia 2c al sur</div>
+
+      <div class="sec-title">Productos Asignados</div>
+      <div style="background:#f9fafb; padding:8px; border-radius:6px; font-size:12px; margin-bottom:4px;">
+        💳 <strong>Visa Signature</strong> **** 4892 (Sobre: SB-99482)
+      </div>
+      <div style="background:#f9fafb; padding:8px; border-radius:6px; font-size:12px;">
+        💳 <strong>Mastercard Black</strong> **** 1102 (Sobre: SB-99483)
+      </div>
+
+      <div class="sec-title">Historial de Visitas</div>
+      <div style="font-size:11px; color:#6b7280;">• 24/07/2026 14:15 - Cliente Ausente</div>
+      <div style="font-size:11px; color:#6b7280;">• 22/07/2026 09:00 - Cita Reprogramada</div>
+
+      <div class="sec-title">Evidencias Adjuntas</div>
+      <div class="photo-grid">
+        <div class="photo-box">📷 Cédula Frente</div>
+        <div class="photo-box">📷 Cédula Dorso</div>
+        <div class="photo-box" style="border-color:#006837; color:#006837; font-weight:bold;">+ Agregar Foto</div>
+      </div>
+
+      <button class="btn btn-main">Confirmar Entrega y Firma</button>
+      <button class="btn btn-sec">Pre-Verificar / Editar Datos</button>
+      <button class="btn btn-danger">Reportar Incidencia</button>
+    </div>
+  </div>
+
+  <!-- TAB 2: IOS CUPERTINO GROUPED -->
+  <div id="v2" class="tab-content">
+    <div style="font-size:12px; font-weight:bold; color:#6c6c70; margin:0 0 4px 4px;">DATOS DEL CLIENTE</div>
+    <div class="v2-group">
+      <div class="v2-row"><span>Nombre</span><strong>Carlos E. Mendoza</strong></div>
+      <div class="v2-row"><span>Cédula</span><strong>001-120590-0004U</strong></div>
+      <div class="v2-row"><span>Teléfono</span><strong>+505 8888-1234</strong></div>
+      <div class="v2-row"><span>Dirección</span><strong>Reparto San Juan</strong></div>
+    </div>
+
+    <div style="font-size:12px; font-weight:bold; color:#6c6c70; margin:8px 0 4px 4px;">DETALLES DE LA CITA</div>
+    <div class="v2-group">
+      <div class="v2-row"><span>Sucursal</span><strong>Metrocentro</strong></div>
+      <div class="v2-row"><span>Fecha/Hora</span><strong>25 Jul, 10:30 AM</strong></div>
+    </div>
+
+    <div style="font-size:12px; font-weight:bold; color:#6c6c70; margin:8px 0 4px 4px;">PRODUCTOS (2)</div>
+    <div class="v2-group">
+      <div class="v2-row"><span>Visa Signature</span><strong>**** 4892</strong></div>
+      <div class="v2-row"><span>Mastercard Black</span><strong>**** 1102</strong></div>
+    </div>
+
+    <div style="font-size:12px; font-weight:bold; color:#6c6c70; margin:8px 0 4px 4px;">HISTORIAL Y EVIDENCIAS</div>
+    <div class="v2-group">
+      <div style="font-size:11px; color:#666; margin-bottom:8px;">24/07: Ausente | 22/07: Reprogramado</div>
+      <div class="photo-grid">
+        <div class="photo-box">Cédula 1</div>
+        <div class="photo-box">Cédula 2</div>
+        <div class="photo-box">+ Camara</div>
+      </div>
+    </div>
+
+    <button class="btn" style="background:#007aff; color:white;">Completar Entrega</button>
+    <button class="btn" style="background:#e5e5ea; color:#000;">Editar / Reportar</button>
+  </div>
+
+  <!-- TAB 3: MATERIAL DESIGN 3 -->
+  <div id="v3" class="tab-content">
+    <div class="v3-card">
+      <span class="badge" style="background:#6750a4; color:white;">Material 3 UI</span>
+      
+      <div style="margin-top:10px;">
+        <label style="font-size:11px; color:#49454f;">Cliente / Titular</label>
+        <input type="text" class="v3-input" value="Carlos Eduardo Mendoza">
+      </div>
+      <div style="margin-top:6px;">
+        <label style="font-size:11px; color:#49454f;">Cédula / Identificación</label>
+        <input type="text" class="v3-input" value="001-120590-0004U">
+      </div>
+
+      <div style="margin-top:10px; background:white; padding:10px; border-radius:12px;">
+        <div style="font-size:12px; font-weight:bold; color:#6750a4;">Cita & Productos</div>
+        <div style="font-size:12px;">📍 Sucursal Metrocentro - 10:30 AM</div>
+        <div style="font-size:11px; color:#666; margin-top:4px;">• Visa Signature (SB-99482)<br>• Mastercard Black (SB-99483)</div>
+      </div>
+
+      <div style="margin-top:10px;">
+        <div style="font-size:11px; font-weight:bold;">Galeria de Entrega</div>
+        <div class="photo-grid">
+          <div class="photo-box">Foto 1</div>
+          <div class="photo-box">Foto 2</div>
+          <div class="photo-box">Capturar</div>
+        </div>
+      </div>
+
+      <button class="btn" style="background:#6750a4; color:white; border-radius:20px;">Registrar Entrega M3</button>
+      <button class="btn" style="background:#b91c1c; color:white; border-radius:20px; margin-top:4px;">Reportar Problema</button>
+    </div>
+  </div>
+
+  <!-- TAB 4: DARK MODE EXECUTIVE -->
+  <div id="v4" class="tab-content">
+    <div class="v4-container">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span style="font-size:14px; font-weight:bold; color:#10b981;">ENTREGA VIP</span>
+        <span style="font-size:11px; color:#888;">Cita: 10:30 AM</span>
+      </div>
+
+      <div class="v4-card">
+        <div style="font-size:11px; color:#10b981;">CLIENTE</div>
+        <div style="font-size:15px; font-weight:bold;">Carlos Eduardo Mendoza</div>
+        <div style="font-size:12px; color:#aaa;">ID: 001-120590-0004U | +505 8888-1234</div>
+        <div style="font-size:11px; color:#777;">Reparto San Juan, Managua</div>
+      </div>
+
+      <div class="v4-card">
+        <div style="font-size:11px; color:#10b981;">TARJETAS (2)</div>
+        <div style="font-size:12px;">• Visa Signature (Sob: SB-99482)</div>
+        <div style="font-size:12px;">• Mastercard Black (Sob: SB-99483)</div>
+      </div>
+
+      <div class="v4-card">
+        <div style="font-size:11px; color:#10b981;">HISTORIAL & EVIDENCIA</div>
+        <div style="font-size:11px; color:#888; margin-bottom:6px;">Visita previa 24/07: Ausente</div>
+        <div class="photo-grid">
+          <div class="photo-box" style="background:#2a2a2a; color:#aaa; border-color:#444;">Frente</div>
+          <div class="photo-box" style="background:#2a2a2a; color:#aaa; border-color:#444;">Dorso</div>
+          <div class="photo-box" style="background:#2a2a2a; color:#10b981; border-color:#10b981;">+ Foto</div>
+        </div>
+      </div>
+
+      <button class="btn" style="background:#10b981; color:#000; font-weight:bold;">Finalizar Proceso</button>
+      <button class="btn" style="background:#333; color:#fff;">Editar / Incidencia</button>
+    </div>
+  </div>
+
+  <!-- TAB 5: MINIMALISTA MONOCROMO -->
+  <div id="v5" class="tab-content">
+    <div class="v5-card">
+      <div style="font-size:16px; font-weight:900; border-bottom:2px solid #000; padding-bottom:4px; margin-bottom:8px;">CARLOS E. MENDOZA</div>
+      <p style="font-size:12px;"><strong>Cédula:</strong> 001-120590-0004U</p>
+      <p style="font-size:12px;"><strong>Tel:</strong> +505 8888-1234</p>
+      <p style="font-size:12px;"><strong>Dirección:</strong> Reparto San Juan, Managua</p>
+      <p style="font-size:12px;"><strong>Cita:</strong> 25/07/2026 - 10:30 AM (Metrocentro)</p>
+      
+      <div style="margin:10px 0; border-top:1px solid #ccc; border-bottom:1px solid #ccc; padding:6px 0;">
+        <p style="font-size:12px;"><strong>Productos:</strong></p>
+        <p style="font-size:12px;">1. Visa Signature (SB-99482)</p>
+        <p style="font-size:12px;">2. Mastercard Black (SB-99483)</p>
+      </div>
+
+      <p style="font-size:11px; color:#555;">Historial: 24/07 Cliente Ausente | 22/07 Reprogramado</p>
+
+      <div class="photo-grid" style="margin-bottom:10px;">
+        <div class="photo-box">Doc 1</div>
+        <div class="photo-box">Doc 2</div>
+        <div class="photo-box">+ Anexo</div>
+      </div>
+
+      <button class="btn" style="background:#000; color:#fff; border-radius:0;">CONFIRMAR ENTREGA</button>
+      <button class="btn" style="background:#fff; color:#000; border:1px solid #000; border-radius:0;">EDITAR / REPORTAR</button>
+    </div>
+  </div>
+
+  <!-- TAB 6: WORKFLOW PASO A PASO -->
+  <div id="v6" class="tab-content">
+    <div style="background:white; padding:14px; border-radius:12px;">
+      <div class="v6-step">
+        <div class="v6-dot">1</div>
+        <div style="font-size:13px; font-weight:bold;">Verificar Cliente y Cita</div>
+        <div style="font-size:12px; color:#4b5563;">Carlos Mendoza (001-120590-0004U)</div>
+        <div style="font-size:11px; color:#6b7280;">Cita: 25/07 - 10:30 AM (Metrocentro)</div>
+      </div>
+
+      <div class="v6-step">
+        <div class="v6-dot">2</div>
+        <div style="font-size:13px; font-weight:bold;">Escanear / Validar Sobres</div>
+        <div style="font-size:12px; color:#4b5563;">• Visa Signature (SB-99482)</div>
+        <div style="font-size:12px; color:#4b5563;">• Mastercard Black (SB-99483)</div>
+      </div>
+
+      <div class="v6-step">
+        <div class="v6-dot">3</div>
+        <div style="font-size:13px; font-weight:bold;">Historial y Evidencias</div>
+        <div style="font-size:11px; color:#6b7280; margin-bottom:4px;">Intentos previos: 24/07 (Ausente)</div>
+        <div class="photo-grid">
+          <div class="photo-box">Cédula A</div>
+          <div class="photo-box">Cédula B</div>
+          <div class="photo-box">+ Foto</div>
+        </div>
+      </div>
+
+      <button class="btn btn-main">Completar Paso Final y Entregar</button>
+      <button class="btn btn-danger">Incidencia en el Paso</button>
+    </div>
+  </div>
+
+  <!-- TAB 7: PRE-VERIFICACIÓN FOCUS -->
+  <div id="v7" class="tab-content">
+    <div class="v7-edit-card">
+      <div style="font-size:12px; font-weight:bold; color:#b45309; margin-bottom:6px;">⚠️ MODO PRE-VERIFICACIÓN Y EDICIÓN</div>
+      <p style="font-size:11px; color:#78350f; margin-bottom:10px;">Valida o corrige la información antes de cerrar la entrega:</p>
+      
+      <label class="sec-title">Nombre Titular</label>
+      <input type="text" value="Carlos Eduardo Mendoza" style="width:100%; padding:8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px;">
+
+      <label class="sec-title">Cédula</label>
+      <input type="text" value="001-120590-0004U" style="width:100%; padding:8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px;">
+
+      <label class="sec-title">Dirección de Cita</label>
+      <input type="text" value="Reparto San Juan, Managua" style="width:100%; padding:8px; border:1px solid #d1d5db; border-radius:6px; font-size:12px;">
+
+      <div style="margin-top:10px; font-size:12px;">
+        <strong>Tarjetas:</strong> Visa Signature / Mastercard Black
+      </div>
+      <div style="font-size:11px; color:#666; margin-top:2px;">Historial: 24/07 Ausente | 22/07 Reprogramado</div>
+
+      <button class="btn" style="background:#d97706; color:white; margin-top:12px;">Guardar Cambios y Confirmar</button>
+    </div>
+  </div>
+
+  <!-- TAB 8: GRID COMPACTO -->
+  <div id="v8" class="tab-content">
+    <div class="v8-grid">
+      <div class="v8-box">
+        <strong style="color:#006837;">CLIENTE</strong><br>
+        Carlos E. Mendoza<br>
+        <span style="color:#666;">001-120590-0004U</span>
+      </div>
+      <div class="v8-box">
+        <strong style="color:#006837;">CITA</strong><br>
+        25 Jul - 10:30 AM<br>
+        <span style="color:#666;">Metrocentro</span>
+      </div>
+      <div class="v8-box" style="grid-column: span 2;">
+        <strong style="color:#006837;">PRODUCTOS</strong><br>
+        1. Visa Signature (SB-99482)<br>
+        2. Mastercard Black (SB-99483)
+      </div>
+      <div class="v8-box" style="grid-column: span 2;">
+        <strong style="color:#006837;">HISTORIAL & FOTOS</strong><br>
+        <span style="color:#666;">24/07: Ausente</span>
+        <div class="photo-grid" style="margin-top:4px;">
+          <div class="photo-box">Foto 1</div>
+          <div class="photo-box">Foto 2</div>
+          <div class="photo-box">+ Foto</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-main" style="margin-top:10px;">Procesar Registro</button>
+    <button class="btn btn-danger">Reportar Incidencia</button>
+  </div>
+
+  <!-- TAB 9: GLASSMORPHISM -->
+  <div id="v9" class="tab-content">
+    <div class="v9-glass">
+      <div style="font-size:11px; font-weight:bold; color:#006837; letter-spacing:1px;">BANPRO PWA GLASS</div>
+      <div style="font-size:16px; font-weight:bold; margin:4px 0;">Carlos Eduardo Mendoza</div>
+      <div style="font-size:12px; color:#4b5563;">001-120590-0004U | +505 8888-1234</div>
+      <div style="font-size:12px; color:#4b5563;">📍 Reparto San Juan, Managua</div>
+
+      <div style="background:rgba(255,255,255,0.6); padding:10px; border-radius:10px; margin:10px 0; font-size:12px;">
+        <strong>Cita:</strong> 25/07 - 10:30 AM (Metrocentro)<br>
+        <strong>Tarjetas:</strong> Visa Signature & Mastercard Black
+      </div>
+
+      <div style="font-size:11px; color:#6b7280; margin-bottom:6px;">Historial: 24/07 Ausente | 22/07 Reprogramado</div>
+      <div class="photo-grid">
+        <div class="photo-box">Evidencia 1</div>
+        <div class="photo-box">Evidencia 2</div>
+        <div class="photo-box">+ Camara</div>
+      </div>
+
+      <button class="btn btn-main" style="margin-top:12px;">Firma y Finalizar</button>
+      <button class="btn btn-sec">Pre-Verificar / Incidencia</button>
+    </div>
+  </div>
+
+  <!-- TAB 10: ACORDEÓN INTERACTIVO -->
+  <div id="v10" class="tab-content">
+    <details open>
+      <summary>1. Datos del Cliente y Cita</summary>
+      <div style="padding-top:8px; font-size:12px;">
+        <p><strong>Nombre:</strong> Carlos Eduardo Mendoza</p>
+        <p><strong>Cédula:</strong> 001-120590-0004U</p>
+        <p><strong>Teléfono:</strong> +505 8888-1234</p>
+        <p><strong>Dirección:</strong> Reparto San Juan, Managua</p>
+        <p><strong>Cita:</strong> 25/07/2026 - 10:30 AM (Metrocentro)</p>
+      </div>
+    </details>
+
+    <details open>
+      <summary>2. Tarjetas y Sobres</summary>
+      <div style="padding-top:8px; font-size:12px;">
+        <p>• Visa Signature **** 4892 (Sobre: SB-99482)</p>
+        <p>• Mastercard Black **** 1102 (Sobre: SB-99483)</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>3. Historial de Visitas</summary>
+      <div style="padding-top:8px; font-size:11px; color:#666;">
+        <p>• 24/07/2026 14:15 - Cliente Ausente en residencia</p>
+        <p>• 22/07/2026 09:00 - Cita reprogramada por llamada</p>
+      </div>
+    </details>
+
+    <details open>
+      <summary>4. Evidencias y Fotos</summary>
+      <div class="photo-grid" style="padding-top:8px;">
+        <div class="photo-box">Doc Frente</div>
+        <div class="photo-box">Doc Reverso</div>
+        <div class="photo-box">+ Captura</div>
+      </div>
+    </details>
+
+    <button class="btn btn-main" style="margin-top:8px;">Completar Entrega</button>
+    <button class="btn btn-sec">Pre-Verificar / Editar</button>
+    <button class="btn btn-danger">Reportar Incidencia</button>
+  </div>
+
+  <script>
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tab-content");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove("active");
+      }
+      tablinks = document.getElementsByClassName("tab-btn");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("active");
+      }
+      document.getElementById(tabName).classList.add("active");
+      evt.currentTarget.classList.add("active");
+    }
+  </script>
+</body>
+</html>

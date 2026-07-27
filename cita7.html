@@ -1,0 +1,1293 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Banpro Promerica - PWA Entrega de Tarjetas (5 Versiones Mejoradas)</title>
+  
+  <!-- Fonts con display=swap para mejor rendimiento -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       GLOBAL APP CORE & TAB NAVIGATOR (BANPRO BRANDING)
+       Mejoras: variables unificadas, mejor contraste, transiciones.
+       ========================================================= */
+    :root {
+      --banpro-green: #006738;
+      --banpro-green-dark: #004D29;
+      --banpro-green-light: #E6F2EB;
+      --banpro-gold: #FDB813;
+      --banpro-gold-dark: #D99B00;
+      --banpro-gray-bg: #F4F6F8;
+      --banpro-text-dark: #0F172A;
+      --banpro-text-muted: #475569;
+      --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius-card: 18px;
+      --shadow-card: 0 4px 16px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #0F172A;
+      color: var(--banpro-text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding-bottom: 30px;
+      font-size: 16px; /* base más grande para móviles */
+      line-height: 1.5;
+    }
+
+    /* Fixed Top Tab Selector Bar */
+    .tab-switcher-container {
+      width: 100%;
+      max-width: 560px; /* un poco más ancho */
+      background-color: #004D29;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 12px 12px 8px 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: white;
+      margin-bottom: 10px;
+      padding: 0 4px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-logo-icon {
+      width: 24px;
+      height: 24px;
+      background: var(--banpro-gold);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #004D29;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .app-subtitle {
+      font-size: 11px;
+      color: #A3D9BC;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+    }
+    .tabs-nav::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.12);
+      color: #D1E7DD;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      /* Mejora: focus visible */
+      outline: none;
+    }
+    .tab-btn:focus-visible {
+      outline: 2px solid var(--banpro-gold);
+      outline-offset: 2px;
+    }
+    .tab-btn.active {
+      background: var(--banpro-gold);
+      color: #00381E;
+      border-color: var(--banpro-gold);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(253, 184, 19, 0.4);
+    }
+    /* efecto pressed */
+    .tab-btn:active {
+      transform: scale(0.96);
+    }
+
+    .viewport-shell {
+      width: 100%;
+      max-width: 560px;
+      background: var(--banpro-gray-bg);
+      min-height: calc(100vh - 100px);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mejora: toast para feedback */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #00381E;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 40px;
+      font-weight: 700;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+      max-width: 90%;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* =========================================================
+       Cada versión hereda estilos base, pero se mejoran detalles.
+       Se añade un badge de versión en cada contenedor.
+       ========================================================= */
+    .version-badge {
+      display: inline-block;
+      background: rgba(0,0,0,0.08);
+      font-size: 10px;
+      font-weight: 800;
+      color: #64748B;
+      padding: 2px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* ---------- V1: Clean Standard (mejoras de contraste) ---------- */
+    .v1-container {
+      background: #F8FAFC;
+      min-height: 100vh;
+      padding-bottom: 90px;
+    }
+    .v1-header {
+      background: linear-gradient(135deg, #006738 0%, #004D29 100%);
+      color: white;
+      padding: 20px 20px 28px 20px;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+    }
+    .v1-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .v1-req-id {
+      font-size: 13px;
+      color: #A3D9BC;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .v1-status-pill {
+      background: #FFFBEB;
+      color: #B45309;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .v1-main {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: -12px;
+    }
+    .v1-card {
+      background: white;
+      border-radius: var(--radius-card);
+      padding: 18px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid #E2E8F0;
+    }
+    .v1-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #006738;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .v1-client-name {
+      font-size: 19px;
+      font-weight: 800;
+      color: #0F172A;
+      margin-bottom: 12px;
+    }
+    .v1-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .v1-label { font-size: 11px; color: #64748B; margin-bottom: 2px; }
+    .v1-val { font-size: 13px; font-weight: 600; color: #0F172A; }
+    .v1-phone-link {
+      color: #006738;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .v1-appt-box {
+      background: #E6F2EB;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .v1-appt-time { font-size: 16px; font-weight: 800; color: #004D29; }
+    .v1-appt-date { font-size: 12px; color: #006738; font-weight: 600; }
+    .v1-third-party {
+      background: #FFFBEB;
+      border-left: 4px solid #FDB813;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: #78350F;
+    }
+    .v1-prod-item {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .v1-card-shape {
+      width: 60px;
+      height: 38px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #006738 0%, #00381E 100%);
+      color: white;
+      padding: 4px 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+    .v1-card-shape.black { background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); }
+    .v1-chip { width: 10px; height: 7px; background: #FDB813; border-radius: 1px; }
+    .v1-digits { font-family: monospace; font-size: 10px; font-weight: 700; text-align: right; }
+    .v1-collapsible summary {
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: #006738;
+      text-transform: uppercase;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+    }
+    .v1-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 560px;
+      background: white;
+      padding: 12px 16px 20px 16px;
+      border-top: 1px solid #E2E8F0;
+      display: flex;
+      gap: 12px;
+      z-index: 200;
+    }
+    .v1-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .v1-btn:active { transform: scale(0.97); }
+    .v1-btn-sec { background: #F1F5F9; color: #475569; }
+    .v1-btn-pri { background: #006738; color: white; box-shadow: 0 4px 12px rgba(0,103,56,0.3); }
+
+    /* ---------- V2: Dark Emerald VIP (mejoras de contraste y legibilidad) ---------- */
+    .v2-container {
+      background: #001A0E;
+      color: #E2E8F0;
+      min-height: 100vh;
+      padding: 16px;
+      padding-bottom: 90px;
+    }
+    .v2-header-card {
+      background: rgba(0, 103, 56, 0.25);
+      border: 1px solid rgba(0, 103, 56, 0.5);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .v2-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    .v2-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #FDB813;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .v2-client-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 14px;
+    }
+    .v2-val { color: #F1F5F9; font-weight: 600; font-size: 13px; }
+    .v2-label { color: #8BAA99; font-size: 11px; margin-bottom: 2px; }
+    .v2-phone { color: #FDB813; text-decoration: none; font-weight: 700; }
+    .v2-appt-box {
+      background: rgba(0, 103, 56, 0.35);
+      border: 1px solid rgba(253, 184, 19, 0.3);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .v2-prod-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .v2-card-img {
+      width: 64px;
+      height: 40px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      border: 1px solid rgba(253, 184, 19, 0.4);
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .v2-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 560px;
+      background: #001A0E;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 12px 16px 20px 16px;
+      display: flex;
+      gap: 12px;
+      z-index: 200;
+    }
+    .v2-btn-pri {
+      background: linear-gradient(135deg, #FDB813 0%, #D99B00 100%);
+      color: #002E19;
+      font-weight: 800;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      flex: 1;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .v2-btn-pri:active { transform: scale(0.97); }
+    .v2-btn-sec {
+      background: rgba(255,255,255,0.08);
+      color: #E2E8F0;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 14px;
+      border-radius: 12px;
+      flex: 1;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.15s ease;
+    }
+    .v2-btn-sec:active { transform: scale(0.97); }
+
+    /* ---------- V3: Compact Field (mejoras de contraste) ---------- */
+    .v3-container {
+      background: #F1F5F9;
+      padding: 12px;
+      padding-bottom: 85px;
+      font-size: 13px;
+    }
+    .v3-status-bar {
+      background: #006738;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .v3-block {
+      background: white;
+      border: 1px solid #CBD5E1;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .v3-header-label {
+      background: #E6F2EB;
+      color: #004D29;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .v3-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dashed #E2E8F0;
+    }
+    .v3-row:last-child { border-bottom: none; }
+    .v3-key { color: #475569; font-size: 12px; }
+    .v3-value { font-weight: 700; color: #0F172A; text-align: right; }
+    .v3-product-strip {
+      background: #F8FAFC;
+      border-left: 4px solid #006738;
+      padding: 8px 10px;
+      margin-top: 8px;
+      border-radius: 0 6px 6px 0;
+    }
+    .v3-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 560px;
+      background: white;
+      padding: 10px 12px 18px 12px;
+      border-top: 2px solid #006738;
+      display: flex;
+      gap: 8px;
+      z-index: 200;
+    }
+    .v3-btn {
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 800;
+      border: none;
+      flex: 1;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .v3-btn:active { transform: scale(0.97); }
+
+    /* ---------- V4: Native iOS (mejoras de contraste y espaciado) ---------- */
+    .v4-container {
+      background: #F2F2F7;
+      padding: 16px;
+      padding-bottom: 90px;
+    }
+    .v4-section-title {
+      font-size: 12px;
+      color: #6C6C70;
+      text-transform: uppercase;
+      margin: 0 0 6px 12px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+    .v4-group {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .v4-cell {
+      padding: 12px 16px;
+      border-bottom: 0.5px solid #E5E5EA;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .v4-cell:last-child { border-bottom: none; }
+    .v4-cell-label { font-size: 14px; color: #1C1C1E; }
+    .v4-cell-val { font-size: 14px; color: #8E8E93; font-weight: 500; }
+    .v4-cell-val.highlight { color: #006738; font-weight: 600; }
+    .v4-badge {
+      background: #FDB813;
+      color: #00381E;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+    .v4-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 560px;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(20px);
+      padding: 12px 16px 20px 16px;
+      border-top: 0.5px solid #C6C6C8;
+      display: flex;
+      gap: 10px;
+      z-index: 200;
+    }
+    .v4-bottom-bar button {
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex:1;
+    }
+    .v4-bottom-bar button:active { transform: scale(0.97); }
+    .v4-bottom-bar .btn-pri {
+      flex:2;
+      background: #006738;
+      color: white;
+    }
+    .v4-bottom-bar .btn-sec {
+      background: #E5E5EA;
+      color: #000;
+    }
+
+    /* ---------- V5: Executive UI (mejoras de legibilidad) ---------- */
+    .v5-container {
+      background: #FFFFFF;
+      padding: 20px;
+      padding-bottom: 95px;
+    }
+    .v5-top-banner {
+      border-bottom: 3px solid #006738;
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+    .v5-tag {
+      color: #FDB813;
+      background: #004D29;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .v5-client-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0F172A;
+      line-height: 1.2;
+    }
+    .v5-section-block {
+      margin-bottom: 24px;
+    }
+    .v5-subhead {
+      font-size: 13px;
+      font-weight: 800;
+      color: #006738;
+      border-left: 4px solid #006738;
+      padding-left: 8px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .v5-info-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .v5-info-table td {
+      padding: 8px 0;
+      border-bottom: 1px solid #F1F5F9;
+      font-size: 13px;
+    }
+    .v5-info-table td.label { color: #475569; width: 40%; }
+    .v5-info-table td.val { font-weight: 700; color: #0F172A; }
+    .v5-highlight-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .v5-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 560px;
+      background: #004D29;
+      padding: 12px 16px 20px 16px;
+      display: flex;
+      gap: 12px;
+      z-index: 200;
+    }
+    .v5-btn-main {
+      background: #FDB813;
+      color: #00381E;
+      font-weight: 800;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      flex: 2;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .v5-btn-main:active { transform: scale(0.97); }
+    .v5-btn-alt {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 14px;
+      border-radius: 8px;
+      flex: 1;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .v5-btn-alt:active { transform: scale(0.97); }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BRANDING & TAB NAVIGATOR -->
+  <div class="tab-switcher-container" role="tablist" aria-label="Versiones de diseño">
+    <div class="brand-header">
+      <div class="brand-logo">
+        <div class="brand-logo-icon">P</div>
+        <span>Banpro <span style="color:var(--banpro-gold); font-weight:400;">Promerica</span></span>
+      </div>
+      <span class="app-subtitle">PWA Entrega Field</span>
+    </div>
+
+    <div class="tabs-nav" role="tablist">
+      <button class="tab-btn active" role="tab" aria-selected="true" onclick="switchTab('v1', this)">
+        <span>V1</span> Clean Standard
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('v2', this)">
+        <span>V2</span> Dark Emerald VIP
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('v3', this)">
+        <span>V3</span> Compact Field
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('v4', this)">
+        <span>V4</span> iOS Inset Native
+      </button>
+      <button class="tab-btn" role="tab" aria-selected="false" onclick="switchTab('v5', this)">
+        <span>V5</span> Executive UI
+      </button>
+    </div>
+  </div>
+
+  <!-- VIEWPORT SHELL -->
+  <div class="viewport-shell">
+
+    <!-- =========================================================
+         VERSIÓN 1: BANPRO CLEAN STANDARD
+         ========================================================= -->
+    <div id="v1" class="tab-content active" role="tabpanel">
+      <div class="v1-container">
+        <div style="padding: 12px 16px 0 16px; display: flex; justify-content: flex-end;">
+          <span class="version-badge">V1 • Estándar</span>
+        </div>
+        <div class="v1-header">
+          <div class="v1-top-row">
+            <span class="v1-req-id">Solicitud #SL-89240</span>
+            <span class="v1-status-pill">
+              <svg width="6" height="6" fill="currentColor" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4"/></svg>
+              En Ruta de Entrega
+            </span>
+          </div>
+        </div>
+
+        <div class="v1-main">
+          <!-- Cliente -->
+          <div class="v1-card">
+            <div class="v1-card-title">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Datos del Cliente
+            </div>
+            <div class="v1-client-name">Sonia María López Ruiz</div>
+            <div class="v1-grid-2">
+              <div>
+                <div class="v1-label">Identificación (ID)</div>
+                <div class="v1-val">001-180592-0042K</div>
+              </div>
+              <div>
+                <div class="v1-label">Nº de Cliente</div>
+                <div class="v1-val">9948201</div>
+              </div>
+              <div style="grid-column: span 2; margin-top: 4px;">
+                <div class="v1-label">Teléfono de Contacto</div>
+                <a href="tel:+50588887777" class="v1-phone-link" aria-label="Llamar al cliente">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328z"/></svg>
+                  +505 8888-7777
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cita y Ubicación -->
+          <div class="v1-card">
+            <div class="v1-card-title">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Detalle de la Cita
+            </div>
+            <div class="v1-appt-box">
+              <div>
+                <div class="v1-appt-time">10:30 AM - 11:30 AM</div>
+                <div class="v1-appt-date">Hoy, 25 de Julio 2026</div>
+              </div>
+            </div>
+            <div style="margin-bottom: 10px;">
+              <div class="v1-label">Dirección de Entrega</div>
+              <div class="v1-val" style="font-weight: 500; margin-top:2px;">Residencial Los Robles, de la Plaza El Sol 2 c. al Sur, Casa #142. Managua.</div>
+            </div>
+            <div class="v1-third-party">
+              <strong>👥 Autorizada Entrega a Tercero</strong>
+              <div style="margin-top:2px;">Nombre: Carlos Eduardo López (Hermano)</div>
+            </div>
+          </div>
+
+          <!-- Productos -->
+          <div class="v1-card">
+            <div class="v1-card-title">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+              Tarjetas a Entregar
+            </div>
+            <div style="font-size: 11px; color: #64748B; margin-bottom: 6px;">Evento: <strong style="color:#006738;">Renovación Masiva 2026</strong></div>
+            
+            <div class="v1-prod-item">
+              <div class="v1-card-shape black">
+                <div class="v1-chip"></div>
+                <div class="v1-digits">4821</div>
+              </div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700;">Visa Signature Black</div>
+                <div style="font-size: 11px; color: #64748B;">Cuenta: **901238491</div>
+                <div style="font-size: 10px; font-weight: 700; color: #006738; margin-top:2px;">Estado: En Custodia</div>
+              </div>
+            </div>
+
+            <div class="v1-prod-item">
+              <div class="v1-card-shape">
+                <div class="v1-chip"></div>
+                <div class="v1-digits">9015</div>
+              </div>
+              <div>
+                <div style="font-size: 13px; font-weight: 700;">Mastercard Débito Preferente</div>
+                <div style="font-size: 11px; color: #64748B;">Cuenta: **104882910</div>
+                <div style="font-size: 10px; font-weight: 700; color: #006738; margin-top:2px;">Estado: En Custodia</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Historial Colapsable -->
+          <div class="v1-card v1-collapsible">
+            <details>
+              <summary>
+                <span>Historial de Visitas Previas (1)</span>
+                <span>▼</span>
+              </summary>
+              <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #E2E8F0; font-size: 12px;">
+                <div style="font-weight: 700; color: #DC2626;">24 Jul 2026, 02:15 PM - Visita Sin Éxito</div>
+                <div style="color: #64748B; margin-top: 2px;">Cliente ausente. Gestor previo: Manuel Gómez. Se dejó notificación de visita.</div>
+              </div>
+            </details>
+          </div>
+
+        </div>
+
+        <div class="v1-bottom-bar">
+          <button class="v1-btn v1-btn-sec" onclick="showToast('Incidencia reportada (simulación)')">Incidencia</button>
+          <button class="v1-btn v1-btn-pri" onclick="showToast('✅ Entrega confirmada (V1)')">Iniciar Entrega</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================
+         VERSIÓN 2: DARK EMERALD VIP
+         ========================================================= -->
+    <div id="v2" class="tab-content" role="tabpanel">
+      <div class="v2-container">
+        <div style="display: flex; justify-content: flex-end; padding: 0 0 8px 0;">
+          <span class="version-badge" style="color: #8BAA99; background: rgba(255,255,255,0.05);">V2 • VIP</span>
+        </div>
+        <div class="v2-header-card">
+          <div>
+            <div style="font-size: 11px; color: #8BAA99;">SOLICITUD BANPRO VIP</div>
+            <div style="font-size: 16px; font-weight: 800; color: #FDB813;">#SL-89240</div>
+          </div>
+          <span style="background: rgba(253, 184, 19, 0.2); color: #FDB813; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid #FDB813;">
+            EN RUTA
+          </span>
+        </div>
+
+        <!-- Cliente -->
+        <div class="v2-card">
+          <div class="v2-title">INFORMACIÓN DEL TITULAR</div>
+          <div class="v2-client-name">Sonia María López Ruiz</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <div class="v2-label">Cédula / ID</div>
+              <div class="v2-val">001-180592-0042K</div>
+            </div>
+            <div>
+              <div class="v2-label">Nº Cliente Banpro</div>
+              <div class="v2-val">9948201</div>
+            </div>
+            <div style="grid-column: span 2;">
+              <div class="v2-label">Llamar al Cliente</div>
+              <a href="tel:+50588887777" class="v2-phone">📞 +505 8888-7777</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cita -->
+        <div class="v2-card">
+          <div class="v2-title">PROGRAMACIÓN Y LUGAR</div>
+          <div class="v2-appt-box">
+            <div style="font-size: 18px; font-weight: 800; color: #FFFFFF;">10:30 AM - 11:30 AM</div>
+            <div style="font-size: 12px; color: #FDB813; font-weight: 600;">Hoy, 25 de Julio 2026</div>
+          </div>
+          <div class="v2-label">Dirección Exacta</div>
+          <div class="v2-val" style="margin-bottom: 12px;">Residencial Los Robles, de la Plaza El Sol 2 c. al Sur, Casa #142. Managua.</div>
+          <div style="background: rgba(253,184,19,0.1); border-left: 3px solid #FDB813; padding: 8px 10px; border-radius: 4px; font-size: 12px; color: #FDB813;">
+            <strong>Entrega a Tercero Permitida:</strong> Carlos Eduardo López (Hermano)
+          </div>
+        </div>
+
+        <!-- Productos -->
+        <div class="v2-card">
+          <div class="v2-title">PRODUCTOS ASIGNADOS (2)</div>
+          <div style="font-size: 11px; color: #8BAA99; margin-bottom: 8px;">Campaña: Renovación Masiva 2026</div>
+
+          <div class="v2-prod-card">
+            <div class="v2-card-img">
+              <div style="width: 8px; height: 6px; background: #FDB813; border-radius: 1px;"></div>
+              <div style="font-size: 9px; color: white; font-family: monospace;">4821</div>
+            </div>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: white;">Visa Signature Black</div>
+              <div style="font-size: 11px; color: #8BAA99;">Cuenta: **901238491</div>
+              <div style="font-size: 10px; color: #FDB813; margin-top:2px;">Custodia Banpro</div>
+            </div>
+          </div>
+
+          <div class="v2-prod-card">
+            <div class="v2-card-img" style="background: linear-gradient(135deg, #006738 0%, #00381E 100%);">
+              <div style="width: 8px; height: 6px; background: #FDB813; border-radius: 1px;"></div>
+              <div style="font-size: 9px; color: white; font-family: monospace;">9015</div>
+            </div>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: white;">Mastercard Débito Preferente</div>
+              <div style="font-size: 11px; color: #8BAA99;">Cuenta: **104882910</div>
+              <div style="font-size: 10px; color: #FDB813; margin-top:2px;">Custodia Banpro</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historial Colapsable -->
+        <div class="v2-card">
+          <details>
+            <summary style="cursor: pointer; font-size: 11px; font-weight: 700; color: #FDB813; letter-spacing: 1px; list-style: none;">
+              ▲ HISTORIAL DE INTENTOS PREVIOS
+            </summary>
+            <div style="margin-top: 10px; font-size: 12px; color: #CBD5E1; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+              <span style="color: #EF4444; font-weight: 700;">24/07/2026 02:15 PM</span> - No encontrada.
+              <br><small style="color: #8BAA99;">Gestor previo: Manuel Gómez. Cliente no respondió.</small>
+            </div>
+          </details>
+        </div>
+
+        <div class="v2-bottom-bar">
+          <button class="v2-btn-sec" onclick="showToast('Novedad registrada (simulación)')">Novedad</button>
+          <button class="v2-btn-pri" onclick="showToast('✅ Entrega VIP completada (V2)')">Completar Entrega</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================
+         VERSIÓN 3: COMPACT FIELD OPERATIVE
+         ========================================================= -->
+    <div id="v3" class="tab-content" role="tabpanel">
+      <div class="v3-container">
+        <div style="display: flex; justify-content: flex-end; padding: 0 0 4px 0;">
+          <span class="version-badge">V3 • Campo</span>
+        </div>
+        <div class="v3-status-bar">
+          <div>
+            <div style="font-size: 10px; opacity: 0.8;">ORDEN DE ENTREGA</div>
+            <div style="font-size: 15px; font-weight: 800;">#SL-89240</div>
+          </div>
+          <span style="background: #FDB813; color: #00381E; font-weight: 800; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
+            EN CURSO
+          </span>
+        </div>
+
+        <!-- Cliente -->
+        <div class="v3-block">
+          <span class="v3-header-label">1. Cliente Titular</span>
+          <div style="font-size: 16px; font-weight: 800; color: #006738; margin-bottom: 6px;">Sonia María López Ruiz</div>
+          <div class="v3-row"><span class="v3-key">Cédula ID:</span><span class="v3-value">001-180592-0042K</span></div>
+          <div class="v3-row"><span class="v3-key">Nº Cliente:</span><span class="v3-value">9948201</span></div>
+          <div class="v3-row"><span class="v3-key">Teléfono:</span><span class="v3-value"><a href="tel:+50588887777" style="color:#006738; font-weight:800;">8888-7777</a></span></div>
+        </div>
+
+        <!-- Cita & Dirección -->
+        <div class="v3-block">
+          <span class="v3-header-label">2. Ubicación y Cita</span>
+          <div class="v3-row"><span class="v3-key">Horario:</span><span class="v3-value" style="color:#006738;">10:30 AM - 11:30 AM (Hoy)</span></div>
+          <div class="v3-row"><span class="v3-key">Dirección:</span><span class="v3-value" style="font-size:11px;">Res. Los Robles, Plaza El Sol 2c S, #142</span></div>
+          <div class="v3-row"><span class="v3-key">Entrega a 3ro:</span><span class="v3-value">SÍ (Carlos López - Hermano)</span></div>
+        </div>
+
+        <!-- Productos -->
+        <div class="v3-block">
+          <span class="v3-header-label">3. Inventario a Entregar (2)</span>
+          <div style="font-size: 11px; color: #64748B; margin-bottom: 4px;">Evento: Renovación Masiva 2026</div>
+
+          <div class="v3-product-strip">
+            <div style="font-weight: 800;">Visa Signature Black</div>
+            <div style="font-size: 11px; color: #475569;">Termina: <strong>•••• 4821</strong> | Cta: **901238491</div>
+            <div style="font-size: 10px; color: #006738; font-weight: 700;">Estado: En Custodia</div>
+          </div>
+
+          <div class="v3-product-strip" style="border-left-color: #FDB813;">
+            <div style="font-weight: 800;">Mastercard Débito Preferente</div>
+            <div style="font-size: 11px; color: #475569;">Termina: <strong>•••• 9015</strong> | Cta: **104882910</div>
+            <div style="font-size: 10px; color: #006738; font-weight: 700;">Estado: En Custodia</div>
+          </div>
+        </div>
+
+        <!-- Historial -->
+        <div class="v3-block">
+          <details>
+            <summary style="cursor:pointer; font-weight:800; color:#006738; font-size:11px;">
+              [+] VER INTENTOS PREVIOS
+            </summary>
+            <div style="margin-top:6px; font-size:11px; background:#FEF2F2; padding:6px; border-radius:4px; color:#991B1B;">
+              <strong>24/07/2026 - 14:15 hrs:</strong> No encontrada por Gestor Manuel Gómez.
+            </div>
+          </details>
+        </div>
+
+        <div class="v3-bottom-bar">
+          <button class="v3-btn" style="background:#E2E8F0; color:#334155;" onclick="showToast('Fallo reportado (simulación)')">Reportar Fallo</button>
+          <button class="v3-btn" style="background:#006738; color:white;" onclick="showToast('✅ Entrega registrada (V3)')">Registrar Entrega</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================
+         VERSIÓN 4: NATIVE iOS INSET GROUPED
+         ========================================================= -->
+    <div id="v4" class="tab-content" role="tabpanel">
+      <div class="v4-container">
+        <div style="display: flex; justify-content: flex-end; padding: 0 4px 4px 0;">
+          <span class="version-badge">V4 • iOS Native</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 4px;">
+          <span style="font-size: 20px; font-weight: 800; color: #000;">Entrega #89240</span>
+          <span class="v4-badge">PENDIENTE</span>
+        </div>
+
+        <!-- Group 1 -->
+        <div class="v4-section-title">CLIENTE</div>
+        <div class="v4-group">
+          <div class="v4-cell">
+            <span class="v4-cell-label">Nombre</span>
+            <span class="v4-cell-val highlight">Sonia María López Ruiz</span>
+          </div>
+          <div class="v4-cell">
+            <span class="v4-cell-label">No. Cédula</span>
+            <span class="v4-cell-val">001-180592-0042K</span>
+          </div>
+          <div class="v4-cell">
+            <span class="v4-cell-label">Código Cliente</span>
+            <span class="v4-cell-val">9948201</span>
+          </div>
+          <div class="v4-cell">
+            <span class="v4-cell-label">Teléfono</span>
+            <a href="tel:+50588887777" style="color:#006738; font-weight:700; text-decoration:none;">+505 8888-7777</a>
+          </div>
+        </div>
+
+        <!-- Group 2 -->
+        <div class="v4-section-title">DETALLES DE CITA</div>
+        <div class="v4-group">
+          <div class="v4-cell">
+            <span class="v4-cell-label">Fecha y Hora</span>
+            <span class="v4-cell-val highlight">Hoy 10:30 - 11:30 AM</span>
+          </div>
+          <div class="v4-cell" style="flex-direction: column; align-items: flex-start; gap: 4px;">
+            <span class="v4-cell-label">Dirección</span>
+            <span class="v4-cell-val" style="font-size: 13px; color: #1C1C1E;">Residencial Los Robles, de la Plaza El Sol 2 c. al Sur, Casa #142. Managua.</span>
+          </div>
+          <div class="v4-cell">
+            <span class="v4-cell-label">Receptor Tercero</span>
+            <span class="v4-cell-val">Carlos López (Hermano)</span>
+          </div>
+        </div>
+
+        <!-- Group 3 -->
+        <div class="v4-section-title">TARJETAS BANPRO</div>
+        <div class="v4-group">
+          <div class="v4-cell">
+            <div>
+              <div style="font-size: 14px; font-weight: 700;">Visa Signature Black</div>
+              <div style="font-size: 12px; color: #8E8E93;">Termina en 4821 | Cta: **901238491</div>
+            </div>
+            <span style="font-size: 11px; font-weight: 700; color: #006738;">En Custodia</span>
+          </div>
+
+          <div class="v4-cell">
+            <div>
+              <div style="font-size: 14px; font-weight: 700;">Mastercard Débito Preferente</div>
+              <div style="font-size: 12px; color: #8E8E93;">Termina en 9015 | Cta: **104882910</div>
+            </div>
+            <span style="font-size: 11px; font-weight: 700; color: #006738;">En Custodia</span>
+          </div>
+        </div>
+
+        <!-- Group 4 -->
+        <div class="v4-section-title">HISTORIAL</div>
+        <div class="v4-group">
+          <details>
+            <summary class="v4-cell" style="cursor: pointer; list-style: none;">
+              <span class="v4-cell-label" style="color:#006738; font-weight:600;">Ver Historial de Intentos</span>
+              <span class="v4-cell-val">1 Visita</span>
+            </summary>
+            <div style="padding: 12px 16px; background: #FAF9F6; font-size: 12px; color: #666;">
+              <strong>24 Jul 2026 (02:15 PM):</strong> Intento fallido por Gestor Manuel Gómez (Cliente ausente).
+            </div>
+          </details>
+        </div>
+
+        <div class="v4-bottom-bar">
+          <button class="btn-sec" onclick="showToast('Reagendado (simulación)')">Reagendar</button>
+          <button class="btn-pri" onclick="showToast('✅ Entrega confirmada (V4)')">Confirmar Entrega</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================
+         VERSIÓN 5: EXECUTIVE UI
+         ========================================================= -->
+    <div id="v5" class="tab-content" role="tabpanel">
+      <div class="v5-container">
+        <div style="display: flex; justify-content: flex-end; padding: 0 0 4px 0;">
+          <span class="version-badge">V5 • Ejecutivo</span>
+        </div>
+        <div class="v5-top-banner">
+          <span class="v5-tag">BANPRO PROMERICA</span>
+          <div class="v5-client-title">Sonia María López Ruiz</div>
+          <div style="font-size: 12px; color: #64748B; margin-top: 4px;">Solicitud de Entrega: <strong>#SL-89240</strong></div>
+        </div>
+
+        <div class="v5-section-block">
+          <div class="v5-subhead">1. Datos de Identificación</div>
+          <table class="v5-info-table">
+            <tr><td class="label">ID / Cédula</td><td class="val">001-180592-0042K</td></tr>
+            <tr><td class="label">Nº de Cliente</td><td class="val">9948201</td></tr>
+            <tr><td class="label">Contacto Directo</td><td class="val"><a href="tel:+50588887777" style="color:#006738; font-weight:700;">+505 8888-7777</a></td></tr>
+          </table>
+        </div>
+
+        <div class="v5-section-block">
+          <div class="v5-subhead">2. Cita de Entrega</div>
+          <div class="v5-highlight-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-size: 16px; font-weight: 800; color: #006738;">10:30 AM - 11:30 AM</span>
+              <span style="font-size: 11px; font-weight: 700; color: #004D29; background: #E6F2EB; padding: 2px 8px; border-radius: 4px;">25/07/2026</span>
+            </div>
+            <div style="font-size: 12px; color: #334155; margin-bottom: 8px;">
+              <strong>Dirección:</strong> Residencial Los Robles, de la Plaza El Sol 2 c. al Sur, Casa #142. Managua.
+            </div>
+            <div style="font-size: 11px; color: #004D29; background: #FFFBEB; padding: 6px; border-radius: 4px; border: 1px solid #FDB813;">
+              <strong>Tercero Autorizado:</strong> Carlos Eduardo López (Hermano / Familiar)
+            </div>
+          </div>
+        </div>
+
+        <div class="v5-section-block">
+          <div class="v5-subhead">3. Resumen de Tarjetas</div>
+          <div style="font-size: 11px; color: #64748B; margin-bottom: 8px;">Campaña: Renovación Masiva 2026</div>
+
+          <table class="v5-info-table" style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px;">
+            <thead>
+              <tr style="border-bottom: 2px solid #E2E8F0; text-align: left; font-size: 11px; color: #64748B;">
+                <th style="padding: 6px 8px;">Producto</th>
+                <th style="padding: 6px 8px;">Dígitos</th>
+                <th style="padding: 6px 8px;">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding: 8px; font-weight: 700;">Visa Signature Black</td>
+                <td style="padding: 8px;">•••• 4821</td>
+                <td style="padding: 8px; color: #006738; font-weight: 700;">En Custodia</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; font-weight: 700;">Mastercard Débito</td>
+                <td style="padding: 8px;">•••• 9015</td>
+                <td style="padding: 8px; color: #006738; font-weight: 700;">En Custodia</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="v5-section-block">
+          <details>
+            <summary style="cursor: pointer; font-size: 12px; font-weight: 800; color: #006738; list-style: none;">
+              + HISTORIAL REGISTRADO
+            </summary>
+            <div style="margin-top: 8px; font-size: 12px; background: #F1F5F9; padding: 10px; border-radius: 6px;">
+              <strong>24 de Julio 2026 (02:15 PM):</strong> Visita infructuosa registrada por gestor Manuel Gómez. No respondió al llamado.
+            </div>
+          </details>
+        </div>
+
+        <div class="v5-bottom-bar">
+          <button class="v5-btn-alt" onclick="showToast('Novedad registrada (simulación)')">Novedad</button>
+          <button class="v5-btn-main" onclick="showToast('✅ Procesando entregas (V5)')">PROCESAR ENTREGAS</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Toast de feedback -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <!-- JAVASCRIPT MEJORADO -->
+  <script>
+    // Función para cambiar de pestaña con accesibilidad
+    function switchTab(tabId, btnElement) {
+      // Ocultar todos los contenidos
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      // Quitar clase active de todos los botones y actualizar aria-selected
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      });
+
+      // Mostrar el contenido seleccionado
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+
+      // Activar el botón
+      btnElement.classList.add('active');
+      btnElement.setAttribute('aria-selected', 'true');
+
+      // Scroll suave al botón
+      btnElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    // Función para mostrar toast (feedback no intrusivo)
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toast._timeout);
+      toast._timeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2800);
+    }
+
+    // Cierre automático del toast al hacer clic
+    document.getElementById('toast').addEventListener('click', function() {
+      this.classList.remove('show');
+      clearTimeout(this._timeout);
+    });
+  </script>
+</body>
+</html>

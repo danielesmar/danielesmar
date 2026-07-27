@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Entrega de Tarjetas - Gestor PWA</title>
+  <!-- PWA Web App Capable -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0F172A">
+  
+  <style>
+    :root {
+      --bg-main: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --primary: #2563EB;
+      --primary-dark: #1D4ED8;
+      --primary-light: #EFF6FF;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
+      --success: #10B981;
+      --success-bg: #ECFDF5;
+      --warning: #F59E0B;
+      --warning-bg: #FFFBEB;
+      --danger: #EF4444;
+      --danger-bg: #FEF2F2;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding-bottom: 90px; /* Espacio para barra flotante de acciones */
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: var(--bg-main);
+      position: relative;
+    }
+
+    /* Header PWA / Barra Superior */
+    .top-bar {
+      background-color: #0F172A;
+      color: #FFFFFF;
+      padding: 20px 20px 24px 20px;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .nav-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #94A3B8;
+    }
+
+    .badge-status {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-pending {
+      background-color: var(--warning-bg);
+      color: #B45309;
+    }
+
+    .agent-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(10px);
+    }
+
+    .agent-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .agent-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .agent-label {
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    .agent-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #F8FAFC;
+    }
+
+    /* Main Content Layout */
+    .content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Card Component */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Customer Info Grid */
+    .client-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .info-item.full-width {
+      grid-column: span 2;
+    }
+
+    .label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .phone-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* Appointment Info */
+    .appointment-box {
+      background: var(--primary-light);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .date-time {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .date-time .time {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .date-time .date {
+      font-size: 12px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .third-party-tag {
+      background: #FEF3C7;
+      color: #92400E;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      margin-top: 10px;
+      border-left: 4px solid var(--warning);
+    }
+
+    /* Products Section */
+    .product-card {
+      background: #F8FAFC;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-top: 10px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .card-graphic {
+      width: 76px;
+      height: 48px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-graphic.gold {
+      background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+    }
+
+    .card-chip {
+      width: 12px;
+      height: 9px;
+      background: #FCD34D;
+      border-radius: 2px;
+    }
+
+    .card-digits {
+      font-family: monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .product-details {
+      flex-grow: 1;
+    }
+
+    .product-type {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .product-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .badge-card-status {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #E2E8F0;
+      color: #475569;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    /* Collapsible History Section (HTML native details) */
+    details {
+      width: 100%;
+    }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .accordion-icon {
+      transition: transform 0.2s ease;
+      width: 20px;
+      height: 20px;
+    }
+
+    details[open] .accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .timeline {
+      margin-top: 16px;
+      border-left: 2px solid var(--border-color);
+      padding-left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .timeline-item {
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -19px;
+      top: 4px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+    }
+
+    .timeline-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .timeline-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 2px 0;
+    }
+
+    .timeline-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Fixed Bottom Action Bar */
+    .bottom-actions {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: #FFFFFF;
+      padding: 12px 16px 20px 16px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 12px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+      z-index: 200;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-secondary {
+      background: #F1F5F9;
+      color: #475569;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    /* Quick Action Icons */
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Header PWA / Barra Superior -->
+    <header class="top-bar">
+      <div class="nav-header">
+        <span class="nav-title">Solicitud #SL-89240</span>
+        <span class="badge-status badge-pending">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+          Pendiente
+        </span>
+      </div>
+
+      <!-- Datos del Gestor -->
+      <div class="agent-pill">
+        <div class="agent-avatar">RP</div>
+        <div class="agent-info">
+          <span class="agent-label">Gestor de Entrega Asignado</span>
+          <span class="agent-name">Ricardo Pérez M.</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Body -->
+    <main class="content">
+
+      <!-- 1. Información del Cliente -->
+      <section class="section-card">
+        <div class="section-header">
+          <span class="section-title">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Cliente
+          </span>
+          <span class="label">Nº Cliente: <strong>9948201</strong></span>
+        </div>
+
+        <h1 class="client-name">Sonia María López Ruiz</h1>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Identificación (ID/DNI)</span>
+            <span class="value">001-180592-0042K</span>
+          </div>
+
+          <div class="info-item">
+            <span class="label">Teléfono de Contacto</span>
+            <a href="tel:+50588887777" class="phone-action">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328z"/></svg>
+              +505 8888-7777
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Detalle de la Cita y Ubicación -->
+      <section class="section-card">
+        <div class="section-header">
+          <span class="section-title">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Cita de Entrega
+          </span>
+        </div>
+
+        <div class="appointment-box">
+          <div class="date-time">
+            <span class="time">10:30 AM - 11:30 AM</span>
+            <span class="date">Hoy, 25 de Julio 2026</span>
+          </div>
+          <a href="https://maps.google.com" target="_blank" class="icon-btn" title="Navegar">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+          </a>
+        </div>
+
+        <div class="info-item full-width" style="margin-bottom: 10px;">
+          <span class="label">Dirección Domiciliar</span>
+          <span class="value" style="font-weight: 500; font-size: 13px; margin-top: 2px;">
+            Residencial Los Robles, de la Plaza El Sol 2 c. al Sur, Casa #142. Managua.
+          </span>
+        </div>
+
+        <!-- Alerta / Info de Entrega a Tercero -->
+        <div class="third-party-tag">
+          <strong>⚠️ Permitida Entrega a Tercero</strong>
+          <div style="margin-top: 4px;">
+            <div><strong>Tercero Autorizado:</strong> Carlos Eduardo López</div>
+            <div><strong>Parentesco:</strong> Hermano / Familiar directo</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Productos a Entregar -->
+      <section class="section-card">
+        <div class="section-header">
+          <span class="section-title">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Productos a Entregar (2)
+          </span>
+        </div>
+
+        <div style="margin-bottom: 8px;">
+          <span class="label">Campaña / Evento:</span>
+          <span class="value" style="font-size: 13px; color: var(--primary);"> Renovación Masiva 2026</span>
+        </div>
+
+        <!-- Producto 1 -->
+        <div class="product-card">
+          <div class="card-graphic gold">
+            <div class="card-chip"></div>
+            <div class="card-digits">•••• 4821</div>
+          </div>
+          <div class="product-details">
+            <div class="product-type">Visa Signature Black</div>
+            <div class="product-meta">Cuenta: **901238491</div>
+            <span class="badge-card-status">En Custodia</span>
+          </div>
+        </div>
+
+        <!-- Producto 2 -->
+        <div class="product-card">
+          <div class="card-graphic">
+            <div class="card-chip"></div>
+            <div class="card-digits">•••• 9015</div>
+          </div>
+          <div class="product-details">
+            <div class="product-type">Mastercard Débito Preferente</div>
+            <div class="product-meta">Cuenta: **104882910</div>
+            <span class="badge-card-status">En Custodia</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Historial de la Solicitud (Colapsable) -->
+      <section class="section-card">
+        <details>
+          <summary>
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Historial de Visitas (1)
+            </span>
+            <svg class="accordion-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-date">24 de Julio 2026 - 02:15 PM</div>
+              <div class="timeline-title">Visita Sin Éxito - Cliente Ausente</div>
+              <div class="timeline-desc">
+                Se realizó visita en la dirección. No atendió el timbre ni llamadas. Gestor previo: <strong>Manuel Gómez</strong>.
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+    </main>
+
+    <!-- Fixed Action Footer Button Bar -->
+    <footer class="bottom-actions">
+      <button class="btn btn-secondary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Incidencia
+      </button>
+
+      <button class="btn btn-primary" onclick="alert('Iniciando flujo de captura de OTP y Firma de entrega...');">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Iniciar Entrega
+      </button>
+    </footer>
+
+  </div>
+
+</body>
+</html>

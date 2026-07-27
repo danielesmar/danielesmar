@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Banpro · Entrega de Tarjetas (5 estilos)</title>
+  <!-- Font Awesome (para iconos comunes) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Fuentes para cada estilo -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Roboto:wght@400;500;700&family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== RESET BASE ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f0f3f8;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px 12px 40px;
+    }
+    .app-wrapper {
+      max-width: 460px;
+      width: 100%;
+    }
+
+    /* ===== TABS ===== */
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    .tab-btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 40px;
+      background: #e6ecf3;
+      color: #1a2c4a;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .tab-btn.active {
+      background: #003366;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0,51,102,0.3);
+    }
+    .tab-btn i { margin-right: 5px; }
+
+    /* ===== CONTENEDORES DE TEMA ===== */
+    .theme-container {
+      display: none;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 10, 30, 0.08);
+    }
+    .theme-container.active { display: block; }
+
+    /* Cada tema tendrá su propio padding interior y estructura */
+    .app-inner {
+      padding: 24px 20px 30px;
+    }
+
+    /* ===== ESTILOS COMUNES PARA CIERTAS CLASES (se sobrescribirán) ===== */
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .header-left .icon-back { font-size: 22px; cursor: default; }
+    .header-left h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
+    .header-right { display: flex; gap: 16px; font-size: 18px; }
+    .header-right i { cursor: default; }
+
+    .client-card { border-radius: 20px; padding: 20px 18px; color: white; margin-bottom: 20px; }
+    .client-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+    .client-row:last-child { margin-bottom: 0; }
+    .client-label { font-size: 12px; font-weight: 500; opacity: 0.7; letter-spacing: 0.3px; text-transform: uppercase; }
+    .client-value { font-size: 16px; font-weight: 500; }
+    .client-value small { font-weight: 400; opacity: 0.8; font-size: 14px; margin-left: 4px; }
+    .client-divider { height: 1px; margin: 12px 0; }
+
+    .section { margin-bottom: 24px; }
+    .section-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; margin-bottom: 14px; letter-spacing: -0.2px; }
+    .section-title i { font-size: 16px; width: 20px; text-align: center; }
+    .section-title .badge { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 30px; margin-left: auto; }
+
+    .product-card { border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 1px solid transparent; }
+    .product-card:last-child { margin-bottom: 0; }
+    .product-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .product-type { font-weight: 600; font-size: 15px; }
+    .product-type i { margin-right: 6px; }
+    .product-event { font-size: 11px; font-weight: 600; padding: 2px 12px; border-radius: 30px; white-space: nowrap; }
+    .product-image-row { display: flex; align-items: center; gap: 14px; margin: 12px 0 10px; }
+    .product-image { width: 60px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+    .product-detail { flex: 1; }
+    .product-detail .label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px; }
+    .product-detail .value { font-size: 15px; font-weight: 500; margin-top: 2px; }
+    .product-detail .value small { font-weight: 400; font-size: 13px; margin-left: 4px; }
+    .product-footer { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid; font-size: 13px; }
+
+    .appointment-grid { border-radius: 16px; padding: 16px; border: 1px solid; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+    .appointment-item { display: flex; flex-direction: column; }
+    .appointment-item .label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px; }
+    .appointment-item .value { font-size: 14px; font-weight: 500; margin-top: 2px; word-break: break-word; }
+    .appointment-item.full { grid-column: 1 / -1; }
+    .appointment-item .value i { margin-right: 4px; font-size: 13px; }
+    .third-party { border-radius: 12px; padding: 12px 14px; margin-top: 8px; grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 13px; }
+    .third-party span { display: flex; align-items: center; gap: 6px; }
+    .third-party i { width: 16px; }
+
+    .status-gestor { display: flex; justify-content: space-between; align-items: center; border-radius: 14px; padding: 12px 16px; margin: 6px 0 4px; }
+    .status-gestor .status { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 14px; }
+    .status-gestor .status .dot { width: 10px; height: 10px; border-radius: 10px; display: inline-block; }
+    .status-gestor .gestor { font-size: 13px; }
+    .status-gestor .gestor i { margin-right: 6px; }
+
+    .collapse-section { margin-top: 16px; border-radius: 16px; border: 1px solid; overflow: hidden; }
+    .collapse-header { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: 0.15s; }
+    .collapse-header .left { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 14px; }
+    .collapse-header .left i { font-size: 16px; }
+    .collapse-header .arrow { transition: transform 0.25s ease; }
+    .collapse-header .arrow.open { transform: rotate(180deg); }
+    .collapse-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding: 0 16px; }
+    .collapse-body.open { max-height: 300px; padding: 16px 16px 20px; }
+    .collapse-body .history-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid; font-size: 13px; }
+    .collapse-body .history-item:last-child { border-bottom: none; }
+    .collapse-body .history-item i { width: 18px; margin-top: 2px; }
+    .collapse-body .history-item .text { flex: 1; }
+    .collapse-body .history-item .date { font-size: 11px; white-space: nowrap; }
+
+    .action-btn { width: 100%; padding: 14px; border: none; border-radius: 40px; font-weight: 600; font-size: 15px; letter-spacing: 0.3px; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 16px; cursor: default; transition: 0.2s; }
+    .action-btn i { font-size: 18px; }
+
+    @media (max-width: 420px) {
+      .app-inner { padding: 18px 14px 24px; }
+      .appointment-grid { grid-template-columns: 1fr; gap: 10px; }
+      .appointment-item.full { grid-column: 1; }
+      .third-party { flex-direction: column; gap: 4px; }
+    }
+
+    /* ==============================================================
+       TEMA 1: iOS (Cupertino) – SF Pro, blur, separadores, sin bordes
+    ============================================================== */
+    .theme-ios .app-inner {
+      background: #f2f2f7;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .theme-ios .header-left h1 { font-weight: 700; font-size: 20px; color: #1c1c1e; }
+    .theme-ios .header-left .icon-back { color: #007aff; }
+    .theme-ios .header-right { color: #007aff; }
+    .theme-ios .client-card {
+      background: linear-gradient(145deg, #1c1c1e, #2c2c2e);
+      border-radius: 14px;
+    }
+    .theme-ios .client-divider { background: rgba(255,255,255,0.15); }
+    .theme-ios .section-title { color: #1c1c1e; font-weight: 600; }
+    .theme-ios .section-title i { color: #007aff; }
+    .theme-ios .section-title .badge {
+      background: #e5e5ea;
+      color: #1c1c1e;
+    }
+    .theme-ios .product-card {
+      background: #ffffff;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+      margin-bottom: 14px;
+    }
+    .theme-ios .product-type { color: #1c1c1e; }
+    .theme-ios .product-type i { color: #007aff; }
+    .theme-ios .product-event {
+      background: #e5e5ea;
+      color: #1c1c1e;
+      font-weight: 500;
+    }
+    .theme-ios .product-image { background: #e5e5ea; color: #1c1c1e; }
+    .theme-ios .product-detail .label { color: #8e8e93; }
+    .theme-ios .product-detail .value { color: #1c1c1e; }
+    .theme-ios .product-footer {
+      border-color: #e5e5ea;
+      color: #1c1c1e;
+    }
+    .theme-ios .product-footer i { color: #007aff; }
+    .theme-ios .appointment-grid {
+      background: #ffffff;
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .theme-ios .appointment-item .label { color: #8e8e93; }
+    .theme-ios .appointment-item .value { color: #1c1c1e; }
+    .theme-ios .appointment-item .value i { color: #007aff; }
+    .theme-ios .third-party {
+      background: #f2f2f7;
+      color: #1c1c1e;
+    }
+    .theme-ios .third-party i { color: #007aff; }
+    .theme-ios .status-gestor {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .theme-ios .status-gestor .status { color: #1c1c1e; }
+    .theme-ios .status-gestor .status .dot { background: #34c759; }
+    .theme-ios .status-gestor .gestor { color: #8e8e93; }
+    .theme-ios .status-gestor .gestor i { color: #007aff; }
+    .theme-ios .collapse-section {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .theme-ios .collapse-header {
+      background: #ffffff;
+    }
+    .theme-ios .collapse-header .left { color: #1c1c1e; }
+    .theme-ios .collapse-header .left i { color: #007aff; }
+    .theme-ios .collapse-header .arrow { color: #8e8e93; }
+    .theme-ios .collapse-body {
+      background: #ffffff;
+    }
+    .theme-ios .collapse-body .history-item {
+      border-color: #e5e5ea;
+      color: #1c1c1e;
+    }
+    .theme-ios .collapse-body .history-item i { color: #007aff; }
+    .theme-ios .collapse-body .history-item .date { color: #8e8e93; }
+    .theme-ios .action-btn {
+      background: #007aff;
+      color: white;
+      border-radius: 40px;
+      box-shadow: 0 6px 14px rgba(0,122,255,0.3);
+      font-weight: 600;
+    }
+
+    /* ==============================================================
+       TEMA 2: Android (Material Design) – Roboto, elevation, chips
+    ============================================================== */
+    .theme-android .app-inner {
+      background: #fafafa;
+      font-family: 'Roboto', sans-serif;
+    }
+    .theme-android .header-left h1 { font-weight: 500; color: #212121; }
+    .theme-android .header-left .icon-back { color: #6200ee; }
+    .theme-android .header-right { color: #6200ee; }
+    .theme-android .client-card {
+      background: linear-gradient(145deg, #3700b3, #6200ee);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(98,0,238,0.2);
+    }
+    .theme-android .client-divider { background: rgba(255,255,255,0.2); }
+    .theme-android .section-title {
+      color: #212121;
+      font-weight: 500;
+    }
+    .theme-android .section-title i { color: #6200ee; }
+    .theme-android .section-title .badge {
+      background: #e0e0e0;
+      color: #212121;
+    }
+    .theme-android .product-card {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .theme-android .product-type { color: #212121; }
+    .theme-android .product-type i { color: #6200ee; }
+    .theme-android .product-event {
+      background: #e0e0e0;
+      color: #212121;
+      font-weight: 500;
+    }
+    .theme-android .product-image { background: #e0e0e0; color: #212121; }
+    .theme-android .product-detail .label { color: #757575; }
+    .theme-android .product-detail .value { color: #212121; }
+    .theme-android .product-footer {
+      border-color: #e0e0e0;
+      color: #212121;
+    }
+    .theme-android .product-footer i { color: #6200ee; }
+    .theme-android .appointment-grid {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+    }
+    .theme-android .appointment-item .label { color: #757575; }
+    .theme-android .appointment-item .value { color: #212121; }
+    .theme-android .appointment-item .value i { color: #6200ee; }
+    .theme-android .third-party {
+      background: #f3edff;
+      color: #212121;
+    }
+    .theme-android .third-party i { color: #6200ee; }
+    .theme-android .status-gestor {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+    }
+    .theme-android .status-gestor .status { color: #212121; }
+    .theme-android .status-gestor .status .dot { background: #4caf50; }
+    .theme-android .status-gestor .gestor { color: #757575; }
+    .theme-android .status-gestor .gestor i { color: #6200ee; }
+    .theme-android .collapse-section {
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+    }
+    .theme-android .collapse-header {
+      background: #ffffff;
+    }
+    .theme-android .collapse-header .left { color: #212121; }
+    .theme-android .collapse-header .left i { color: #6200ee; }
+    .theme-android .collapse-header .arrow { color: #757575; }
+    .theme-android .collapse-body {
+      background: #ffffff;
+    }
+    .theme-android .collapse-body .history-item {
+      border-color: #e0e0e0;
+      color: #212121;
+    }
+    .theme-android .collapse-body .history-item i { color: #6200ee; }
+    .theme-android .collapse-body .history-item .date { color: #757575; }
+    .theme-android .action-btn {
+      background: #6200ee;
+      color: white;
+      border-radius: 24px;
+      box-shadow: 0 4px 12px rgba(98,0,238,0.3);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* ==============================================================
+       TEMA 3: Minimalista Clean – mucho espacio, líneas finas, sin sombras
+    ============================================================== */
+    .theme-clean .app-inner {
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      padding: 20px 16px 24px;
+    }
+    .theme-clean .header { margin-bottom: 28px; }
+    .theme-clean .header-left h1 { font-weight: 300; font-size: 20px; color: #111; letter-spacing: -0.5px; }
+    .theme-clean .header-left .icon-back { color: #111; }
+    .theme-clean .header-right { color: #111; }
+    .theme-clean .client-card {
+      background: #f7f7f7;
+      color: #111;
+      border-radius: 8px;
+      padding: 16px;
+      border: 1px solid #eee;
+      box-shadow: none;
+    }
+    .theme-clean .client-label { color: #666; opacity: 1; }
+    .theme-clean .client-value { color: #111; }
+    .theme-clean .client-divider { background: #ddd; }
+    .theme-clean .section-title {
+      color: #111;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+    .theme-clean .section-title i { color: #111; }
+    .theme-clean .section-title .badge {
+      background: #f0f0f0;
+      color: #111;
+    }
+    .theme-clean .product-card {
+      background: #fafafa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+      box-shadow: none;
+    }
+    .theme-clean .product-type { color: #111; }
+    .theme-clean .product-type i { color: #111; }
+    .theme-clean .product-event {
+      background: #eaeaea;
+      color: #111;
+      font-weight: 400;
+    }
+    .theme-clean .product-image { background: #eaeaea; color: #111; }
+    .theme-clean .product-detail .label { color: #888; }
+    .theme-clean .product-detail .value { color: #111; }
+    .theme-clean .product-footer {
+      border-color: #eaeaea;
+      color: #111;
+    }
+    .theme-clean .product-footer i { color: #111; }
+    .theme-clean .appointment-grid {
+      background: #fafafa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+    }
+    .theme-clean .appointment-item .label { color: #888; }
+    .theme-clean .appointment-item .value { color: #111; }
+    .theme-clean .appointment-item .value i { color: #111; }
+    .theme-clean .third-party {
+      background: #f5f5f5;
+      color: #111;
+    }
+    .theme-clean .third-party i { color: #111; }
+    .theme-clean .status-gestor {
+      background: #fafafa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+    }
+    .theme-clean .status-gestor .status { color: #111; }
+    .theme-clean .status-gestor .status .dot { background: #2e7d32; }
+    .theme-clean .status-gestor .gestor { color: #666; }
+    .theme-clean .status-gestor .gestor i { color: #111; }
+    .theme-clean .collapse-section {
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+    }
+    .theme-clean .collapse-header {
+      background: #fafafa;
+    }
+    .theme-clean .collapse-header .left { color: #111; }
+    .theme-clean .collapse-header .left i { color: #111; }
+    .theme-clean .collapse-header .arrow { color: #888; }
+    .theme-clean .collapse-body {
+      background: #ffffff;
+    }
+    .theme-clean .collapse-body .history-item {
+      border-color: #eaeaea;
+      color: #111;
+    }
+    .theme-clean .collapse-body .history-item i { color: #111; }
+    .theme-clean .collapse-body .history-item .date { color: #888; }
+    .theme-clean .action-btn {
+      background: #111;
+      color: white;
+      border-radius: 4px;
+      box-shadow: none;
+      font-weight: 400;
+      letter-spacing: 0.5px;
+    }
+
+    /* ==============================================================
+       TEMA 4: Oscuro Moderno – fondo oscuro, neón, glassmorphism
+    ============================================================== */
+    .theme-dark .app-inner {
+      background: #0b0e14;
+      font-family: 'Inter', sans-serif;
+    }
+    .theme-dark .header-left h1 { color: #e8edf5; }
+    .theme-dark .header-left .icon-back { color: #00d4ff; }
+    .theme-dark .header-right { color: #00d4ff; }
+    .theme-dark .client-card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      color: #e8edf5;
+    }
+    .theme-dark .client-divider { background: rgba(255,255,255,0.08); }
+    .theme-dark .section-title {
+      color: #b0c7e7;
+    }
+    .theme-dark .section-title i { color: #00d4ff; }
+    .theme-dark .section-title .badge {
+      background: rgba(0,212,255,0.15);
+      color: #00d4ff;
+    }
+    .theme-dark .product-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      backdrop-filter: blur(4px);
+    }
+    .theme-dark .product-type { color: #e8edf5; }
+    .theme-dark .product-type i { color: #00d4ff; }
+    .theme-dark .product-event {
+      background: rgba(0,212,255,0.12);
+      color: #00d4ff;
+    }
+    .theme-dark .product-image { background: rgba(255,255,255,0.08); color: #00d4ff; }
+    .theme-dark .product-detail .label { color: #7a8aa8; }
+    .theme-dark .product-detail .value { color: #e8edf5; }
+    .theme-dark .product-footer {
+      border-color: rgba(255,255,255,0.06);
+      color: #b0c7e7;
+    }
+    .theme-dark .product-footer i { color: #00d4ff; }
+    .theme-dark .appointment-grid {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+    }
+    .theme-dark .appointment-item .label { color: #7a8aa8; }
+    .theme-dark .appointment-item .value { color: #e8edf5; }
+    .theme-dark .appointment-item .value i { color: #00d4ff; }
+    .theme-dark .third-party {
+      background: rgba(0,212,255,0.08);
+      color: #b0c7e7;
+    }
+    .theme-dark .third-party i { color: #00d4ff; }
+    .theme-dark .status-gestor {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+    }
+    .theme-dark .status-gestor .status { color: #e8edf5; }
+    .theme-dark .status-gestor .status .dot { background: #00d4ff; box-shadow: 0 0 8px #00d4ff; }
+    .theme-dark .status-gestor .gestor { color: #7a8aa8; }
+    .theme-dark .status-gestor .gestor i { color: #00d4ff; }
+    .theme-dark .collapse-section {
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+    }
+    .theme-dark .collapse-header {
+      background: transparent;
+    }
+    .theme-dark .collapse-header .left { color: #b0c7e7; }
+    .theme-dark .collapse-header .left i { color: #00d4ff; }
+    .theme-dark .collapse-header .arrow { color: #7a8aa8; }
+    .theme-dark .collapse-body {
+      background: transparent;
+    }
+    .theme-dark .collapse-body .history-item {
+      border-color: rgba(255,255,255,0.06);
+      color: #b0c7e7;
+    }
+    .theme-dark .collapse-body .history-item i { color: #00d4ff; }
+    .theme-dark .collapse-body .history-item .date { color: #7a8aa8; }
+    .theme-dark .action-btn {
+      background: linear-gradient(135deg, #00d4ff, #0070b3);
+      color: #0b0e14;
+      border-radius: 30px;
+      box-shadow: 0 0 20px rgba(0,212,255,0.3);
+      font-weight: 700;
+    }
+
+    /* ==============================================================
+       TEMA 5: Neumorfismo – pastel, sombras suaves, sin bordes duros
+    ============================================================== */
+    .theme-neumo .app-inner {
+      background: #e0e5ec;
+      font-family: 'Inter', sans-serif;
+    }
+    .theme-neumo .header-left h1 { color: #2d4059; }
+    .theme-neumo .header-left .icon-back { color: #2d4059; }
+    .theme-neumo .header-right { color: #2d4059; }
+    .theme-neumo .client-card {
+      background: #e0e5ec;
+      border-radius: 30px;
+      box-shadow: -6px -6px 12px rgba(255,255,255,0.7), 6px 6px 12px rgba(174,192,214,0.5);
+      color: #2d4059;
+    }
+    .theme-neumo .client-divider { background: rgba(45,64,89,0.15); }
+    .theme-neumo .client-label { opacity: 0.6; }
+    .theme-neumo .section-title {
+      color: #2d4059;
+    }
+    .theme-neumo .section-title i { color: #2d4059; }
+    .theme-neumo .section-title .badge {
+      background: #e0e5ec;
+      box-shadow: inset -2px -2px 4px rgba(255,255,255,0.6), inset 2px 2px 4px rgba(174,192,214,0.4);
+      color: #2d4059;
+    }
+    .theme-neumo .product-card {
+      background: #e0e5ec;
+      border-radius: 24px;
+      box-shadow: -4px -4px 8px rgba(255,255,255,0.7), 4px 4px 8px rgba(174,192,214,0.5);
+      border: none;
+    }
+    .theme-neumo .product-type { color: #2d4059; }
+    .theme-neumo .product-type i { color: #2d4059; }
+    .theme-neumo .product-event {
+      background: #e0e5ec;
+      box-shadow: inset -2px -2px 4px rgba(255,255,255,0.6), inset 2px 2px 4px rgba(174,192,214,0.4);
+      color: #2d4059;
+    }
+    .theme-neumo .product-image { background: #e0e5ec; color: #2d4059; box-shadow: inset -2px -2px 6px rgba(255,255,255,0.7), inset 2px 2px 6px rgba(174,192,214,0.5); }
+    .theme-neumo .product-detail .label { color: #5a6f8c; }
+    .theme-neumo .product-detail .value { color: #2d4059; }
+    .theme-neumo .product-footer {
+      border-color: rgba(45,64,89,0.1);
+      color: #2d4059;
+    }
+    .theme-neumo .product-footer i { color: #2d4059; }
+    .theme-neumo .appointment-grid {
+      background: #e0e5ec;
+      border-radius: 24px;
+      box-shadow: -4px -4px 8px rgba(255,255,255,0.7), 4px 4px 8px rgba(174,192,214,0.5);
+      border: none;
+    }
+    .theme-neumo .appointment-item .label { color: #5a6f8c; }
+    .theme-neumo .appointment-item .value { color: #2d4059; }
+    .theme-neumo .appointment-item .value i { color: #2d4059; }
+    .theme-neumo .third-party {
+      background: #e0e5ec;
+      box-shadow: inset -2px -2px 4px rgba(255,255,255,0.6), inset 2px 2px 4px rgba(174,192,214,0.4);
+      color: #2d4059;
+    }
+    .theme-neumo .third-party i { color: #2d4059; }
+    .theme-neumo .status-gestor {
+      background: #e0e5ec;
+      border-radius: 24px;
+      box-shadow: -4px -4px 8px rgba(255,255,255,0.7), 4px 4px 8px rgba(174,192,214,0.5);
+    }
+    .theme-neumo .status-gestor .status { color: #2d4059; }
+    .theme-neumo .status-gestor .status .dot { background: #4caf84; }
+    .theme-neumo .status-gestor .gestor { color: #5a6f8c; }
+    .theme-neumo .status-gestor .gestor i { color: #2d4059; }
+    .theme-neumo .collapse-section {
+      border: none;
+      border-radius: 24px;
+      box-shadow: -4px -4px 8px rgba(255,255,255,0.7), 4px 4px 8px rgba(174,192,214,0.5);
+    }
+    .theme-neumo .collapse-header {
+      background: #e0e5ec;
+    }
+    .theme-neumo .collapse-header .left { color: #2d4059; }
+    .theme-neumo .collapse-header .left i { color: #2d4059; }
+    .theme-neumo .collapse-header .arrow { color: #5a6f8c; }
+    .theme-neumo .collapse-body {
+      background: #e0e5ec;
+    }
+    .theme-neumo .collapse-body .history-item {
+      border-color: rgba(45,64,89,0.1);
+      color: #2d4059;
+    }
+    .theme-neumo .collapse-body .history-item i { color: #2d4059; }
+    .theme-neumo .collapse-body .history-item .date { color: #5a6f8c; }
+    .theme-neumo .action-btn {
+      background: #e0e5ec;
+      color: #2d4059;
+      border-radius: 40px;
+      box-shadow: -6px -6px 12px rgba(255,255,255,0.7), 6px 6px 12px rgba(174,192,214,0.5);
+      font-weight: 600;
+      border: none;
+    }
+
+  </style>
+</head>
+<body>
+<div class="app-wrapper">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-theme="ios"><i class="fab fa-apple"></i> iOS</button>
+    <button class="tab-btn" data-theme="android"><i class="fab fa-android"></i> Android</button>
+    <button class="tab-btn" data-theme="clean"><i class="fas fa-circle"></i> Clean</button>
+    <button class="tab-btn" data-theme="dark"><i class="fas fa-moon"></i> Dark</button>
+    <button class="tab-btn" data-theme="neumo"><i class="fas fa-cube"></i> Neumo</button>
+  </div>
+
+  <!-- ===== TEMA iOS ===== -->
+  <div class="theme-container active theme-ios" data-theme="ios">
+    <div class="app-inner">
+      <div class="header">
+        <div class="header-left">
+          <span class="icon-back"><i class="fas fa-chevron-left"></i></span>
+          <h1>Entrega de Tarjetas</h1>
+        </div>
+        <div class="header-right">
+          <i class="fas fa-search"></i>
+          <i class="fas fa-ellipsis-v"></i>
+        </div>
+      </div>
+      <div class="client-card">
+        <div class="client-row"><span class="client-label">Cliente</span><span class="client-value">María Elena Rodríguez</span></div>
+        <div class="client-row"><span class="client-label">ID / Cédula</span><span class="client-value">12.345.678-9</span></div>
+        <div class="client-divider"></div>
+        <div class="client-row"><span class="client-label">Teléfono</span><span class="client-value">+56 9 8765 4321</span></div>
+        <div class="client-row"><span class="client-label">N° Cliente</span><span class="client-value">#CL-2025-0047 <small>· VIP</small></span></div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-credit-card"></i> Productos <span class="badge">2 tarjetas</span></div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Visa Gold</span><span class="product-event">Renovación</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 4832</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-8872</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 12/28</span><span><i class="fas fa-check-circle" style="color:#34c759;"></i> Activa</span></div>
+        </div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Mastercard Black</span><span class="product-event">Nuevo</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 9105</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-9912</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 09/29</span><span><i class="fas fa-hourglass-half" style="color:#ff9500;"></i> Pendiente</span></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-calendar-check"></i> Cita</div>
+        <div class="appointment-grid">
+          <div class="appointment-item"><span class="label">Fecha</span><span class="value"><i class="far fa-calendar-alt"></i> 25/07/2026</span></div>
+          <div class="appointment-item"><span class="label">Hora</span><span class="value"><i class="far fa-clock"></i> 11:30 hrs</span></div>
+          <div class="appointment-item full"><span class="label">Dirección</span><span class="value"><i class="fas fa-map-pin"></i> Av. Las Condes 1234, Depto 56, Santiago</span></div>
+          <div class="appointment-item full"><span class="label">Entrega a tercero</span><div class="third-party"><span><i class="fas fa-user-check"></i> Sí</span><span><i class="fas fa-user"></i> Juan Pérez</span><span><i class="fas fa-users"></i> Hermano</span></div></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="status-gestor">
+          <span class="status"><span class="dot"></span> Listo para entrega</span>
+          <span class="gestor"><i class="fas fa-user-circle"></i> Ana Torres</span>
+        </div>
+      </div>
+      <div class="section" style="margin-bottom:8px;">
+        <div class="collapse-section">
+          <div class="collapse-header toggle-collapse">
+            <span class="left"><i class="fas fa-history"></i> Historial</span>
+            <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+          </div>
+          <div class="collapse-body">
+            <div class="history-item"><i class="fas fa-user-times"></i><span class="text"><strong>Visita fallida</strong> — Gestor anterior (Carlos Méndez) no encontró al cliente.</span><span class="date">22/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-phone-alt"></i><span class="text">Contacto telefónico exitoso, se acordó nueva cita.</span><span class="date">23/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-check-circle"></i><span class="text">Solicitud de entrega generada por el banco.</span><span class="date">20/07/2026</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="action-btn" onclick="void(0)"><i class="fas fa-check-circle"></i> Confirmar entrega</button>
+    </div>
+  </div>
+
+  <!-- ===== TEMA Android ===== -->
+  <div class="theme-container theme-android" data-theme="android">
+    <div class="app-inner">
+      <div class="header">
+        <div class="header-left">
+          <span class="icon-back"><i class="fas fa-arrow-left"></i></span>
+          <h1>Entrega de Tarjetas</h1>
+        </div>
+        <div class="header-right">
+          <i class="fas fa-search"></i>
+          <i class="fas fa-more-vertical"></i>
+        </div>
+      </div>
+      <div class="client-card">
+        <div class="client-row"><span class="client-label">Cliente</span><span class="client-value">María Elena Rodríguez</span></div>
+        <div class="client-row"><span class="client-label">ID / Cédula</span><span class="client-value">12.345.678-9</span></div>
+        <div class="client-divider"></div>
+        <div class="client-row"><span class="client-label">Teléfono</span><span class="client-value">+56 9 8765 4321</span></div>
+        <div class="client-row"><span class="client-label">N° Cliente</span><span class="client-value">#CL-2025-0047 <small>· VIP</small></span></div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-credit-card"></i> Productos a entregar <span class="badge">2</span></div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Visa Gold</span><span class="product-event">Renovación</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 4832</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-8872</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 12/28</span><span><i class="fas fa-check-circle" style="color:#4caf50;"></i> Activa</span></div>
+        </div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Mastercard Black</span><span class="product-event">Nuevo</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 9105</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-9912</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 09/29</span><span><i class="fas fa-hourglass-half" style="color:#ff9800;"></i> Pendiente</span></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-calendar-check"></i> Detalle de cita</div>
+        <div class="appointment-grid">
+          <div class="appointment-item"><span class="label">Fecha</span><span class="value"><i class="far fa-calendar-alt"></i> 25/07/2026</span></div>
+          <div class="appointment-item"><span class="label">Hora</span><span class="value"><i class="far fa-clock"></i> 11:30 hrs</span></div>
+          <div class="appointment-item full"><span class="label">Dirección</span><span class="value"><i class="fas fa-map-pin"></i> Av. Las Condes 1234, Depto 56, Santiago</span></div>
+          <div class="appointment-item full"><span class="label">Entrega a tercero</span><div class="third-party"><span><i class="fas fa-user-check"></i> Sí</span><span><i class="fas fa-user"></i> Juan Pérez</span><span><i class="fas fa-users"></i> Hermano</span></div></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="status-gestor">
+          <span class="status"><span class="dot"></span> Estado: Listo</span>
+          <span class="gestor"><i class="fas fa-user-circle"></i> Gestor: Ana Torres</span>
+        </div>
+      </div>
+      <div class="section" style="margin-bottom:8px;">
+        <div class="collapse-section">
+          <div class="collapse-header toggle-collapse">
+            <span class="left"><i class="fas fa-history"></i> Historial</span>
+            <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+          </div>
+          <div class="collapse-body">
+            <div class="history-item"><i class="fas fa-user-times"></i><span class="text"><strong>Visita fallida</strong> — Gestor anterior (Carlos Méndez) no encontró al cliente.</span><span class="date">22/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-phone-alt"></i><span class="text">Contacto telefónico exitoso, se acordó nueva cita.</span><span class="date">23/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-check-circle"></i><span class="text">Solicitud de entrega generada por el banco.</span><span class="date">20/07/2026</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="action-btn" onclick="void(0)"><i class="fas fa-check-circle"></i> Confirmar entrega</button>
+    </div>
+  </div>
+
+  <!-- ===== TEMA Clean ===== -->
+  <div class="theme-container theme-clean" data-theme="clean">
+    <div class="app-inner">
+      <div class="header">
+        <div class="header-left">
+          <span class="icon-back"><i class="fas fa-arrow-left"></i></span>
+          <h1>Entrega de Tarjetas</h1>
+        </div>
+        <div class="header-right">
+          <i class="fas fa-search"></i>
+          <i class="fas fa-ellipsis-h"></i>
+        </div>
+      </div>
+      <div class="client-card">
+        <div class="client-row"><span class="client-label">Cliente</span><span class="client-value">María Elena Rodríguez</span></div>
+        <div class="client-row"><span class="client-label">ID / Cédula</span><span class="client-value">12.345.678-9</span></div>
+        <div class="client-divider"></div>
+        <div class="client-row"><span class="client-label">Teléfono</span><span class="client-value">+56 9 8765 4321</span></div>
+        <div class="client-row"><span class="client-label">N° Cliente</span><span class="client-value">#CL-2025-0047 <small>· VIP</small></span></div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-credit-card"></i> Productos a entregar <span class="badge">2 tarjetas</span></div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Visa Gold</span><span class="product-event">Renovación</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 4832</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-8872</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 12/28</span><span><i class="fas fa-check-circle" style="color:#2e7d32;"></i> Activa</span></div>
+        </div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Mastercard Black</span><span class="product-event">Nuevo</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 9105</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-9912</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 09/29</span><span><i class="fas fa-hourglass-half" style="color:#f57c00;"></i> Pendiente</span></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-calendar-check"></i> Detalle de cita</div>
+        <div class="appointment-grid">
+          <div class="appointment-item"><span class="label">Fecha</span><span class="value"><i class="far fa-calendar-alt"></i> 25/07/2026</span></div>
+          <div class="appointment-item"><span class="label">Hora</span><span class="value"><i class="far fa-clock"></i> 11:30 hrs</span></div>
+          <div class="appointment-item full"><span class="label">Dirección</span><span class="value"><i class="fas fa-map-pin"></i> Av. Las Condes 1234, Depto 56, Santiago</span></div>
+          <div class="appointment-item full"><span class="label">Entrega a tercero</span><div class="third-party"><span><i class="fas fa-user-check"></i> Sí</span><span><i class="fas fa-user"></i> Juan Pérez</span><span><i class="fas fa-users"></i> Hermano</span></div></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="status-gestor">
+          <span class="status"><span class="dot"></span> Listo para entrega</span>
+          <span class="gestor"><i class="fas fa-user-circle"></i> Ana Torres</span>
+        </div>
+      </div>
+      <div class="section" style="margin-bottom:8px;">
+        <div class="collapse-section">
+          <div class="collapse-header toggle-collapse">
+            <span class="left"><i class="fas fa-history"></i> Historial</span>
+            <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+          </div>
+          <div class="collapse-body">
+            <div class="history-item"><i class="fas fa-user-times"></i><span class="text"><strong>Visita fallida</strong> — Gestor anterior (Carlos Méndez) no encontró al cliente.</span><span class="date">22/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-phone-alt"></i><span class="text">Contacto telefónico exitoso, se acordó nueva cita.</span><span class="date">23/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-check-circle"></i><span class="text">Solicitud de entrega generada por el banco.</span><span class="date">20/07/2026</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="action-btn" onclick="void(0)"><i class="fas fa-check-circle"></i> Confirmar entrega</button>
+    </div>
+  </div>
+
+  <!-- ===== TEMA Dark ===== -->
+  <div class="theme-container theme-dark" data-theme="dark">
+    <div class="app-inner">
+      <div class="header">
+        <div class="header-left">
+          <span class="icon-back"><i class="fas fa-chevron-left"></i></span>
+          <h1>Entrega de Tarjetas</h1>
+        </div>
+        <div class="header-right">
+          <i class="fas fa-search"></i>
+          <i class="fas fa-ellipsis-v"></i>
+        </div>
+      </div>
+      <div class="client-card">
+        <div class="client-row"><span class="client-label">Cliente</span><span class="client-value">María Elena Rodríguez</span></div>
+        <div class="client-row"><span class="client-label">ID / Cédula</span><span class="client-value">12.345.678-9</span></div>
+        <div class="client-divider"></div>
+        <div class="client-row"><span class="client-label">Teléfono</span><span class="client-value">+56 9 8765 4321</span></div>
+        <div class="client-row"><span class="client-label">N° Cliente</span><span class="client-value">#CL-2025-0047 <small>· VIP</small></span></div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-credit-card"></i> Productos <span class="badge">2</span></div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Visa Gold</span><span class="product-event">Renovación</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 4832</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-8872</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 12/28</span><span><i class="fas fa-check-circle" style="color:#00d4ff;"></i> Activa</span></div>
+        </div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Mastercard Black</span><span class="product-event">Nuevo</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 9105</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-9912</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 09/29</span><span><i class="fas fa-hourglass-half" style="color:#ffab00;"></i> Pendiente</span></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-calendar-check"></i> Cita</div>
+        <div class="appointment-grid">
+          <div class="appointment-item"><span class="label">Fecha</span><span class="value"><i class="far fa-calendar-alt"></i> 25/07/2026</span></div>
+          <div class="appointment-item"><span class="label">Hora</span><span class="value"><i class="far fa-clock"></i> 11:30 hrs</span></div>
+          <div class="appointment-item full"><span class="label">Dirección</span><span class="value"><i class="fas fa-map-pin"></i> Av. Las Condes 1234, Depto 56, Santiago</span></div>
+          <div class="appointment-item full"><span class="label">Entrega a tercero</span><div class="third-party"><span><i class="fas fa-user-check"></i> Sí</span><span><i class="fas fa-user"></i> Juan Pérez</span><span><i class="fas fa-users"></i> Hermano</span></div></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="status-gestor">
+          <span class="status"><span class="dot"></span> Listo para entrega</span>
+          <span class="gestor"><i class="fas fa-user-circle"></i> Ana Torres</span>
+        </div>
+      </div>
+      <div class="section" style="margin-bottom:8px;">
+        <div class="collapse-section">
+          <div class="collapse-header toggle-collapse">
+            <span class="left"><i class="fas fa-history"></i> Historial</span>
+            <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+          </div>
+          <div class="collapse-body">
+            <div class="history-item"><i class="fas fa-user-times"></i><span class="text"><strong>Visita fallida</strong> — Gestor anterior (Carlos Méndez) no encontró al cliente.</span><span class="date">22/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-phone-alt"></i><span class="text">Contacto telefónico exitoso, se acordó nueva cita.</span><span class="date">23/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-check-circle"></i><span class="text">Solicitud de entrega generada por el banco.</span><span class="date">20/07/2026</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="action-btn" onclick="void(0)"><i class="fas fa-check-circle"></i> Confirmar entrega</button>
+    </div>
+  </div>
+
+  <!-- ===== TEMA Neumo ===== -->
+  <div class="theme-container theme-neumo" data-theme="neumo">
+    <div class="app-inner">
+      <div class="header">
+        <div class="header-left">
+          <span class="icon-back"><i class="fas fa-chevron-left"></i></span>
+          <h1>Entrega de Tarjetas</h1>
+        </div>
+        <div class="header-right">
+          <i class="fas fa-search"></i>
+          <i class="fas fa-ellipsis-v"></i>
+        </div>
+      </div>
+      <div class="client-card">
+        <div class="client-row"><span class="client-label">Cliente</span><span class="client-value">María Elena Rodríguez</span></div>
+        <div class="client-row"><span class="client-label">ID / Cédula</span><span class="client-value">12.345.678-9</span></div>
+        <div class="client-divider"></div>
+        <div class="client-row"><span class="client-label">Teléfono</span><span class="client-value">+56 9 8765 4321</span></div>
+        <div class="client-row"><span class="client-label">N° Cliente</span><span class="client-value">#CL-2025-0047 <small>· VIP</small></span></div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-credit-card"></i> Productos <span class="badge">2</span></div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Visa Gold</span><span class="product-event">Renovación</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 4832</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-8872</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 12/28</span><span><i class="fas fa-check-circle" style="color:#4caf84;"></i> Activa</span></div>
+        </div>
+        <div class="product-card">
+          <div class="product-header"><span class="product-type"><i class="fas fa-credit-card"></i> Mastercard Black</span><span class="product-event">Nuevo</span></div>
+          <div class="product-image-row">
+            <div class="product-image"><i class="fas fa-credit-card"></i></div>
+            <div class="product-detail"><div class="label">Últimos 4 dígitos</div><div class="value">•••• 9105</div></div>
+            <div class="product-detail" style="text-align:right;"><div class="label">Cuenta</div><div class="value">CTA-9912</div></div>
+          </div>
+          <div class="product-footer"><span><i class="fas fa-calendar-alt"></i> Vence 09/29</span><span><i class="fas fa-hourglass-half" style="color:#f5a623;"></i> Pendiente</span></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title"><i class="fas fa-calendar-check"></i> Cita</div>
+        <div class="appointment-grid">
+          <div class="appointment-item"><span class="label">Fecha</span><span class="value"><i class="far fa-calendar-alt"></i> 25/07/2026</span></div>
+          <div class="appointment-item"><span class="label">Hora</span><span class="value"><i class="far fa-clock"></i> 11:30 hrs</span></div>
+          <div class="appointment-item full"><span class="label">Dirección</span><span class="value"><i class="fas fa-map-pin"></i> Av. Las Condes 1234, Depto 56, Santiago</span></div>
+          <div class="appointment-item full"><span class="label">Entrega a tercero</span><div class="third-party"><span><i class="fas fa-user-check"></i> Sí</span><span><i class="fas fa-user"></i> Juan Pérez</span><span><i class="fas fa-users"></i> Hermano</span></div></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="status-gestor">
+          <span class="status"><span class="dot"></span> Listo para entrega</span>
+          <span class="gestor"><i class="fas fa-user-circle"></i> Ana Torres</span>
+        </div>
+      </div>
+      <div class="section" style="margin-bottom:8px;">
+        <div class="collapse-section">
+          <div class="collapse-header toggle-collapse">
+            <span class="left"><i class="fas fa-history"></i> Historial</span>
+            <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+          </div>
+          <div class="collapse-body">
+            <div class="history-item"><i class="fas fa-user-times"></i><span class="text"><strong>Visita fallida</strong> — Gestor anterior (Carlos Méndez) no encontró al cliente.</span><span class="date">22/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-phone-alt"></i><span class="text">Contacto telefónico exitoso, se acordó nueva cita.</span><span class="date">23/07/2026</span></div>
+            <div class="history-item"><i class="fas fa-check-circle"></i><span class="text">Solicitud de entrega generada por el banco.</span><span class="date">20/07/2026</span></div>
+          </div>
+        </div>
+      </div>
+      <button class="action-btn" onclick="void(0)"><i class="fas fa-check-circle"></i> Confirmar entrega</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Cambio de pestañas
+  const tabs = document.querySelectorAll('.tab-btn');
+  const containers = document.querySelectorAll('.theme-container');
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', function() {
+      tabs.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const theme = this.dataset.theme;
+      containers.forEach(c => {
+        c.classList.remove('active');
+        if (c.dataset.theme === theme) c.classList.add('active');
+      });
+    });
+  });
+
+  // Colapsable
+  document.querySelectorAll('.toggle-collapse').forEach(header => {
+    header.addEventListener('click', function() {
+      const body = this.nextElementSibling;
+      const arrow = this.querySelector('.arrow');
+      if (body) {
+        body.classList.toggle('open');
+        if (arrow) arrow.classList.toggle('open');
+      }
+    });
+  });
+
+  // Por defecto colapsado
+  document.querySelectorAll('.collapse-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.arrow').forEach(a => a.classList.remove('open'));
+</script>
+
+</body>
+</html>
