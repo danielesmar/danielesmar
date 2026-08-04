@@ -1,0 +1,573 @@
+<div class="bank-card-item">
+  <div class="bank-card-header">
+    <div class="bank-card-title-group">
+      <div class="bank-card-icon">
+        <img src="#APP_FILES#piggy-bank.png" alt="Icono" width="36" />
+      </div>
+      <div class="bank-card-names">
+        <span class="card-title">&NOMBRE_CUENTA.</span>
+        <span class="card-subtitle">&NUMERO_CUENTA.</span>
+      </div>
+    </div>
+    <div class="bank-card-fav">
+      <span class="fa &ICONO_FAVORITO."></span>
+    </div>
+  </div>
+
+  <div class="bank-card-body">
+    <span class="balance-label">Saldo disponible</span>
+    <div class="balance-amount">&SALDO_DISPLAY.</div>
+  </div>
+
+  <div class="bank-card-footer">
+    <a href="&URL_DETALLE." class="bank-card-btn">
+      Ir a mi cuenta <span class="fa fa-chevron-right"></span>
+    </a>
+  </div>
+</div>
+
+
+/* Contenedor principal horizontal */
+.horizontal-cards .a-CardView-items {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 5px 20px 5px;
+    gap: 16px;
+}
+
+/* Ocultar barra de desplazamiento visual manteniendo funcionalidad */
+.horizontal-cards .a-CardView-items::-webkit-scrollbar {
+    display: none;
+}
+
+/* Estilo individual de la tarjeta */
+.bank-card-item {
+    flex: 0 0 82%; /* Muestra el 82% de la tarjeta para dejar ver el borde de la siguiente */
+    max-width: 320px;
+    scroll-snap-align: center;
+    background: linear-gradient(135deg, #0042a5 0%, #008eb4 60%, #00c896 100%);
+    border-radius: 20px;
+    padding: 20px;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 200px;
+}
+
+/* Encabezado de la tarjeta */
+.bank-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.bank-card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.card-title {
+    display: block;
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+.card-subtitle {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+.bank-card-fav .fa {
+    background: #ffffff;
+    color: #00a884;
+    padding: 8px;
+    border-radius: 50%;
+    font-size: 1rem;
+}
+
+/* Cuerpo y saldo */
+.balance-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+.balance-amount {
+    font-size: 1.6rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-top: 4px;
+}
+
+/* Botón inferior */
+.bank-card-btn {
+    background: #ffffff;
+    color: #111111;
+    text-align: center;
+    display: block;
+    padding: 10px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+}
+.bank-card-btn:hover {
+    background: #f0f0f0;
+}
+
+
+
+
+
+
+
+
+
+
+
+<div class="bank-card">
+
+    <div class="bank-card-header">
+
+        <div class="bank-product">
+
+            <div class="bank-icon">
+                <span class="fa fa-piggy-bank"></span>
+            </div>
+
+            <div>
+                <div class="bank-title">
+                    &TIPO_PRODUCTO.
+                </div>
+
+                <div class="bank-number">
+                    &NUMERO_PRODUCTO.
+                </div>
+            </div>
+
+        </div>
+
+        <div class="bank-favorite">
+            <span class="fa fa-star"></span>
+        </div>
+
+    </div>
+
+
+    <div class="bank-balance">
+
+        <div class="balance-label">
+            Saldo disponible
+        </div>
+
+        <div class="balance-value">
+            &MONEDA. *****
+        </div>
+
+    </div>
+
+
+    <div class="bank-action">
+
+        <span>Ir a mi cuenta</span>
+
+        <span class="fa fa-angle-right"></span>
+
+    </div>
+
+</div>
+
+
+/* =====================================================
+   CONTENEDOR DEL CARRUSEL
+   ===================================================== */
+
+#productosCarousel .t-Cards {
+    display: flex !important;
+
+    flex-wrap: nowrap !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    gap: 18px;
+
+    padding: 10px 0 20px 0;
+
+    scroll-snap-type: x mandatory;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+}
+
+
+/* Chrome / Edge / Safari */
+#productosCarousel .t-Cards::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* =====================================================
+   CADA TARJETA
+   ===================================================== */
+
+#productosCarousel .t-Cards-item {
+
+    flex: 0 0 88% !important;
+
+    width: 88% !important;
+
+    max-width: 88% !important;
+
+    scroll-snap-align: center;
+
+    scroll-snap-stop: always;
+
+}
+
+
+/* Elimina estilos que puedan interferir */
+#productosCarousel .t-Cards-item {
+    margin: 0 !important;
+}
+
+
+/* =====================================================
+   TARJETA BANCARIA
+   ===================================================== */
+
+.bank-card {
+
+    min-height: 360px;
+
+    padding: 28px;
+
+    border-radius: 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #08a9dc 0%,
+            #0878d9 48%,
+            #04c98d 100%
+        );
+
+    color: white;
+
+    position: relative;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.12);
+
+}
+
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.bank-card-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+}
+
+
+.bank-product {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+
+.bank-icon {
+
+    width: 58px;
+    height: 58px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #08a98b;
+
+    font-size: 25px;
+
+}
+
+
+.bank-title {
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+}
+
+
+.bank-number {
+
+    margin-top: 5px;
+
+    font-size: 17px;
+
+    opacity: .95;
+
+}
+
+
+.bank-favorite {
+
+    width: 54px;
+    height: 54px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #00b889;
+
+    font-size: 25px;
+
+}
+
+
+/* =====================================================
+   SALDO
+   ===================================================== */
+
+.bank-balance {
+
+    margin-top: 45px;
+
+}
+
+
+.balance-label {
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+}
+
+
+.balance-value {
+
+    margin-top: 12px;
+
+    font-size: 38px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+}
+
+
+/* =====================================================
+   BOTÓN
+   ===================================================== */
+
+.bank-action {
+
+    position: absolute;
+
+    left: 28px;
+    right: 28px;
+    bottom: 28px;
+
+    height: 58px;
+
+    background: white;
+
+    color: #171717;
+
+    border-radius: 35px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+}
+
+#productosCarousel .t-Cards::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* MOBILE */
+
+#productosCarousel .t-Cards-item {
+    flex: 0 0 88% !important;
+}
+
+
+/* TABLET */
+
+@media (min-width: 600px) {
+
+    #productosCarousel .t-Cards-item {
+        flex: 0 0 65% !important;
+    }
+
+}
+
+
+/* DESKTOP */
+
+@media (min-width: 1024px) {
+
+    #productosCarousel .t-Cards-item {
+        flex: 0 0 420px !important;
+        max-width: 420px !important;
+    }
+
+}
+
+
+<div class="carousel-indicators">
+
+    <span class="indicator active"></span>
+    <span class="indicator"></span>
+    <span class="indicator"></span>
+
+</div>
+
+
+.carousel-indicators {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+
+.indicator {
+
+    width: 10px;
+
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: #d0d5dc;
+
+    transition: all .25s ease;
+
+}
+
+
+.indicator.active {
+
+    width: 12px;
+
+    height: 12px;
+
+    background: #00a984;
+
+}
+
+
+
+
+const carousel = document.querySelector(
+    '#productosCarousel .t-Cards'
+);
+
+const indicators = document.querySelectorAll(
+    '.carousel-indicators .indicator'
+);
+
+if (carousel && indicators.length) {
+
+    carousel.addEventListener('scroll', () => {
+
+        const items = carousel.querySelectorAll(
+            '.t-Cards-item'
+        );
+
+        if (!items.length) return;
+
+        const scrollLeft = carousel.scrollLeft;
+
+        const itemWidth = items[0].offsetWidth;
+
+        const gap = 18;
+
+        const index = Math.round(
+            scrollLeft / (itemWidth + gap)
+        );
+
+        indicators.forEach((indicator, i) => {
+
+            indicator.classList.toggle(
+                'active',
+                i === index
+            );
+
+        });
+
+    });
+
+}
+
+
+
+
+
+<div class="products-carousel">
+
+   <article class="product-card">
+      ...
+   </article>
+
+   <article class="product-card">
+      ...
+   </article>
+
+   <article class="product-card">
+      ...
+   </article>
+
+</div>
