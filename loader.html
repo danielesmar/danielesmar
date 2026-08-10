@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Green Geometric Loader</title>
+  <style>
+    :root {
+      --green-lime: #7ad026;
+      --green-mid: #008638;
+      --green-dark: #2d5d2a;
+      --green-deep: #0a391b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #808080;
+    }
+
+    .loader {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      animation: rotateContainer 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    .piece {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      transform-origin: center center;
+    }
+
+    /* Triángulo superior izquierdo */
+    .p1 {
+      background-color: var(--green-lime);
+      clip-path: polygon(50% 0%, 0% 50%, 50% 50%);
+      animation: animP1 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* Triángulo superior derecho */
+    .p2 {
+      background-color: var(--green-mid);
+      clip-path: polygon(50% 0%, 100% 50%, 50% 50%);
+      animation: animP2 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* Triángulo inferior derecho */
+    .p3 {
+      background-color: var(--green-dark);
+      clip-path: polygon(100% 50%, 50% 100%, 50% 50%);
+      animation: animP3 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* Triángulo inferior izquierdo */
+    .p4 {
+      background-color: var(--green-deep);
+      clip-path: polygon(0% 50%, 50% 100%, 50% 50%);
+      animation: animP4 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* Animaciones de rotación y despliegue */
+    @keyframes rotateContainer {
+      0% {
+        transform: rotate(0deg) scale(1);
+      }
+      25% {
+        transform: rotate(90deg) scale(0.3);
+        opacity: 0.2;
+      }
+      50% {
+        transform: rotate(180deg) scale(1);
+        opacity: 1;
+      }
+      75% {
+        transform: rotate(270deg) scale(0.7);
+      }
+      100% {
+        transform: rotate(360deg) scale(1);
+      }
+    }
+
+    @keyframes animP1 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(-15px, -15px) scale(0); }
+      50% { transform: translate(0, 0) rotate(0deg); }
+      75% { transform: translate(-8px, 0); }
+    }
+
+    @keyframes animP2 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(15px, -15px) scale(0); }
+      50% { transform: translate(0, 0) rotate(0deg); }
+      75% { transform: translate(0, -8px); }
+    }
+
+    @keyframes animP3 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(15px, 15px) scale(0); }
+      50% { transform: translate(0, 0) rotate(0deg); }
+      75% { transform: translate(8px, 8px); }
+    }
+
+    @keyframes animP4 {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25% { transform: translate(-15px, 15px) scale(0); }
+      50% { transform: translate(0, 0) rotate(0deg); }
+      75% { transform: translate(-8px, 8px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="loader">
+    <div class="piece p1"></div>
+    <div class="piece p2"></div>
+    <div class="piece p3"></div>
+    <div class="piece p4"></div>
+  </div>
+
+</body>
+</html>
