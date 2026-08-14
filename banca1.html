@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <title>Banca Móvil NextGen</title>
+
+  <!-- FontAwesome Icons & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-light: #eff6ff;
+      --secondary: #0f172a;
+      --accent: #10b981;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+      --safe-area-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: #0b0f19;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--text);
+    }
+
+    /* PWA Mobile Frame Container */
+    .app-container {
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      max-height: 932px;
+      background-color: var(--bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (min-width: 480px) {
+      .app-container {
+        height: 92vh;
+        border-radius: 40px;
+        border: 8px solid #1e293b;
+      }
+    }
+
+    /* Header */
+    .app-header {
+      padding: 20px 20px 12px 20px;
+      background: var(--surface);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #4f46e5);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .user-info h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .user-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+    }
+
+    /* Main Content & Screen Navigation */
+    .app-body {
+      flex: 1;
+      overflow-y: auto;
+      position: relative;
+      padding-bottom: 90px;
+    }
+
+    .screen {
+      display: none;
+      padding: 20px;
+      animation: fadeIn 0.25s ease-in-out forwards;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Components */
+    .card-carousel {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+      margin: 0 -20px 20px -20px;
+      padding-left: 20px;
+      padding-right: 20px;
+      scrollbar-width: none;
+    }
+    .card-carousel::-webkit-scrollbar { display: none; }
+
+    .bank-card {
+      min-width: 270px;
+      height: 160px;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bank-card.black {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .bank-card.blue {
+      background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+    }
+
+    .bank-card.emerald {
+      background: linear-gradient(135deg, #047857 0%, #10b981 100%);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-type {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+      font-weight: 600;
+    }
+
+    .card-balance {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-top: 4px;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .card-number {
+      font-size: 13px;
+      letter-spacing: 1.5px;
+      opacity: 0.9;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .action-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .action-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 18px;
+      box-shadow: var(--shadow);
+      transition: transform 0.15s;
+    }
+
+    .action-item:active .action-icon {
+      transform: scale(0.92);
+    }
+
+    .action-item span {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Section Titles */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-link {
+      font-size: 13px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* Transaction List */
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .transaction-item {
+      background: var(--surface);
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--border);
+    }
+
+    .tx-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tx-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .tx-icon.expense { background: #fef2f2; color: #ef4444; }
+    .tx-icon.income { background: #ecfdf5; color: #10b981; }
+
+    .tx-details h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .tx-details p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .tx-amount {
+      font-size: 14px;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .tx-amount.expense { color: var(--text); }
+    .tx-amount.income { color: var(--accent); }
+
+    /* Forms & Tabs Controls */
+    .tab-bar {
+      display: flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      gap: 2px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--primary);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: var(--primary);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+      transition: background 0.2s;
+    }
+
+    .btn-primary:active {
+      background: var(--primary-dark);
+    }
+
+    /* Products List Box */
+    .product-box {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-meta h4 { font-size: 14px; font-weight: 700; }
+    .product-meta p { font-size: 12px; color: var(--text-muted); }
+    .product-val { font-size: 15px; font-weight: 800; text-align: right; }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 75px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding-bottom: env(safe-area-inset-bottom);
+      z-index: 20;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 20%;
+    }
+
+    .nav-item i {
+      font-size: 18px;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+    }
+
+    /* Modal Sheet */
+    .modal-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      display: none;
+      align-items: flex-end;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .bottom-sheet {
+      background: var(--surface);
+      width: 100%;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      padding: 24px;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="user-profile">
+        <div class="avatar">DE</div>
+        <div class="user-info">
+          <h2>Hola, Daniel</h2>
+          <p>Cuenta Premium</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" onclick="openNotifications()">
+          <i class="fa-regular fa-bell"></i>
+          <span class="badge"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- App Body Dynamic Views -->
+    <main class="app-body">
+
+      <!-- 1. INICIO / HOME -->
+      <section id="screen-home" class="screen active">
+        <div class="section-header">
+          <span class="section-title">Mis Productos</span>
+          <a href="#" class="section-link" onclick="switchTab('products')">Ver todos</a>
+        </div>
+
+        <div class="card-carousel">
+          <div class="bank-card black">
+            <div class="card-top">
+              <span class="card-type">Cuenta de Ahorros</span>
+              <i class="fa-solid fa-wifi"></i>
+            </div>
+            <div>
+              <p style="font-size: 11px; opacity: 0.8;">Balance Disponible</p>
+              <div class="card-balance">$ 12,450.80</div>
+            </div>
+            <div class="card-bottom">
+              <span class="card-number">**** 8842</span>
+              <i class="fa-brands fa-cc-visa" style="font-size: 24px;"></i>
+            </div>
+          </div>
+
+          <div class="bank-card blue">
+            <div class="card-top">
+              <span class="card-type">Tarjeta de Crédito</span>
+              <i class="fa-solid fa-wifi"></i>
+            </div>
+            <div>
+              <p style="font-size: 11px; opacity: 0.8;">Cupo Disponible</p>
+              <div class="card-balance">$ 4,120.00</div>
+            </div>
+            <div class="card-bottom">
+              <span class="card-number">**** 3109</span>
+              <i class="fa-brands fa-cc-mastercard" style="font-size: 24px;"></i>
+            </div>
+          </div>
+
+          <div class="bank-card emerald">
+            <div class="card-top">
+              <span class="card-type">Préstamo Personal</span>
+              <i class="fa-solid fa-building-columns"></i>
+            </div>
+            <div>
+              <p style="font-size: 11px; opacity: 0.8;">Saldo Pendiente</p>
+              <div class="card-balance">$ 8,200.00</div>
+            </div>
+            <div class="card-bottom">
+              <span class="card-number">Cuota: $240/mes</span>
+              <i class="fa-solid fa-circle-check" style="font-size: 20px;"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="quick-actions">
+          <div class="action-item" onclick="switchTab('transfers')">
+            <div class="action-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+            <span>Transferir</span>
+          </div>
+          <div class="action-item" onclick="switchTab('payments')">
+            <div class="action-icon"><i class="fa-solid fa-receipt"></i></div>
+            <span>Pagar</span>
+          </div>
+          <div class="action-item" onclick="openModal('QR scanner listo para escanear.')">
+            <div class="action-icon"><i class="fa-solid fa-qrcode"></i></div>
+            <span>Cobro QR</span>
+          </div>
+          <div class="action-item" onclick="switchTab('requests')">
+            <div class="action-icon"><i class="fa-solid fa-plus"></i></div>
+            <span>Solicitar</span>
+          </div>
+        </div>
+
+        <!-- Ultimos Movimientos -->
+        <div class="section-header">
+          <span class="section-title">Últimos Movimientos</span>
+          <a href="#" class="section-link" onclick="switchTab('history')">Ver más</a>
+        </div>
+
+        <div class="transaction-list">
+          <div class="transaction-item">
+            <div class="tx-info">
+              <div class="tx-icon expense"><i class="fa-solid fa-bag-shopping"></i></div>
+              <div class="tx-details">
+                <h4>Supermercado Walmart</h4>
+                <p>Hoy, 10:42 AM</p>
+              </div>
+            </div>
+            <div class="tx-amount expense">-$ 84.50</div>
+          </div>
+
+          <div class="transaction-item">
+            <div class="tx-info">
+              <div class="tx-icon income"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="tx-details">
+                <h4>Transferencia Recibida</h4>
+                <p>Ayer, 04:15 PM</p>
+              </div>
+            </div>
+            <div class="tx-amount income">+$ 500.00</div>
+          </div>
+
+          <div class="transaction-item">
+            <div class="tx-info">
+              <div class="tx-icon expense"><i class="fa-solid fa-bolt"></i></div>
+              <div class="tx-details">
+                <h4>Pago de Servicio Eléctrico</h4>
+                <p>11 Ago, 09:30 AM</p>
+              </div>
+            </div>
+            <div class="tx-amount expense">-$ 42.10</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. TRANSFERENCIAS -->
+      <section id="screen-transfers" class="screen">
+        <div class="section-header">
+          <span class="section-title">Transferencias</span>
+        </div>
+
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="setTransferSubTab(this, 'propia')">Propias</button>
+          <button class="tab-btn" onclick="setTransferSubTab(this, 'terceros')">Mismo Banco</button>
+          <button class="tab-btn" onclick="setTransferSubTab(this, 'ach')">Interbancaria</button>
+          <button class="tab-btn" onclick="setTransferSubTab(this, 'intl')">Internacional</button>
+        </div>
+
+        <form onsubmit="executeTransfer(event)">
+          <div class="form-group">
+            <label class="form-label">Cuenta de Origen</label>
+            <select class="form-select">
+              <option>Ahorros **** 8842 ($ 12,450.80)</option>
+              <option>Nomina **** 1022 ($ 1,120.00)</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="dest-account-field">
+            <label class="form-label">Cuenta Destino</label>
+            <input type="text" class="form-input" placeholder="Número de cuenta o IBAN" required>
+          </div>
+
+          <div class="form-group" id="bank-selector-field" style="display: none;">
+            <label class="form-label">Banco Destino</label>
+            <select class="form-select">
+              <option>BAC Credomatic</option>
+              <option>Banco LAFISE</option>
+              <option>Banpro Grupo Promerica</option>
+              <option>Forder Bank Int.</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Monto a Transferir ($)</label>
+            <input type="number" step="0.01" class="form-input" placeholder="0.00" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Concepto / Nota</label>
+            <input type="text" class="form-input" placeholder="Ej. Pago de arriendo">
+          </div>
+
+          <button type="submit" class="btn-primary">Confirmar Transferencia</button>
+        </form>
+      </section>
+
+      <!-- 3. PAGOS DE SERVICIOS -->
+      <section id="screen-payments" class="screen">
+        <div class="section-header">
+          <span class="section-title">Pago de Servicios</span>
+        </div>
+
+        <div class="quick-actions" style="margin-bottom: 20px;">
+          <div class="action-item" onclick="selectService('Luz / Electricidad')">
+            <div class="action-icon"><i class="fa-solid fa-bolt"></i></div>
+            <span>Energía</span>
+          </div>
+          <div class="action-item" onclick="selectService('Agua Potable')">
+            <div class="action-icon"><i class="fa-solid fa-droplet"></i></div>
+            <span>Agua</span>
+          </div>
+          <div class="action-item" onclick="selectService('Telecomunicaciones / Internet')">
+            <div class="action-icon"><i class="fa-solid fa-wifi"></i></div>
+            <span>Internet</span>
+          </div>
+          <div class="action-item" onclick="selectService('Tarjeta de Crédito')">
+            <div class="action-icon"><i class="fa-solid fa-credit-card"></i></div>
+            <span>Tarjeta</span>
+          </div>
+        </div>
+
+        <form onsubmit="executePayment(event)">
+          <div class="form-group">
+            <label class="form-label">Servicio Seleccionado</label>
+            <input type="text" id="selected-service-input" class="form-input" value="Luz / Electricidad" readonly>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Número de Contrato / Factura</label>
+            <input type="text" class="form-input" placeholder="Ingresa el N° de referencia" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Pagar Desde</label>
+            <select class="form-select">
+              <option>Cuenta Ahorros **** 8842</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Monto ($)</label>
+            <input type="number" step="0.01" class="form-input" placeholder="0.00" required>
+          </div>
+
+          <button type="submit" class="btn-primary">Realizar Pago</button>
+        </form>
+      </section>
+
+      <!-- 4. PRODUCTOS Y SOLICITUDES -->
+      <section id="screen-products" class="screen">
+        <div class="section-header">
+          <span class="section-title">Mis Cuentas y Tarjetas</span>
+        </div>
+
+        <div class="product-box">
+          <div class="product-meta">
+            <h4>Cuenta de Ahorros Principal</h4>
+            <p>**** 8842</p>
+          </div>
+          <div class="product-val">$ 12,450.80</div>
+        </div>
+
+        <div class="product-box">
+          <div class="product-meta">
+            <h4>Tarjeta Gold Mastercard</h4>
+            <p>**** 3109</p>
+          </div>
+          <div class="product-val">$ 4,120.00</div>
+        </div>
+
+        <div class="product-box">
+          <div class="product-meta">
+            <h4>Préstamo Automotriz</h4>
+            <p>Ref: #PR-9920</p>
+          </div>
+          <div class="product-val">$ 8,200.00</div>
+        </div>
+
+        <div class="section-header" style="margin-top: 24px;">
+          <span class="section-title">Solicitar Nuevos Productos</span>
+        </div>
+
+        <div class="transaction-list">
+          <div class="transaction-item" onclick="openModal('Solicitud enviada para: Tarjeta de Crédito Black Signature.')">
+            <div class="tx-info">
+              <div class="tx-icon income"><i class="fa-solid fa-credit-card"></i></div>
+              <div class="tx-details">
+                <h4>Tarjeta de Crédito Black</h4>
+                <p>Pre-aprobada hasta $10,000</p>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+          </div>
+
+          <div class="transaction-item" onclick="openModal('Iniciando proceso de crédito personal instantáneo.')">
+            <div class="tx-info">
+              <div class="tx-icon income"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+              <div class="tx-details">
+                <h4>Préstamo Personal Inmediato</h4>
+                <p>Tasa preferencial desde 8.9%</p>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+          </div>
+
+          <div class="transaction-item" onclick="openModal('Apertura de Cuenta de Ahorro en Dólares iniciada.')">
+            <div class="tx-info">
+              <div class="tx-icon income"><i class="fa-solid fa-vault"></i></div>
+              <div class="tx-details">
+                <h4>Cuenta de Ahorro USD</h4>
+                <p>Apertura 100% digital</p>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color: var(--text-muted); font-size: 12px;"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. HISTORIAL -->
+      <section id="screen-history" class="screen">
+        <div class="section-header">
+          <span class="section-title">Historial Global</span>
+        </div>
+
+        <div class="tab-bar">
+          <button class="tab-btn active">Todos</button>
+          <button class="tab-btn">Ingresos</button>
+          <button class="tab-btn">Egresos</button>
+        </div>
+
+        <div class="transaction-list">
+          <div class="transaction-item">
+            <div class="tx-info">
+              <div class="tx-icon expense"><i class="fa-solid fa-bag-shopping"></i></div>
+              <div class="tx-details">
+                <h4>Supermercado Walmart</h4>
+                <p>Hoy, 10:42 AM</p>
+              </div>
+            </div>
+            <div class="tx-amount expense">-$ 84.50</div>
+          </div>
+
+          <div class="transaction-item">
+            <div class="tx-info">
+              <div class="tx-icon income"><i class="fa-solid fa-arrow-down"></i></div>
+              <div class="tx-details">
+                <h4>Transferencia Recibida</h4>
+                <p>Ayer, 04:15 PM</p>
+              </div>
+            </div>
+            <div class="tx-amount income">+$ 500.00</div>
+          </div>
+
+          <div class="transaction-item">
+            <div class="tx-info">
+              <div class="tx-icon expense"><i class="fa-solid fa-utensils"></i></div>
+              <div class="tx-details">
+                <h4>Restaurante Café Flores</h4>
+                <p>12 Ago, 01:20 PM</p>
+              </div>
+            </div>
+            <div class="tx-amount expense">-$ 28.00</div>
+          </div>
+
+          <div class="transaction-item">
+            <div class="tx-info">
+              <div class="tx-icon expense"><i class="fa-solid fa-bolt"></i></div>
+              <div class="tx-details">
+                <h4>Pago Servicio Luz</h4>
+                <p>11 Ago, 09:30 AM</p>
+              </div>
+            </div>
+            <div class="tx-amount expense">-$ 42.10</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+      <div class="nav-item active" onclick="switchTab('home')">
+        <i class="fa-solid fa-house"></i>
+        <span>Inicio</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('transfers')">
+        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+        <span>Transferir</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('payments')">
+        <i class="fa-solid fa-receipt"></i>
+        <span>Pagos</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('products')">
+        <i class="fa-solid fa-wallet"></i>
+        <span>Productos</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('history')">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>Historial</span>
+      </div>
+    </nav>
+
+    <!-- Bottom Sheet / Modal Dialog -->
+    <div id="modal-overlay" class="modal-overlay">
+      <div class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div style="text-align: center; padding: 10px 0;">
+          <i class="fa-solid fa-circle-check" style="font-size: 48px; color: var(--accent); margin-bottom: 12px;"></i>
+          <h3 id="modal-title" style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Operación Exitosa</h3>
+          <p id="modal-msg" style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">La transacción ha sido procesada con éxito.</p>
+          <button class="btn-primary" onclick="closeModal()">Aceptar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Navegación entre Pantallas (SPA Router Nativo)
+    function switchTab(screenId) {
+      // Ocultar todas las pantallas
+      const screens = document.querySelectorAll('.screen');
+      screens.forEach(s => s.classList.remove('active'));
+
+      // Desactivar iconos del nav
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(n => n.classList.remove('active'));
+
+      // Mostrar pantalla seleccionada
+      const targetScreen = document.getElementById(`screen-${screenId}`);
+      if (targetScreen) {
+        targetScreen.classList.add('active');
+      }
+
+      // Activar icono correspondiente en bottom nav
+      const activeNavMap = {
+        'home': 0,
+        'transfers': 1,
+        'payments': 2,
+        'products': 3,
+        'requests': 3,
+        'history': 4
+      };
+
+      if (activeNavMap[screenId] !== undefined) {
+        navItems[activeNavMap[screenId]].classList.add('active');
+      }
+    }
+
+    // Sub-pestañas de Transferencias
+    function setTransferSubTab(btn, mode) {
+      const parent = btn.parentElement;
+      parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const bankField = document.getElementById('bank-selector-field');
+      const destField = document.getElementById('dest-account-field');
+
+      if (mode === 'ach' || mode === 'intl') {
+        bankField.style.display = 'block';
+      } else {
+        bankField.style.display = 'none';
+      }
+    }
+
+    // Seleccionar Servicio para Pago
+    function selectService(name) {
+      document.getElementById('selected-service-input').value = name;
+    }
+
+    // Modales y Notificaciones
+    function openModal(message) {
+      document.getElementById('modal-msg').innerText = message;
+      document.getElementById('modal-overlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('active');
+    }
+
+    function openNotifications() {
+      openModal("Tienes 2 nuevas notificaciones: Tu estado de cuenta está disponible y un pago automático fue realizado.");
+    }
+
+    // Handlers de Formulario
+    function executeTransfer(e) {
+      e.preventDefault();
+      openModal("Transferencia enviada y procesada correctamente.");
+      switchTab('home');
+    }
+
+    function executePayment(e) {
+      e.preventDefault();
+      openModal("El pago del servicio ha sido registrado con éxito.");
+      switchTab('home');
+    }
+  </script>
+</body>
+</html>
