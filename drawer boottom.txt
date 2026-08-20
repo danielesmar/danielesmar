@@ -1,0 +1,672 @@
+Sí. En Oracle APEX 24.x puedes conseguir una apariencia prácticamente idéntica a un Bottom Sheet nativo de una PWA, y de hecho APEX ya tiene mecanismos bastante apropiados para hacerlo.
+La clave es no intentar convertir el contenido interno del modal en un Bottom Sheet, sino modificar el contenedor externo del diálogo que APEX crea. APEX permite asignar clases CSS directamente al diálogo mediante Dialog → CSS Classes, y los diálogos modales se renderizan como overlays. �
+Oracle Docs +1
+Además, en las implementaciones modernas de Universal Theme existe incluso el concepto de Drawer con posición Bottom, lo que confirma que el framework ya contempla diálogos que salen desde la parte inferior. �
+GitHub
+La arquitectura que te recomiendo
+Para una PWA bancaria, yo lo haría así:
+┌─────────────────────────────┐
+│                             │
+│      Página principal       │
+│                             │
+│                             │
+│                             │
+│                             │
+│                             │
+│                             │
+├─────────────────────────────┤
+│        fondo oscuro         │
+│       semitransparente      │
+│                             │
+│  ╭───────────────────────╮  │
+│  │          ───          │  │ ← grabber
+│  │                       │  │
+│  │  Filtrar movimientos  │  │
+│  │                       │  │
+│  │  Cuenta               │  │
+│  │  [ Cuenta corriente ] │  │
+│  │                       │  │
+│  │  [ Aplicar filtros ]  │  │
+│  ╰───────────────────────╯  │
+└─────────────────────────────┘
+Y eliminaría completamente:
+título estándar de APEX
+botón X
+padding del diálogo
+bordes del diálogo
+sombras excesivas
+footer estándar
+espacios superiores
+espacios laterales
+encabezado de Universal Theme
+El resultado visual puede quedar mucho más cercano a Android/iOS nativo.
+1. Configura la página Modal Dialog
+En tu página hija:
+Page → Appearance
+Configura:
+Page Mode:
+    Modal Dialog
+Después:
+Dialog Template:
+    Modal Dialog
+APEX utiliza automáticamente una plantilla de diálogo para páginas con Page Mode Modal Dialog. �
+Oracle Docs
+Ahora ve a:
+Page
+ └── Appearance
+      └── Dialog
+Y configura:
+Width:
+    100%
+
+Maximum Width:
+    100%
+
+Height:
+    Auto
+
+Resizable:
+    Off
+Y lo más importante:
+CSS Classes:
+    pwa-bottom-sheet
+APEX permite precisamente agregar clases personalizadas mediante Dialog → CSS Classes. �
+Oracle Docs
+2. Eliminar el padding interno
+En el modal agrega:
+Template Options
+y busca:
+Remove Body Padding
+Actívalo.
+En Theme 42 esto corresponde a:
+t-Dialog--noPadding
+Oracle documenta esta opción para los diálogos de Universal Theme. �
+GitHub
+Por lo tanto, si quieres hacerlo directamente mediante CSS Classes también puedes utilizar:
+pwa-bottom-sheet t-Dialog--noPadding
+3. CSS completo del Bottom Sheet
+Puedes colocar este CSS en:
+Page → CSS → Inline
+de la página modal.
+/* =========================================================
+   PWA BOTTOM SHEET - ORACLE APEX
+   ========================================================= */
+
+.pwa-bottom-sheet {
+    --sheet-radius: 24px;
+    --sheet-max-height: 92dvh;
+    --sheet-bg: #ffffff;
+    --sheet-shadow:
+        0 -8px 30px rgba(0, 0, 0, .12),
+        0 -2px 8px rgba(0, 0, 0, .06);
+}
+
+
+/* =========================================================
+   CONTENEDOR PRINCIPAL DEL DIALOG
+   ========================================================= */
+
+.pwa-bottom-sheet.ui-dialog {
+
+    position: fixed !important;
+
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    margin: 0 !important;
+
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    border-radius:
+        var(--sheet-radius)
+        var(--sheet-radius)
+        0
+        0 !important;
+
+    background: var(--sheet-bg) !important;
+
+    box-shadow: var(--sheet-shadow) !important;
+
+    overflow: hidden !important;
+
+    max-height: var(--sheet-max-height);
+
+    z-index: 10001 !important;
+}
+
+
+/* =========================================================
+   CONTENIDO DEL DIALOG
+   ========================================================= */
+
+.pwa-bottom-sheet .t-Dialog {
+
+    width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    border-radius:
+        var(--sheet-radius)
+        var(--sheet-radius)
+        0
+        0 !important;
+
+    background: var(--sheet-bg) !important;
+
+    overflow: hidden !important;
+}
+
+
+/* =========================================================
+   HEADER APEX
+   ========================================================= */
+
+.pwa-bottom-sheet .t-Dialog-header {
+
+    display: none !important;
+
+    height: 0 !important;
+
+    min-height: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+.pwa-bottom-sheet .t-Dialog-bodyWrapperOut,
+.pwa-bottom-sheet .t-Dialog-bodyWrapperIn,
+.pwa-bottom-sheet .t-Dialog-body {
+
+    width: 100% !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    background: transparent !important;
+}
+
+
+/* =========================================================
+   FOOTER APEX
+   ========================================================= */
+
+.pwa-bottom-sheet .t-Dialog-footer {
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    background: transparent !important;
+}
+
+
+/* =========================================================
+   ELIMINAR TITLEBAR DE JQUERY UI
+   ========================================================= */
+
+.pwa-bottom-sheet .ui-dialog-titlebar {
+
+    display: none !important;
+}
+
+
+/* =========================================================
+   ELIMINAR TITULO
+   ========================================================= */
+
+.pwa-bottom-sheet .ui-dialog-title {
+
+    display: none !important;
+}
+
+
+/* =========================================================
+   ELIMINAR BOTON X
+   ========================================================= */
+
+.pwa-bottom-sheet .ui-dialog-titlebar-close {
+
+    display: none !important;
+}
+
+
+/* =========================================================
+   ELIMINAR PADDING GENERADO POR APEX
+   ========================================================= */
+
+.pwa-bottom-sheet .t-DialogRegion,
+.pwa-bottom-sheet .t-DialogRegion-wrap {
+
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (min-width: 768px) {
+
+    .pwa-bottom-sheet.ui-dialog {
+
+        left: 50% !important;
+        right: auto !important;
+
+        transform: translateX(-50%) !important;
+
+        width: min(560px, 100%) !important;
+
+        border-radius:
+            var(--sheet-radius)
+            var(--sheet-radius)
+            0
+            0 !important;
+    }
+
+}
+4. Pero hay un detalle importante
+El CSS anterior hace que el diálogo sea Bottom Sheet, pero necesitamos controlar también la animación.
+Un Bottom Sheet nativo normalmente hace:
+cerrado
+
+       ↓
+
+┌──────────────┐
+│              │
+│    página    │
+│              │
+└──────────────┘
+
+
+abriendo
+
+       ↑
+       │
+┌──────────────┐
+│              │
+│    página    │
+├──────────────┤
+│    sheet     │
+│              │
+└──────────────┘
+Podemos agregar una animación mucho más natural.
+5. Animación de entrada
+Agrega:
+.pwa-bottom-sheet {
+
+    animation:
+        pwaSheetEnter
+        .28s
+        cubic-bezier(.32, .72, 0, 1)
+        both;
+}
+
+
+@keyframes pwaSheetEnter {
+
+    from {
+
+        transform:
+            translateY(100%);
+
+        opacity: .8;
+    }
+
+    to {
+
+        transform:
+            translateY(0);
+
+        opacity: 1;
+    }
+}
+La curva:
+cubic-bezier(.32, .72, 0, 1)
+produce una sensación bastante más cercana a una animación de componente móvil que un simple:
+ease;
+6. El "grabber"
+Este detalle hace muchísima diferencia.
+En lugar de mostrar el título de APEX, podemos crear un pequeño indicador:
+       ───────
+En la página modal crea una región:
+Region Type:
+    Static Content
+Y coloca:
+HTML
+<div class="pwa-sheet-handle">
+    <span></span>
+</div>
+CSS:
+.pwa-sheet-handle {
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
+    height: 28px;
+
+    padding-top: 10px;
+
+    background: #fff;
+}
+
+
+.pwa-sheet-handle span {
+
+    display: block;
+
+    width: 42px;
+    height: 4px;
+
+    border-radius: 999px;
+
+    background: #c7c7c7;
+}
+Visualmente:
+╭──────────────────────────╮
+│                          │
+│          ─────           │
+│                          │
+│      Filtrar cuentas     │
+│                          │
+7. El backdrop también debe cambiar
+APEX genera el overlay detrás del diálogo.
+Para una PWA yo utilizaría:
+.pwa-bottom-sheet ~ .ui-widget-overlay {
+
+    background: rgba(15, 23, 42, .42) !important;
+
+    backdrop-filter: blur(2px);
+
+    -webkit-backdrop-filter: blur(2px);
+}
+Pero hay un detalle: dependiendo de cómo APEX genere el DOM, el selector ~ puede no alcanzar el overlay.
+Por eso prefiero utilizar:
+.ui-widget-overlay {
+
+    background:
+        rgba(15, 23, 42, .42) !important;
+
+    backdrop-filter:
+        blur(2px);
+
+    -webkit-backdrop-filter:
+        blur(2px);
+}
+Si tu aplicación utiliza otros diálogos que no quieres modificar, entonces podemos limitarlo mediante JavaScript.
+8. Una estructura que recomiendo para tus modales
+Para tus PWA yo utilizaría una estructura estándar.
+Por ejemplo:
+PAGE 20
+Modal Dialog
+│
+├── Static Content
+│   └── Bottom Sheet Handle
+│
+├── Region
+│   └── Header personalizado
+│
+├── Region
+│   └── Contenido
+│
+└── Region
+    └── Acciones
+Y visualmente:
+╭────────────────────────────╮
+│            ─────           │
+│                            │
+│  Filtrar movimientos       │
+│  ──────────────────────    │
+│                            │
+│  Cuenta                    │
+│  Cuenta corriente     ›   │
+│                            │
+│  Fecha                     │
+│  Desde        Hasta        │
+│                            │
+│  ☑ Solo pendientes         │
+│                            │
+│  ┌──────────────────────┐  │
+│  │   Aplicar filtros    │  │
+│  └──────────────────────┘  │
+│                            │
+└────────────────────────────┘
+Es mucho más apropiado para una PWA que el modal tradicional de APEX.
+9. El encabezado personalizado
+En lugar de:
+X     Filtrar movimientos
+yo haría:
+HTML
+<div class="pwa-sheet-header">
+
+    <div class="pwa-sheet-handle">
+        <span></span>
+    </div>
+
+    <div class="pwa-sheet-title">
+        Filtrar movimientos
+    </div>
+
+</div>
+CSS:
+.pwa-sheet-header {
+
+    background: #fff;
+
+    padding:
+        0
+        20px
+        18px;
+}
+
+
+.pwa-sheet-title {
+
+    font-size: 21px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+
+    color: #172033;
+
+    padding-top: 4px;
+}
+10. Botón cerrar
+Personalmente, para una PWA bancaria no eliminaría siempre la posibilidad de cerrar.
+En lugar de la X de APEX, puedes poner:
+             ─────
+
+        Filtrar movimientos
+
+        ...
+
+        Cancelar
+o:
+╭──────────────────────────╮
+│         ─────             │
+│                           │
+│ Filtrar movimientos   ×   │
+│                           │
+Pero el × sería tu propio botón, no el botón de APEX.
+Por ejemplo:
+HTML
+<button
+    type="button"
+    class="pwa-sheet-close"
+    onclick="apex.navigation.dialog.cancel(true);">
+
+    <span class="fa fa-times"></span>
+
+</button>
+CSS:
+.pwa-sheet-close {
+
+    position: absolute;
+
+    top: 42px;
+    right: 18px;
+
+    width: 38px;
+    height: 38px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    background: #f1f3f5;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 16px;
+
+    cursor: pointer;
+}
+11. Para que parezca realmente una PWA
+Hay otra cosa que te recomiendo mucho.
+No uses:
+height: 500px;
+para el Bottom Sheet.
+Utiliza:
+height: auto;
+max-height: 92dvh;
+y:
+overflow-y: auto;
+Por ejemplo:
+.pwa-bottom-sheet .t-Dialog-body {
+
+    max-height: calc(92dvh - 80px);
+
+    overflow-y: auto;
+
+    overscroll-behavior: contain;
+
+    -webkit-overflow-scrolling: touch;
+}
+dvh es particularmente útil en móviles porque tiene en cuenta mejor las dimensiones dinámicas del viewport.
+12. Y podemos llevarlo todavía más lejos
+Si quieres una experiencia realmente nativa, podemos implementar:
+Bottom Sheet tipo Android
+        ─────
+     Seleccionar cuenta
+
+     ○ Cuenta A
+     ○ Cuenta B
+     ○ Cuenta C
+Bottom Sheet tipo iOS
+╭────────────────────────╮
+│        ─────           │
+│                        │
+│ Seleccionar cuenta     │
+│                        │
+│ Cuenta corriente   ›  │
+│ Cuenta ahorro       › │
+│ Tarjeta             › │
+╰────────────────────────╯
+Bottom Sheet con diferentes alturas
+small
+
+┌──────────────────────┐
+│        ─────         │
+│  Seleccionar cuenta  │
+└──────────────────────┘
+medium
+
+┌──────────────────────┐
+│        ─────         │
+│                      │
+│  Seleccionar cuenta  │
+│                      │
+│  Cuenta corriente    │
+│  Cuenta ahorro       │
+│  Tarjeta             │
+└──────────────────────┘
+large
+
+┌──────────────────────┐
+│        ─────         │
+│                      │
+│       Filtros        │
+│                      │
+│       ...            │
+│                      │
+│       ...            │
+│                      │
+│       Aplicar        │
+└──────────────────────┘
+Y hay una alternativa todavía mejor en APEX 24
+Para tu caso, no necesariamente tienes que reinventar todo desde cero.
+Oracle APEX/Universal Theme tiene soporte para componentes tipo Drawer, incluyendo una variante Bottom, y existen clases como:
+js-dialog-class-t-Drawer--pullOutBottom
+además de:
+t-Dialog--noPadding
+para eliminar el padding. �
+GitHub
+Por eso, si estás construyendo una PWA bancaria en APEX, mi recomendación sería crear un componente/plantilla reutilizable de Bottom Sheet y no repetir CSS en cada página.
+La arquitectura ideal sería:
+APEX Application
+│
+├── Theme Roller
+│
+├── CSS
+│   └── pwa-bottom-sheet.css
+│
+├── JavaScript
+│   └── pwa-bottom-sheet.js
+│
+├── Modal Page 10
+│   └── Bottom Sheet
+│
+├── Modal Page 20
+│   └── Bottom Sheet
+│
+├── Modal Page 30
+│   └── Bottom Sheet
+│
+└── Modal Page 40
+    └── Bottom Sheet
+Así puedes tener un estándar visual para toda tu PWA.
+Y algo importante: APEX monta los modal dialogs dentro de iframe, así que conviene que el CSS del Bottom Sheet esté pensado específicamente para el DOM del dialog/iframe, no solamente para la página padre. �
+Oracle Docs
+Si quieres llevarlo al siguiente nivel, puedo darte una implementación completa para APEX 24.2 de un Bottom Sheet reutilizable, con:
+small / medium / large
+animación de entrada/salida
+grabber
+cerrar tocando el backdrop
+botón cerrar opcional
+safe-area-inset-bottom para iPhone
+scroll interno
+bloqueo del scroll de la página padre
+soporte táctil
+drag & swipe hacia abajo para cerrar
+apertura desde JavaScript
+comunicación modal → página padre
+parámetros
+apex.navigation.dialog
+y clases que puedas reutilizar en todos tus Modal Dialog de APEX.
+Eso te permitiría usar algo como PWA_BOTTOM_SHEET en cualquier modal y que automáticamente se comporte como un componente nativo.
