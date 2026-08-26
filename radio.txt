@@ -1,0 +1,87 @@
+<div class="pwa-filter-container">
+  <div class="pwa-filter-group">
+    <input type="radio" id="f-all" name="pwa_filter" value="ALL" checked>
+    <label for="f-all">Todos</label>
+
+    <input type="radio" id="f-active" name="pwa_filter" value="ACTIVE">
+    <label for="f-active">Activos</label>
+
+    <input type="radio" id="f-pending" name="pwa_filter" value="PENDING">
+    <label for="f-pending">Pendientes</label>
+
+    <input type="radio" id="f-done" name="pwa_filter" value="DONE">
+    <label for="f-done">Completados</label>
+  </div>
+</div>
+
+
+/* Contenedor fijo anclado debajo del header/breadcrumb */
+.pwa-filter-container {
+  position: -webkit-sticky;
+  position: sticky;
+  top: var(--ut-header-height, 48px); /* Se alinea con la cabecera de Universal Theme */
+  z-index: 100;
+  background-color: var(--ut-body-bg-color, #f9fafb);
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+}
+
+/* Grupo responsivo con desplazamiento horizontal suave en móviles */
+.pwa-filter-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.pwa-filter-group::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/PWA */
+}
+
+/* Ocultar los inputs radio reales */
+.pwa-filter-group input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Estilo de los Botones (Píldoras) */
+.pwa-filter-group label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ut-body-text-color, #4b5563);
+  background-color: var(--ut-region-bg-color, #ffffff);
+  border: 1px solid var(--ut-component-border-color, #e5e7eb);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Estado al pasar el cursor */
+.pwa-filter-group label:hover {
+  background-color: #f3f4f6;
+}
+
+/* Estado Seleccionado (Checked) */
+.pwa-filter-group input[type="radio"]:checked + label {
+  background-color: var(--ut-palette-primary, #056ac8);
+  color: #ffffff;
+  border-color: var(--ut-palette-primary, #056ac8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+/* Estado Enfocado para accesibilidad PWA */
+.pwa-filter-group input[type="radio"]:focus-visible + label {
+  outline: 2px solid var(--ut-palette-primary, #056ac8);
+  outline-offset: 2px;
+}
