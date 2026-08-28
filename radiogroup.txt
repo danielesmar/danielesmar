@@ -1,0 +1,104 @@
+/* Contenedor principal del Radio Group */
+.custom-sliding-radio {
+  --total-items: 3; /* Ajusta este valor al número de opciones que tengas */
+  position: relative !important;
+  display: flex !important;
+  align-items: center;
+  background-color: #ebf7f5 !important; /* Verde menta claro */
+  border-radius: 50px !important;
+  padding: 4px !important;
+  border: none !important;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  isolation: isolate;
+}
+
+/* Ocultar los inputs nativos de APEX */
+.custom-sliding-radio input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  pointer-events: none;
+}
+
+/* Reseteo de contenedores internos generados por APEX */
+.custom-sliding-radio .apex-item-option,
+.custom-sliding-radio .apex-item-grid-row,
+.custom-sliding-radio .apex-item-grid {
+  display: flex !important;
+  flex: 1;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* Estilo de los textos / Labels */
+.custom-sliding-radio label {
+  flex: 1;
+  text-align: center;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #1a2b3c;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.3s ease;
+  user-select: none;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 50px !important;
+  white-space: nowrap;
+}
+
+/* Color del texto seleccionado */
+.custom-sliding-radio input[type="radio"]:checked + label,
+.custom-sliding-radio .apex-item-option:has(input:checked) label {
+  color: #ffffff !important;
+}
+
+/* Pill flotante que realiza el desplazamiento animado */
+.custom-sliding-radio::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / var(--total-items));
+  background-color: #008767; /* Verde oscuro activo */
+  border-radius: 50px;
+  z-index: 1;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Cálculo de posiciones según la opción activa (Posición 1, 2, 3...) */
+.custom-sliding-radio:has(.apex-item-option:nth-child(1) input:checked)::before,
+.custom-sliding-radio:has(input[type="radio"]:nth-of-type(1):checked)::before {
+  transform: translateX(0%);
+}
+
+.custom-sliding-radio:has(.apex-item-option:nth-child(2) input:checked)::before,
+.custom-sliding-radio:has(input[type="radio"]:nth-of-type(2):checked)::before {
+  transform: translateX(100%);
+}
+
+.custom-sliding-radio:has(.apex-item-option:nth-child(3) input:checked)::before,
+.custom-sliding-radio:has(input[type="radio"]:nth-of-type(3):checked)::before {
+  transform: translateX(200%);
+}
+
+.custom-sliding-radio:has(.apex-item-option:nth-child(4) input:checked)::before,
+.custom-sliding-radio:has(input[type="radio"]:nth-of-type(4):checked)::before {
+  transform: translateX(300%);
+}
+
+/* Ajuste Responsivo para pantallas pequeñas */
+@media (max-width: 480px) {
+  .custom-sliding-radio label {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+}
