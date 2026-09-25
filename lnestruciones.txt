@@ -1,0 +1,62 @@
+window.abrirAplicacion = function(data) {
+
+    const urlActual = new URL(window.location.href);
+    const host = urlActual.hostname.toLowerCase();
+
+    const esDevUat =
+        host.includes("dev-") ||
+        host.includes("dev.") ||
+        host.includes("uat-") ||
+        host.includes("uat.");
+
+    const esProduccion =
+        host.includes("pro-") ||
+        host.includes("pro.");
+
+    let baseUrl;
+
+    if (esDevUat) {
+
+        // Ejemplo:
+        // /ords/BASE_DATOS/r/workspace/app/...
+        const partes = urlActual.pathname
+            .split("/")
+            .filter(Boolean);
+
+        const indiceOrds = partes.indexOf("ords");
+
+        if (indiceOrds === -1 || !partes[indiceOrds + 1]) {
+            console.error("No fue posible determinar la base de datos.");
+            return;
+        }
+
+        const baseDatos = partes[indiceOrds + 1];
+
+        baseUrl =
+            urlActual.origin +
+            "/ords/" +
+            encodeURIComponent(baseDatos) +
+            "/r/";
+
+    } else if (esProduccion) {
+
+        // Producción no lleva nombre de BD.
+        baseUrl =
+            urlActual.origin +
+            "/ords/r/";
+
+    } else {
+        console.error("No se pudo determinar el ambiente.");
+        return;
+    }
+
+    const destino =
+        baseUrl +
+        encodeURIComponent(data.app_workspace) +
+        "/" +
+        encodeURIComponent(data.app_id) +
+        "/";
+
+    // Abre dentro de la misma pestaña/PWA
+    window.location.href = destino;
+};
