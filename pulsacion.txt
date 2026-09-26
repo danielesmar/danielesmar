@@ -1,0 +1,46 @@
+(function () {
+  // Mapa de clases CSS a patrones de vibración (en milisegundos)
+  const HAPTIC_PATTERNS = {
+    'haptic-light': 15,                     // Vibración suave/corta
+    'haptic-medium': 40,                    // Vibración estándar
+    'haptic-heavy': 80,                     // Vibración intensa
+    'haptic-sustained': 250,                // Vibración larga/sostenida
+    'haptic-double': [30, 50, 30],          // Doble pulso
+    'haptic-error': [50, 40, 50, 40, 100]   // Patrón de error
+  };
+
+  // Verificar si el navegador soporta la API de vibración
+  if (!('vibrate' in navigator)) return;
+
+  function triggerHaptic(event) {
+    // Busca el elemento con la clase haptic más cercano al toque
+    const target = event.target.closest('[class*="haptic-"]');
+    if (!target) return;
+
+    // Recorre las clases del elemento para encontrar la coincidencia
+    for (const className of target.classList) {
+      if (HAPTIC_PATTERNS[className]) {
+        try {
+          navigator.vibrate(HAPTIC_PATTERNS[className]);
+        } catch (e) {
+          // Ignorar bloqueos por políticas de interacción del usuario
+        }
+        break;
+      }
+    }
+  }
+
+  // Se escucha 'pointerdown' para responder inmediatamente sin el retraso de 300ms de 'click'
+  document.addEventListener('pointerdown', triggerHaptic, { passive: true });
+})();
+
+
+
+
+Solo necesitas agregar estas clases al atributo CSS Classes de cualquier botón, enlace, región o ítem en Oracle APEX:
+​haptic-light: Confirmaciones leves, clics de navegación simple.
+​haptic-medium: Botones de acción principal (Guardar, Enviar).
+​haptic-heavy: Acciones destructivas o importantes (Eliminar, Cancelar).
+​haptic-sustained: Mantener presionado o acciones prolongadas.
+​haptic-double: Éxito en formulación / alertas.
+​haptic-error: Errores de validación o fallos.
