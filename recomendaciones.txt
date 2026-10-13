@@ -1,0 +1,317 @@
+A. AndroidManifest.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:usesCleartextTraffic="false"
+        android:hardwareAccelerated="true"
+        android:label="Mi Aplicación">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+        </activity>
+    </application>
+</manifest>
+
+
+
+
+B. activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"/>
+
+</FrameLayout>
+
+
+
+C. MainActivity.kt
+Esta es la configuración principal.
+
+
+
+package com.example.apexapp
+
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.webkit.*
+import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
+
+class MainActivity : ComponentActivity() {
+
+    private lateinit var webView: WebView
+
+    private val appUrl =
+        "https://tu-dominio.com/ords/r/workspace/app/home"
+
+    private val allowedHost = "tu-dominio.com"
+
+    private var fileCallback: ValueCallback<Array<Uri>>? = null
+
+    private val filePicker = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val files = if (result.resultCode == Activity.RESULT_OK) {
+            WebChromeClient.FileChooserParams.parseResult(
+                result.resultCode,
+                result.data
+            )
+        } else null
+
+        fileCallback?.onReceiveValue(files)
+        fileCallback = null
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        webView = WebView(this)
+        setContentView(webView)
+
+        configureWebView()
+
+        if (savedInstanceState != null) {
+            webView.restoreState(savedInstanceState)
+        } else {
+            webView.loadUrl(appUrl)
+        }
+
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    // Primero permite cerrar overlays web.
+                    webView.evaluateJavascript(
+                        """
+                        (function() {
+                            if (window.apex &&
+                                apex.jQuery &&
+                                apex.jQuery(".ui-dialog:visible").length) {
+                                apex.jQuery(".ui-dialog:visible")
+                                    .last()
+                                    .find(".ui-dialog-titlebar-close")
+                                    .trigger("click");
+                                return true;
+                            }
+                            return false;
+                        })();
+                        """.trimIndent()
+                    ) { result ->
+                        if (result != "true") {
+                            if (webView.canGoBack()) {
+                                webView.goBack()
+                            } else {
+                                finish()
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+    private fun configureWebView() {
+
+        WebView.setWebContentsDebuggingEnabled(
+            (applicationInfo.flags and
+                android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        )
+
+        webView.setLayerType(
+            View.LAYER_TYPE_HARDWARE,
+            null
+        )
+
+        webView.isFocusable = true
+        webView.isFocusableInTouchMode = true
+
+        webView.settings.apply {
+
+            javaScriptEnabled = true
+            domStorageEnabled = true
+
+            databaseEnabled = true
+
+            cacheMode = WebSettings.LOAD_DEFAULT
+
+            useWideViewPort = true
+            loadWithOverviewMode = true
+
+            javaScriptCanOpenWindowsAutomatically = false
+            setSupportMultipleWindows(false)
+
+            builtInZoomControls = false
+            displayZoomControls = false
+
+            mediaPlaybackRequiresUserGesture = true
+
+            mixedContentMode =
+                WebSettings.MIXED_CONTENT_NEVER_ALLOW
+
+            allowFileAccess = false
+            allowContentAccess = true
+
+            @Suppress("DEPRECATION")
+            allowFileAccessFromFileURLs = false
+
+            @Suppress("DEPRECATION")
+            allowUniversalAccessFromFileURLs = false
+        }
+
+        CookieManager.getInstance().apply {
+            setAcceptCookie(true)
+            setAcceptThirdPartyCookies(webView, false)
+        }
+
+        webView.webViewClient = object : WebViewClient() {
+
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest
+            ): Boolean {
+
+                val uri = request.url
+
+                // Dejar navegar dentro de APEX.
+                if (uri.scheme == "https" &&
+                    (uri.host == allowedHost ||
+                     uri.host?.endsWith(".$allowedHost") == true)
+                ) {
+                    return false
+                }
+
+                // No interceptar recursos ni navegación de iframes.
+                if (!request.isForMainFrame) {
+                    return false
+                }
+
+                if (uri.scheme == "http" ||
+                    uri.scheme == "https" ||
+                    uri.scheme == "mailto" ||
+                    uri.scheme == "tel"
+                ) {
+                    try {
+                        startActivity(
+                            Intent(Intent.ACTION_VIEW, uri)
+                        )
+                    } catch (e: ActivityNotFoundException) {
+                        Log.e("APEX_WEBVIEW", "Sin aplicación para URL", e)
+                    }
+                }
+
+                return true
+            }
+
+            override fun onPageFinished(
+                view: WebView,
+                url: String
+            ) {
+                super.onPageFinished(view, url)
+                Log.d("APEX_WEBVIEW", "Página cargada: $url")
+            }
+
+            override fun onReceivedError(
+                view: WebView,
+                request: WebResourceRequest,
+                error: WebResourceError
+            ) {
+                if (request.isForMainFrame) {
+                    Log.e(
+                        "APEX_WEBVIEW",
+                        "Error: ${error.description}"
+                    )
+                }
+            }
+        }
+
+        webView.webChromeClient = object : WebChromeClient() {
+
+            override fun onConsoleMessage(
+                consoleMessage: ConsoleMessage
+            ): Boolean {
+                Log.d(
+                    "APEX_JS",
+                    "${consoleMessage.message()} " +
+                    "(${consoleMessage.sourceId()}:" +
+                    "${consoleMessage.lineNumber()})"
+                )
+                return true
+            }
+
+            override fun onJsAlert(
+                view: WebView,
+                url: String,
+                message: String,
+                result: JsResult
+            ): Boolean {
+                return super.onJsAlert(
+                    view, url, message, result
+                )
+            }
+
+            override fun onShowFileChooser(
+                webView: WebView,
+                filePathCallback: ValueCallback<Array<Uri>>,
+                fileChooserParams: FileChooserParams
+            ): Boolean {
+
+                fileCallback?.onReceiveValue(null)
+                fileCallback = filePathCallback
+
+                return try {
+                    filePicker.launch(
+                        fileChooserParams.createIntent()
+                    )
+                    true
+                } catch (e: ActivityNotFoundException) {
+                    fileCallback = null
+                    filePathCallback.onReceiveValue(null)
+                    true
+                }
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        webView.saveState(outState)
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroy() {
+        fileCallback?.onReceiveValue(null)
+        fileCallback = null
+        webView.destroy()
+        super.onDestroy()
+    }
+}
+
+
